@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6816893148955959798
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6816893148955959792}
+  - component: {fileID: 6816893148955959799}
+  - component: {fileID: 2299349994982093603}
+  m_Layer: 0
+  m_Name: UIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6816893148955959792
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6816893148955959798}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.1876413, y: 0.4691445, z: -0.8492386}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6816893148955959799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6816893148955959798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1180636e0c9d2c14fb8dbba577f09731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pages:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  currentPage: 0
+  defaultPage: 0
+  pausePageIndex: 0
+  allowPause: 0
+  pauseAction:
+    m_Name: Pause
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 41131938-aac1-4091-90ba-797fcad7e368
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 69cc823f-082f-4187-a85a-6e662aa8b12f
+      m_Path: <Keyboard>/escape
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Pause
+      m_Flags: 0
+    m_Flags: 0
+  textoGhost: {fileID: 0}
+  botaoFuria: {fileID: 0}
+  textoBotaoFuria: {fileID: 0}
+  velocidadePulsoFuria: 5
+  eventSystem: {fileID: 0}
+--- !u!114 &2299349994982093603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6816893148955959798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e59635c8f785b54d8848f30af9bd266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameSettings
+  dificuldadeSelecionada: 1
+  nivelAtual: 1
+  dificuldadeFacil: {fileID: 11400000, guid: 4af6bcf340ed1f14484f4fa76b1c0c9f, type: 2}
+  dificuldadeNormal: {fileID: 11400000, guid: 2fae2c3d128fa954fb59b22475edaf2d, type: 2}
+  dificuldadeDificil: {fileID: 11400000, guid: 971f35cdfd61d064a839c7751be45e04, type: 2}
+  dificuldadeFuria: {fileID: 11400000, guid: 7ebc54f566492ce48be32f69b155aafc, type: 2}
+  infoDificuldadeTexto: {fileID: 0}
+  imagemBandeira: {fileID: 0}
+  botaoDificuldadeExtra: {fileID: 0}
+  flagUSA: {fileID: 0}
+  flagRussia: {fileID: 0}
+  flagNKorea: {fileID: 0}
+  flagCUBA: {fileID: 0}
+  configAtual: {fileID: 0}
