@@ -56,12 +56,13 @@ public class GameSettings : MonoBehaviour
 
     void AoCarregarCena(Scene cena, LoadSceneMode modo)
     {
-        if (cena.name == "MainMenu")
+        if (cena.name == "MainMenu") // Verifique se este nome é igual ao do UIManager
         {
-            // Busca as referências de UI pelo nome exato na Hierarchy
+            // O GameObject.Find procura o nome EXATO que está na lista da esquerda (Hierarchy) do Unity
             infoDificuldadeTexto = GameObject.Find("DificuldadeTexto")?.GetComponent<TextMeshProUGUI>();
             imagemBandeira = GameObject.Find("BandeiraImagem")?.GetComponent<Image>();
 
+            // Se o seu botão de Cuba na Hierarchy se chamar "Botao_Cuba", mude aqui:
             GameObject btn = GameObject.Find("BotaoCuba");
             if (btn != null) botaoDificuldadeExtra = btn;
 
@@ -99,6 +100,7 @@ public class GameSettings : MonoBehaviour
 
     public void SetDificuldade(int index)
     {
+        Debug.Log("Botão de dificuldade clicado! Index: " + index);
         dificuldadeSelecionada = (Dificuldade)index;
         AtualizarConfigAtual();
         PlayerPrefs.SetInt("DificuldadeSelecionada", index);

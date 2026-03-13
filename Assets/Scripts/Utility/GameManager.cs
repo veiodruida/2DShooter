@@ -4,9 +4,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Classe principal que coordena o estado do jogo, pontuação, tempo e vitórias/derrotas.
-/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance = null;
@@ -25,8 +22,6 @@ public class GameManager : MonoBehaviour
         set { instance.gameManagerScore = value; }
     }
 
-    public static object Dificuldade { get; internal set; }
-
     [Header("Configurações do Boss e Recordes")]
     public int highScore = 0;
     public float tempoDaFase = 0f;
@@ -38,13 +33,11 @@ public class GameManager : MonoBehaviour
     public int enemiesToDefeat = 10;
     private int enemiesDefeated = 0;
     public bool printDebugOfWinnableStatus = true;
-    public int gameVictoryPageIndex = 0;
+    public string nomePaginaVitoria = "VictoryPage"; // Mudado para string
     public GameObject victoryEffect;
 
     [Header("Configurações de Nível de Dificuldade")]
     public int nivelAtual = 1;
-    // 0=Facil, 1=Medio, 2=Dificil, 3=Furia
-    //public enum Dificuldade { Facil, Medio, Dificil, Furia }
     public GameSettings.Dificuldade dificuldadeSelecionada;
 
     private int numberOfEnemiesFoundAtStart;
@@ -53,13 +46,13 @@ public class GameManager : MonoBehaviour
     public bool gameIsOver = false;
 
     [Header("Configurações de Game Over")]
-    public int gameOverPageIndex = 0;
+    public string nomePaginaGameOver = "GameOverPage"; // Mudado para string
     public GameObject gameOverEffect;
 
     private void Awake()
     {
         if (instance == null) instance = this;
-        else DestroyImmediate(this);
+        else { DestroyImmediate(this); return; }
 
         if ((player == null) && (Object.FindFirstObjectByType<Controller>() != null))
         {
@@ -69,6 +62,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Carrega o que foi escolhido no menu (padrão 0 = facil USA)
+        int diff = PlayerPrefs.GetInt("DificuldadeSalva", 0);
+        dificuldadeSelecionada = (GameSettings.Dificuldade)diff;
+
         HandleStartUp();
     }
 
@@ -124,12 +121,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // --- MÉTODOS DE CÁLCULO DE DIFICULDADE (Adicionados para evitar erros) ---
-
-    /// <summary>
-    /// Retorna um multiplicador baseado na dificuldade atual.
-    /// Útil para velocidade de inimigos ou dano.
-    /// </summary>
     public float GetDificuldadeMultiplier()
     {
         switch (dificuldadeSelecionada)
@@ -137,23 +128,17 @@ public class GameManager : MonoBehaviour
             case GameSettings.Dificuldade.Facil: return 0.7f;
             case GameSettings.Dificuldade.Medio: return 1.0f;
             case GameSettings.Dificuldade.Dificil: return 1.4f;
-            case GameSettings.Dificuldade.Furia: return 2.0f; // Fúria dobra a agressividade
+            case GameSettings.Dificuldade.Furia: return 2.0f;
             default: return 1.0f;
         }
     }
 
-    /// <summary>
-    /// Calcula a vida que um inimigo deve ter baseado na dificuldade e no nível atual.
-    /// </summary>
     public int CalcularVidaInimigo(int vidaBase)
     {
         float mult = GetDificuldadeMultiplier();
-        // Aumenta 20% de vida por cada nível da fase
         float fatorNivel = 1f + (nivelAtual - 1) * 0.2f;
         return Mathf.RoundToInt(vidaBase * mult * fatorNivel);
     }
-
-    // --- FIM DOS MÉTODOS DE CÁLCULO ---
 
     public int CalcularPontuacaoFinalBoss()
     {
@@ -167,7 +152,7 @@ public class GameManager : MonoBehaviour
         int pontosDeTempo = Mathf.Max(0, scoreBaseBoss - Mathf.FloorToInt(tempoDaFase * penalidadePorSegundo));
         pontuacaoFinal += pontosDeTempo;
 
-        Health pHealth = player.GetComponent<Health>();
+        Health pHealth = (player != null) ? player.GetComponent<Health>() : null;
         if (pHealth != null && pHealth.currentHealth >= pHealth.maximumHealth)
         {
             pontuacaoFinal += bonusPerfect;
@@ -211,12 +196,9 @@ public class GameManager : MonoBehaviour
     {
         string historicoRaw = PlayerPrefs.GetString("historico_partidas", "");
         string novaEntrada = pontos + "|" + tempo.ToString("F2");
-
         historicoRaw = string.IsNullOrEmpty(historicoRaw) ? novaEntrada : novaEntrada + "," + historicoRaw;
-
         string[] entradas = historicoRaw.Split(',');
         if (entradas.Length > 10) historicoRaw = string.Join(",", entradas.Take(10));
-
         PlayerPrefs.SetString("historico_partidas", historicoRaw);
         PlayerPrefs.Save();
     }
@@ -247,20 +229,26 @@ public class GameManager : MonoBehaviour
         {
             if (player != null) player.SetActive(false);
             UIManager.instance.allowPause = false;
+            UIManager.instance.ConfigurarCursor(true);
             UIManager.instance.UpdateUI();
-            UIManager.instance.GoToPage(gameVictoryPageIndex);
+            UIManager.instance.GoToPageByName(nomePaginaVitoria);
             if (victoryEffect != null) Instantiate(victoryEffect, transform.position, transform.rotation);
         }
     }
 
     public void GameOver()
     {
+        if (gameIsOver) return;
         gameIsOver = true;
+        Time.timeScale = 0f; // TRAVA O JOGO
+
         if (gameOverEffect != null) Instantiate(gameOverEffect, transform.position, transform.rotation);
+
         if (UIManager.instance != null)
         {
             UIManager.instance.allowPause = false;
-            UIManager.instance.GoToPage(gameOverPageIndex);
+            UIManager.instance.ConfigurarCursor(true);
+            UIManager.instance.GoToPageByName(nomePaginaGameOver);
         }
     }
 
@@ -269,6 +257,7 @@ public class GameManager : MonoBehaviour
         ResetScore();
         tempoDaFase = 0f;
         ResetPlayerWeapon();
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
