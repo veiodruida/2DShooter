@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using System.Linq;
@@ -15,7 +14,6 @@ public class UIManager : MonoBehaviour
 
     [Header("Page Management")]
     public List<UIPage> pages = new List<UIPage>();
-    public int pausePageIndex = 1;
     public bool allowPause = true;
 
     [Header("Input Actions")]
@@ -36,15 +34,36 @@ public class UIManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
         }
-        else
+        else if (instance != this)
         {
             Destroy(gameObject);
             return;
         }
     }
+    // Método Mágico para o UIManager se auto-criar
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Initialize()
+    {
+        if (instance == null)
+        {
+            // Tenta carregar o prefab da pasta Resources
+            GameObject prefab = Resources.Load<GameObject>("UIManager");
 
+            if (prefab != null)
+            {
+                Debug.Log("<color=yellow>Auto-Spawner: Criando UIManager automaticamente no início da cena.</color>");
+                GameObject clone = Instantiate(prefab);
+                instance = clone.GetComponent<UIManager>();
+            }
+            else
+            {
+                Debug.LogError("Auto-Spawner: Prefab 'UIManager' não encontrado na pasta Assets/Resources!");
+            }
+        }
+    }
     private void OnEnable()
     {
         pauseAction.Enable();
@@ -59,95 +78,104 @@ public class UIManager : MonoBehaviour
 
     private void AoMudarDeCena(Scene cena, LoadSceneMode modo)
     {
-        // Reset fundamental para evitar que o jogo comece travado
         isPaused = false;
         Time.timeScale = 1f;
+        pauseAction.Disable();
+        pauseAction.Enable();
 
-        // Reconfigura o EventSystem antes de qualquer ação de UI
-        SetUpEventSystem();
+        eventSystem = Object.FindFirstObjectByType<EventSystem>();
 
-        // Busca todas as páginas (UIPage) presentes na nova cena
-        pages.Clear();
-        pages = Resources.FindObjectsOfTypeAll<UIPage>().Where(p => p.gameObject.scene == cena).ToList();
+        pages = Resources.FindObjectsOfTypeAll<UIPage>()
+            .Where(p => p.gameObject.scene == cena).ToList();
 
-        // Lógica específica para a cena MainMenu
+        foreach (var p in pages) p.gameObject.SetActive(false);
+
         if (cena.name == "MainMenu")
         {
             allowPause = false;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-
-            // Tenta abrir o painel principal do menu automaticamente
+            ConfigurarCursor(true);
             GoToPageByName("MainMenu");
         }
         else
         {
             allowPause = true;
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-            SetActiveAllPages(false); // Garante que nenhum menu comece aberto no level
+            ConfigurarCursor(false);
         }
-
-        SetUpUIElements();
         UpdateUI();
     }
 
-    private void SetUpUIElements()
+    public void ConfigurarCursor(bool visivel)
     {
-        UIelements = FindObjectsByType<UIelement>(FindObjectsInactive.Include, FindObjectsSortMode.None).ToList();
-    }
-
-    private void SetUpEventSystem()
-    {
-        eventSystem = Object.FindFirstObjectByType<EventSystem>();
+        Cursor.visible = visivel;
+        Cursor.lockState = visivel ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
     public void TogglePause()
     {
-        if (!allowPause) return;
+        if (!allowPause || (GameManager.instance != null && GameManager.instance.gameIsOver)) return;
 
         isPaused = !isPaused;
         Time.timeScale = isPaused ? 0f : 1f;
+        ConfigurarCursor(isPaused);
 
-        if (isPaused)
-        {
-            // Busca a página de Pause pelo nome ou pelo index configurado
-            UIPage pausePage = pages.Find(p => p.gameObject.name.Contains("Pause") || p.gameObject.name.Contains("Menu"));
-            if (pausePage != null) GoToPage(pages.IndexOf(pausePage));
-            else if (pages.Count > pausePageIndex) GoToPage(pausePageIndex);
-
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else
-        {
-            SetActiveAllPages(false);
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-    }
-
-    private void Update()
-    {
-        if (pauseAction.triggered) TogglePause();
-        AtualizarTextoGhost();
-        AnimarBotaoFuria();
-    }
-
-    public void GoToPage(int pageIndex)
-    {
-        if (pageIndex >= 0 && pageIndex < pages.Count && pages[pageIndex] != null)
-        {
-            SetActiveAllPages(false);
-            pages[pageIndex].gameObject.SetActive(true);
-            pages[pageIndex].SetSelectedUIToDefault();
-        }
+        if (isPaused) GoToPageByName("PausePage");
+        else SetActiveAllPages(false);
     }
 
     public void GoToPageByName(string pageName)
     {
-        UIPage page = pages.Find(item => item != null && item.name == pageName);
-        if (page != null) GoToPage(pages.IndexOf(page));
+        // LOG DE ENTRADA - Se não aparecer no Console, o EventSystem da cena está quebrado
+        Debug.Log($"<color=orange>UIManager: Tentando abrir a página: {pageName}</color>");
+
+        if (pages == null || pages.Count == 0)
+        {
+            pages = Resources.FindObjectsOfTypeAll<UIPage>()
+                .Where(p => p.gameObject.scene == SceneManager.GetActiveScene()).ToList();
+        }
+
+        UIPage page = pages.Find(item => item != null && item.gameObject.name == pageName);
+
+        if (page != null)
+        {
+            SetActiveAllPages(false);
+            page.gameObject.SetActive(true);
+
+            // CORREÇÃO AQUI: Chamamos o método diretamente. 
+            // Se a página existe, o método existe.
+            page.SetSelectedUIToDefault();
+
+            Debug.Log($"<color=green>UIManager: Sucesso! {pageName} aberta.</color>");
+        }
+        else
+        {
+            string disponiveis = string.Join(", ", pages.Select(p => p.gameObject.name));
+            Debug.LogError($"UIManager: Erro! '{pageName}' não encontrada. Disponíveis: {disponiveis}");
+        }
+    }
+
+    public void SetActiveAllPages(bool status)
+    {
+        foreach (UIPage page in pages) if (page != null) page.gameObject.SetActive(status);
+    }
+
+    public void UpdateUI()
+    {
+        UIelements = FindObjectsByType<UIelement>(FindObjectsInactive.Include, FindObjectsSortMode.None).ToList();
+        foreach (UIelement ui in UIelements) ui.UpdateUI();
+    }
+
+    public void VoltarAoMenu()
+    {
+        Time.timeScale = 1f;
+        isPaused = false;
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    private void Update()
+    {
+        if (pauseAction != null && pauseAction.triggered) TogglePause();
+        AtualizarTextoGhost();
+        AnimarBotaoFuria();
     }
 
     private void AtualizarTextoGhost()
@@ -171,25 +199,5 @@ public class UIManager : MonoBehaviour
             float escala = 1.0f + Mathf.Sin(Time.time * velocidadePulsoFuria) * 0.03f;
             botaoFuria.transform.localScale = new Vector3(escala, escala, 1);
         }
-    }
-
-    public void SetActiveAllPages(bool activated)
-    {
-        foreach (UIPage page in pages)
-        {
-            if (page != null) page.gameObject.SetActive(activated);
-        }
-    }
-
-    public void UpdateUI()
-    {
-        SetUpUIElements();
-        foreach (UIelement ui in UIelements) ui.UpdateUI();
-    }
-
-    public void VoltarAoMenu()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
     }
 }

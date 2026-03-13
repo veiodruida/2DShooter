@@ -51,9 +51,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  currentPage: 0
-  defaultPage: 0
-  pausePageIndex: 0
   allowPause: 0
   pauseAction:
     m_Name: Pause
@@ -64,7 +61,7 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings:
     - m_Name: 
-      m_Id: 69cc823f-082f-4187-a85a-6e662aa8b12f
+      m_Id: 6decb17f-afc9-4bc2-9442-ed11707879f6
       m_Path: <Keyboard>/escape
       m_Interactions: 
       m_Processors: 
@@ -89,7 +86,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e59635c8f785b54d8848f30af9bd266, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameSettings
-  dificuldadeSelecionada: 1
+  dificuldadeSelecionada: 0
   nivelAtual: 1
   dificuldadeFacil: {fileID: 11400000, guid: 4af6bcf340ed1f14484f4fa76b1c0c9f, type: 2}
   dificuldadeNormal: {fileID: 11400000, guid: 2fae2c3d128fa954fb59b22475edaf2d, type: 2}
