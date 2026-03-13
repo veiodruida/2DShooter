@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ShootingController : MonoBehaviour
@@ -14,7 +12,7 @@ public class ShootingController : MonoBehaviour
     public InputAction fireAction;
 
     [Header("Firing Settings")]
-    [Tooltip("Base fire rate antes dos modificadores")]
+    [Tooltip("Base fire rate usado caso o GameSettings não seja encontrado")]
     public float fireRateBase = 0.15f;
     public float projectileSpread = 1.0f;
 
@@ -32,33 +30,26 @@ public class ShootingController : MonoBehaviour
 
     private void Update() => ProcessInput();
 
-    // Calcula o Fire Rate atual baseado na dificuldade do GameManager
+    // PEGA O VALOR DIRETAMENTE DO ARQUIVO DE DIFICULDADE
     public float GetCurrentFireRate()
     {
-        // Se for Inimigo ou Nave Mãe, usa o valor exato injetado (Autoridade do Arquivo)
-        if (!isPlayerControlled)
+        if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
         {
-            return fireRateBase;
-        }
+            var cfg = GameSettings.instance.configAtual;
 
-        // Lógica apenas para o PLAYER
-        float rate = fireRateBase;
-
-        if (GameManager.instance != null && GameSettings.instance != null)
-        {
-            rate -= (GameSettings.instance.nivelAtual * 0.01f);
-
-            if (GameSettings.instance.dificuldadeSelecionada == GameSettings.Dificuldade.Furia)
+            if (isPlayerControlled)
             {
-                rate *= 1.25f;
+                // USA O CAMPO "Taxa De Tiro" DO PLAYER NO ARQUIVO
+                return cfg.taxaDeTiro;
             }
-            else if (GameSettings.instance.dificuldadeSelecionada == GameSettings.Dificuldade.Facil)
+            else
             {
-                rate *= 0.9f;
+                // USA O CAMPO "Intervalo Tiro Inimigo" DO ARQUIVO
+                return cfg.intervaloTiroInimigo;
             }
         }
 
-        return Mathf.Max(rate, 0.05f);
+        return fireRateBase; // Fallback caso o sistema falhe
     }
 
     void ProcessInput()
@@ -71,7 +62,7 @@ public class ShootingController : MonoBehaviour
 
     public void Fire()
     {
-        // Usa o Fire Rate dinâmico baseado na dificuldade
+        // Agora usa o valor vindo do DifficultyData
         if ((Time.timeSinceLevelLoad - lastFired) > GetCurrentFireRate())
         {
             SpawnProjectile();

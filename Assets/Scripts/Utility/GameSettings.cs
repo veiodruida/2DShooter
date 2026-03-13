@@ -8,22 +8,26 @@ public class GameSettings : MonoBehaviour
     private static GameSettings _instance;
     public static GameSettings instance
     {
-        get { if (_instance == null) _instance = FindFirstObjectByType<GameSettings>(); return _instance; }
+        get
+        {
+            if (_instance == null) _instance = Object.FindFirstObjectByType<GameSettings>();
+            return _instance;
+        }
     }
 
     public enum Dificuldade { Facil, Medio, Dificil, Furia }
 
     [Header("Seleção Atual")]
-    public Dificuldade dificuldadeSelecionada = Dificuldade.Medio;
-    public int nivelAtual = 1;
+    public Dificuldade dificuldadeSelecionada = Dificuldade.Facil;
+    public int nivelAtual = 0;
 
-    [Header("Assets de Dificuldade")]
+    [Header("Assets de Dificuldade (ScriptableObjects)")]
     public DifficultyData dificuldadeFacil;
     public DifficultyData dificuldadeNormal;
     public DifficultyData dificuldadeDificil;
     public DifficultyData dificuldadeFuria;
 
-    [Header("UI Feedback (MainMenu)")]
+    [Header("UI Feedback (Encontrados Automaticamente)")]
     public TextMeshProUGUI infoDificuldadeTexto;
     public Image imagemBandeira;
     public GameObject botaoDificuldadeExtra;
@@ -39,10 +43,16 @@ public class GameSettings : MonoBehaviour
     void Awake()
     {
         if (transform.parent != null) transform.SetParent(null);
+
         if (_instance == null)
         {
             _instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // Carrega a dificuldade salva logo ao iniciar
+            int salva = PlayerPrefs.GetInt("DificuldadeSelecionada", 0);
+            dificuldadeSelecionada = (Dificuldade)salva;
+
             AtualizarConfigAtual();
         }
         else if (_instance != this)
@@ -56,16 +66,14 @@ public class GameSettings : MonoBehaviour
 
     void AoCarregarCena(Scene cena, LoadSceneMode modo)
     {
-        if (cena.name == "MainMenu") // Verifique se este nome é igual ao do UIManager
+        if (cena.name == "MainMenu")
         {
-            // O GameObject.Find procura o nome EXATO que está na lista da esquerda (Hierarchy) do Unity
+            // Forçamos a busca sempre que entramos no menu
             infoDificuldadeTexto = GameObject.Find("DificuldadeTexto")?.GetComponent<TextMeshProUGUI>();
             imagemBandeira = GameObject.Find("BandeiraImagem")?.GetComponent<Image>();
+            botaoDificuldadeExtra = GameObject.Find("BotaoCuba");
 
-            // Se o seu botão de Cuba na Hierarchy se chamar "Botao_Cuba", mude aqui:
-            GameObject btn = GameObject.Find("BotaoCuba");
-            if (btn != null) botaoDificuldadeExtra = btn;
-
+            // IMPORTANTE: Atualiza o visual logo ao entrar para mostrar o que estava salvo
             AtualizarTexto();
             VerificarDesbloqueioFuria();
         }
@@ -80,11 +88,13 @@ public class GameSettings : MonoBehaviour
         }
     }
 
-    public void FinalizarJogo()
+    public void SetDificuldade(int index)
     {
-        PlayerPrefs.SetInt("JogoFinalizado", 1);
+        dificuldadeSelecionada = (Dificuldade)index;
+        AtualizarConfigAtual(); // Garante que o multiplicador de vida mude!
+        PlayerPrefs.SetInt("DificuldadeSelecionada", index);
         PlayerPrefs.Save();
-        VerificarDesbloqueioFuria();
+        Debug.Log("GameSettings: Dificuldade lógica alterada para " + dificuldadeSelecionada);
     }
 
     void AtualizarConfigAtual()
@@ -96,15 +106,11 @@ public class GameSettings : MonoBehaviour
             case Dificuldade.Dificil: configAtual = dificuldadeDificil; break;
             case Dificuldade.Furia: configAtual = dificuldadeFuria; break;
         }
-    }
 
-    public void SetDificuldade(int index)
-    {
-        Debug.Log("Botão de dificuldade clicado! Index: " + index);
-        dificuldadeSelecionada = (Dificuldade)index;
-        AtualizarConfigAtual();
-        PlayerPrefs.SetInt("DificuldadeSelecionada", index);
-        AtualizarTexto();
+        if (configAtual != null)
+        {
+            Debug.Log($"<color=magenta>Configuração Carregada: {configAtual.name} | Vel. Inimigo: {configAtual.velocidadeInimigoComum} | Vel. Boss: {configAtual.velocidadeBossBase}</color>");
+        }
     }
 
     private void AtualizarTexto()
@@ -138,17 +144,11 @@ public class GameSettings : MonoBehaviour
         }
     }
 
+    // Mantendo os teus cálculos originais
     public int CalcularVidaInimigo(int vidaBase)
     {
         float mult = (int)dificuldadeSelecionada + 1;
         if (dificuldadeSelecionada == Dificuldade.Furia) mult = 6f;
         return Mathf.RoundToInt(vidaBase * mult * (nivelAtual * 1.2f));
-    }
-
-    public float CalcularVelocidadeSpawn(float tempoBase)
-    {
-        float fator = (int)dificuldadeSelecionada * 0.5f;
-        if (dificuldadeSelecionada == Dificuldade.Furia) fator = 3.0f;
-        return tempoBase / (nivelAtual * 0.5f + fator);
     }
 }

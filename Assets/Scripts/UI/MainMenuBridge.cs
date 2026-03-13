@@ -1,49 +1,71 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainMenuBridge : MonoBehaviour
 {
-    // Funções simples que os botões vão chamar
-    // Elas servem apenas para repassar o comando para o UIManager persistente
+    [Header("Arraste os objetos do seu Canvas aqui")]
+    public TextMeshProUGUI infoDificuldadeTexto;
+    public Image imagemBandeira;
+    public GameObject botaoDificuldadeExtra;
 
-    public void AbrirPagina(string nomeDaPagina)
+    private void Start()
     {
-        if (UIManager.instance != null)
-        {
-            UIManager.instance.GoToPageByName(nomeDaPagina);
-        }
-        else
-        {
-            Debug.LogError("Ponte: UIManager não encontrado na cena!");
-        }
-    }
-
-    public void IniciarNovoJogo(string nomeDaCena)
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(nomeDaCena);
-    }
-
-    public void SairDoJogo()
-    {
-        Debug.Log("Saindo...");
-        Application.Quit();
+        // Assim que o menu abre, ele sincroniza o visual com o que está salvo
+        int salva = PlayerPrefs.GetInt("DificuldadeSelecionada", 0);
+        AtualizarVisualLocal(salva);
     }
 
     public void AlterarDificuldade(int indice)
     {
-        // 0=Facil, 1=Medio, 2=Dificil, 3=Furia
         if (GameSettings.instance != null)
         {
-            GameSettings.instance.dificuldadeSelecionada = (GameSettings.Dificuldade)indice;
+            // 1. Manda a ordem para o GameSettings (que cuida da lógica)
+            GameSettings.instance.SetDificuldade(indice);
 
-            // Salva para que o GameManager leia ao carregar a fase
-            PlayerPrefs.SetInt("DificuldadeSalva", indice);
-            PlayerPrefs.Save();
-
-            Debug.Log("<color=yellow>Dificuldade definida para: </color>" + GameSettings.instance.dificuldadeSelecionada);
-        }
-        else
-        {
-            Debug.LogError("Erro: GameSettings não encontrado na cena!");
+            // 2. Atualiza a UI do menu imediatamente através da ponte
+            AtualizarVisualLocal(indice);
         }
     }
+
+    private void AtualizarVisualLocal(int indice)
+    {
+        if (infoDificuldadeTexto == null || imagemBandeira == null) return;
+
+        // Pegamos as sprites que estão guardadas no GameSettings
+        var gs = GameSettings.instance;
+        if (gs == null) return;
+
+        switch (indice)
+        {
+            case 0:
+                infoDificuldadeTexto.text = "DIFFICULTY: USA";
+                infoDificuldadeTexto.color = new Color(0.2f, 0.5f, 1f);
+                imagemBandeira.sprite = gs.flagUSA;
+                break;
+            case 1:
+                infoDificuldadeTexto.text = "DIFFICULTY: RUSSIA";
+                infoDificuldadeTexto.color = Color.white;
+                imagemBandeira.sprite = gs.flagRussia;
+                break;
+            case 2:
+                infoDificuldadeTexto.text = "DIFFICULTY: NORTH KOREA";
+                infoDificuldadeTexto.color = new Color(1f, 0.5f, 0f);
+                imagemBandeira.sprite = gs.flagNKorea;
+                break;
+            case 3:
+                infoDificuldadeTexto.text = "!!! CUBA MODE ACTIVATED !!!";
+                infoDificuldadeTexto.color = Color.red;
+                imagemBandeira.sprite = gs.flagCUBA;
+                break;
+        }
+
+        if (botaoDificuldadeExtra != null)
+            botaoDificuldadeExtra.SetActive(PlayerPrefs.GetInt("JogoFinalizado", 0) == 1);
+    }
+
+    public void AbrirPagina(string nomeDaPagina) => UIManager.instance?.GoToPageByName(nomeDaPagina);
+    public void IniciarNovoJogo(string nomeDaCena) => SceneManager.LoadScene(nomeDaCena);
+    public void SairDoJogo() => Application.Quit();
 }
