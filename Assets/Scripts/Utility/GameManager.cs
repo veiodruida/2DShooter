@@ -60,13 +60,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    // No GameManager.cs
+    void Start()
     {
-        // Carrega o que foi escolhido no menu (padrão 0 = facil USA)
-        int diff = PlayerPrefs.GetInt("DificuldadeSalva", 0);
-        dificuldadeSelecionada = (GameSettings.Dificuldade)diff;
-
-        HandleStartUp();
+        if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
+        {
+            var cfg = GameSettings.instance.configAtual;
+            Debug.Log($"<color=cyan>=== VERIFICAÇÃO DE INÍCIO DE FASE ===</color>");
+            Debug.Log($"<color=cyan>Dificuldade Selecionada: {GameSettings.instance.dificuldadeSelecionada}</color>");
+            Debug.Log($"<color=cyan>Arquivo de Configuração: {cfg.name}</color>");
+            Debug.Log($"<color=cyan>Velocidade Inimigo: {cfg.velocidadeInimigoComum} | Vidas Player: {cfg.vidasIniciais}</color>");
+            Debug.Log($"<color=cyan>Velocidade Boss (Base): {cfg.velocidadeBossBase} | Boss Fúria 2: {cfg.velocidadeFuria2}</color>");
+        }
+        else
+        {
+            Debug.LogError("CUIDADO: Level 1 iniciado sem GameSettings ou sem arquivo DifficultyData!");
+        }
     }
 
     private void Update()
