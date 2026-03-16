@@ -34,4 +34,5 @@ public class DifficultyData : ScriptableObject
 
     [Header("Multiplicadores Globais")]
     public float multiplicadorDanoRecebido = 1.0f; // Novo: Para facilitar o balanceamento
+    public float multiplicadorVidaInimigo = 1.0f;
 }

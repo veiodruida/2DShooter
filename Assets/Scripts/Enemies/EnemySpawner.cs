@@ -39,61 +39,50 @@ public class EnemySpawner : MonoBehaviour
     [Tooltip("The object to make projectiles child objects of.")]
     public Transform projectileHolder = null;
 
-    /// <summary>
-    /// Description:
-    /// Standard Unity function called every frame
-    /// Inputs: 
-    /// none
-    /// Returns: 
-    /// void (no return)
-    /// </summary>
+    // --- NOVO: Lógica de Dificuldade ---
+    private void Start()
+    {
+        ConfigurarDificuldade();
+    }
+
+    void ConfigurarDificuldade()
+    {
+        if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
+        {
+            float delayAntigo = spawnDelay;
+            spawnDelay = GameSettings.instance.configAtual.tempoSpawnInimigos;
+
+            Debug.Log($"<color=cyan>[CONFIG ARQUIVO]</color> Spawner {name}: Intervalo alterado de {delayAntigo}s para {spawnDelay}s");
+        }
+        else
+        {
+            Debug.Log($"<color=yellow>[INSPECTOR]</color> Spawner {name}: Usando delay manual de {spawnDelay}s");
+        }
+    }
+    // ----------------------------------
+
     private void Update()
     {
         CheckSpawnTimer();
     }
 
-    /// <summary>
-    /// Description:
-    /// Checks if it is time to spawn an enemy
-    /// Spawns an enemy if it is time
-    /// Inputs: 
-    /// none
-    /// Returns: 
-    /// void (no return)
-    /// </summary>
     private void CheckSpawnTimer()
     {
-        // If it is time for an enemy to be spawned
         if (Time.timeSinceLevelLoad > lastSpawnTime + spawnDelay && (currentlySpawned < maxSpawn || spawnInfinite))
         {
-            // Determine spawn location
             Vector3 spawnLocation = GetSpawnLocation();
-
-            // Spawn an enemy
             SpawnEnemy(spawnLocation);
         }
     }
 
-    /// <summary>
-    /// Description:
-    /// Spawn and set up an instance of the enemy prefab
-    /// Inputs: 
-    /// Vector3 spawnLocation
-    /// Returns: 
-    /// void (no return)
-    /// </summary>
-    /// <param name="spawnLocation">The location to spawn an enmy at</param>
     private void SpawnEnemy(Vector3 spawnLocation)
     {
-        // Make sure the prefab is valid
         if (enemyPrefab != null)
         {
-            // Create the enemy gameobject
             GameObject enemyGameObject = Instantiate(enemyPrefab, spawnLocation, enemyPrefab.transform.rotation, null);
             Enemy enemy = enemyGameObject.GetComponent<Enemy>();
             ShootingController[] shootingControllers = enemyGameObject.GetComponentsInChildren<ShootingController>();
 
-            // Setup the enemy if necessary
             if (enemy != null)
             {
                 enemy.followTarget = target;
@@ -103,27 +92,15 @@ public class EnemySpawner : MonoBehaviour
                 gun.projectileHolder = projectileHolder;
             }
 
-            // Incremment the spawn count
             currentlySpawned++;
             lastSpawnTime = Time.timeSinceLevelLoad;
         }
     }
 
-    /// <summary>
-    /// Description:
-    /// Returns a generated spawn location for an enemy
-    /// Inputs: 
-    /// none
-    /// Returns: 
-    /// Vector3
-    /// </summary>
-    /// <returns>Vector3: The spawn location as determined by the function</returns>
     protected virtual Vector3 GetSpawnLocation()
     {
-        // Get random coordinates
         float x = Random.Range(0 - spawnRangeX, spawnRangeX);
         float y = Random.Range(0 - spawnRangeY, spawnRangeY);
-        // Return the coordinates as a vector
         return new Vector3(transform.position.x + x, transform.position.y + y, 0);
     }
 }

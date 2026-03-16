@@ -51,6 +51,13 @@ public class Controller : MonoBehaviour
     private void Start()
     {
         if (myRigidbody == null) myRigidbody = GetComponent<Rigidbody2D>();
+
+        // APLICAÇÃO DA DIFICULDADE (Velocidade)
+        if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
+        {
+            moveSpeed = GameSettings.instance.configAtual.velocidadePlayer;
+            Debug.Log($"Controller: Velocidade ajustada para {moveSpeed} pela dificuldade.");
+        }
     }
 
     void Update()

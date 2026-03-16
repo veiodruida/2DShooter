@@ -25,12 +25,33 @@ public class ShootingController : MonoBehaviour
     [Range(1, 3)]
     public int weaponLevel = 1;
 
+    // --- MANTENDO A LÓGICA DE INPUT ORIGINAL ---
     void OnEnable() => fireAction.Enable();
     void OnDisable() => fireAction.Disable();
 
-    private void Update() => ProcessInput();
+    void Update()
+    {
+        ProcessInput();
 
-    // PEGA O VALOR DIRETAMENTE DO ARQUIVO DE DIFICULDADE
+        // GARANTIA: Se o jogo estiver a correr e não estiver pausado, mantém o cursor visível
+        if (Time.timeScale > 0 && !Cursor.visible)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
+        }
+    }
+
+    private void Start()
+    {
+        // Busca o holder apenas uma vez no início para ganhar performance
+        if (projectileHolder == null)
+        {
+            GameObject holder = GameObject.Find("ProjectileHolder");
+            if (holder != null) projectileHolder = holder.transform;
+        }
+    }
+
+    // PEGA O VALOR DIRETAMENTE DO ARQUIVO DE DIFICULDADE (Sincronizado)
     public float GetCurrentFireRate()
     {
         if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
@@ -39,21 +60,22 @@ public class ShootingController : MonoBehaviour
 
             if (isPlayerControlled)
             {
-                // USA O CAMPO "Taxa De Tiro" DO PLAYER NO ARQUIVO
+                // Garante que o campo no ScriptableObject se chama taxaDeTiro
                 return cfg.taxaDeTiro;
             }
             else
             {
-                // USA O CAMPO "Intervalo Tiro Inimigo" DO ARQUIVO
+                // Garante que o campo no ScriptableObject se chama intervaloTiroInimigo
                 return cfg.intervaloTiroInimigo;
             }
         }
 
-        return fireRateBase; // Fallback caso o sistema falhe
+        return fireRateBase; // Fallback
     }
 
     void ProcessInput()
     {
+        // Mantém a verificação do novo Input System
         if (isPlayerControlled && fireAction.ReadValue<float>() >= 1)
         {
             Fire();
@@ -62,7 +84,7 @@ public class ShootingController : MonoBehaviour
 
     public void Fire()
     {
-        // Agora usa o valor vindo do DifficultyData
+        // Usa o GetCurrentFireRate() que consulta a dificuldade
         if ((Time.timeSinceLevelLoad - lastFired) > GetCurrentFireRate())
         {
             SpawnProjectile();
@@ -77,9 +99,11 @@ public class ShootingController : MonoBehaviour
 
         for (int i = 0; i < weaponLevel; i++)
         {
+            // 1. Instancia o projétil
             GameObject proj = Instantiate(projectilePrefab, transform.position, transform.rotation);
             Vector3 rotationEuler = proj.transform.rotation.eulerAngles;
 
+            // 2. Lógica de Nível de Arma (offsets originais)
             if (weaponLevel == 2)
             {
                 float offset = (i == 0) ? -0.25f : 0.25f;
@@ -87,13 +111,16 @@ public class ShootingController : MonoBehaviour
             }
             else if (weaponLevel == 3)
             {
+                // Tiro central, esquerda (-15) e direita (+15)
                 float angleOffset = (i - 1) * 15f;
                 rotationEuler.z += angleOffset;
             }
 
+            // 3. Aplica o Spread aleatório que tinhas definido
             rotationEuler.z += Random.Range(-projectileSpread, projectileSpread);
             proj.transform.rotation = Quaternion.Euler(rotationEuler);
 
+            // 4. Gestão do ProjectileHolder
             if (projectileHolder == null)
                 projectileHolder = GameObject.Find("ProjectileHolder")?.transform;
 
@@ -108,5 +135,12 @@ public class ShootingController : MonoBehaviour
             weaponLevel++;
             Debug.Log("<color=cyan>Arma evoluiu para nível: </color>" + weaponLevel);
         }
+    }
+
+    // Função de reset chamada pelo Health ao morrer (Importante!)
+    public void ResetWeapon()
+    {
+        weaponLevel = 1;
+        Debug.Log("<color=orange>Arma resetada para nível 1</color>");
     }
 }
