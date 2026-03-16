@@ -87,16 +87,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameSettings
   dificuldadeSelecionada: 0
+  configAtual: {fileID: 0}
   nivelAtual: 1
   dificuldadeFacil: {fileID: 11400000, guid: 4af6bcf340ed1f14484f4fa76b1c0c9f, type: 2}
   dificuldadeNormal: {fileID: 11400000, guid: 2fae2c3d128fa954fb59b22475edaf2d, type: 2}
   dificuldadeDificil: {fileID: 11400000, guid: 971f35cdfd61d064a839c7751be45e04, type: 2}
   dificuldadeFuria: {fileID: 11400000, guid: 7ebc54f566492ce48be32f69b155aafc, type: 2}
-  infoDificuldadeTexto: {fileID: 0}
-  imagemBandeira: {fileID: 0}
-  botaoDificuldadeExtra: {fileID: 0}
   flagUSA: {fileID: 0}
   flagRussia: {fileID: 0}
   flagNKorea: {fileID: 0}
   flagCUBA: {fileID: 0}
-  configAtual: {fileID: 0}

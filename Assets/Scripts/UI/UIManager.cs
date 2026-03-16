@@ -84,23 +84,26 @@ public class UIManager : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1f;
 
-        // Re-ativa as ações de input
+        // --- A CORREÇÃO ESTÁ AQUI ---
+        // Limpamos a referência da cena anterior para forçar a nova busca
+        textoGhost = null;
+
         pauseAction.Disable();
         pauseAction.Enable();
 
         eventSystem = Object.FindFirstObjectByType<EventSystem>();
 
-        // Busca as páginas da cena atual
         pages = Resources.FindObjectsOfTypeAll<UIPage>()
             .Where(p => p.gameObject.scene == cena).ToList();
 
         foreach (var p in pages) p.gameObject.SetActive(false);
 
-        // BUSCA DINÂMICA DO TEXTO RECORD (Evita o erro de sumir o texto)
-        if (textoGhost == null)
+        // Agora, como textoGhost é null, o Find vai rodar obrigatoriamente
+        GameObject obj = GameObject.Find("TextoRecorde");
+        if (obj != null)
         {
-            GameObject obj = GameObject.Find("TextoRecorde"); // Garante que o nome na hierarquia seja este
-            if (obj != null) textoGhost = obj.GetComponent<TextMeshProUGUI>();
+            textoGhost = obj.GetComponent<TextMeshProUGUI>();
+            Debug.Log($"<color=cyan>UIManager: Conectado ao texto de recorde em {cena.name}</color>");
         }
 
         if (cena.name == "MainMenu")
@@ -112,7 +115,7 @@ public class UIManager : MonoBehaviour
         else
         {
             allowPause = true;
-            ConfigurarCursor(true); // MANTÉM O CURSOR ATIVO PARA O JOGO
+            ConfigurarCursor(true);
         }
         UpdateUI();
     }

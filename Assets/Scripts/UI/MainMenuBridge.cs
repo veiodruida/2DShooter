@@ -32,7 +32,8 @@ public class MainMenuBridge : MonoBehaviour
     private void AtualizarVisualLocal(int indice)
     {
         if (infoDificuldadeTexto == null || imagemBandeira == null) return;
-
+        infoDificuldadeTexto.color = Color.white;
+      
         // Pegamos as sprites que estão guardadas no GameSettings
         var gs = GameSettings.instance;
         if (gs == null) return;
