@@ -27,12 +27,17 @@ public class HistoricoDisplay : MonoBehaviour
 
         for (int i = 0; i < entradas.Length; i++)
         {
-            string[] dados = entradas[i].Split('|'); // Separa Pontos de Tempo
+            if (string.IsNullOrEmpty(entradas[i])) continue;
+
+            string[] dados = entradas[i].Split('|');
+
+            // Se a entrada estiver mal formatada, ignora para não dar erro
+            if (dados.Length < 2) continue;
+
             string pontos = dados[0];
             string tempo = dados[1];
 
-            // Formata a linha: #1 | 5000 pts | 45.20s
-            textoFormatado += $" #{i + 1:D2}    |   {pontos} pts   |   {tempo}s\n";
+            textoFormatado += $" #{i + 1:D2}    |   {pontos.PadLeft(5)} pts   |   {tempo}s\n";
         }
 
         textoLista.text = textoFormatado;

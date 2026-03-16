@@ -243,7 +243,7 @@ public class GameManager : MonoBehaviour
     public static void AddScore(int scoreAmount)
     {
         score += scoreAmount;
-        if (score > instance.highScore) SaveHighScore();
+        if (score > instance.highScore) SalvarDadosPartida();
         UpdateUIElements();
     }
 
@@ -254,32 +254,84 @@ public class GameManager : MonoBehaviour
         UpdateUIElements();
     }
 
-    public static void SaveHighScore()
+    public static void SalvarDadosPartida()
     {
-        if (score > instance.highScore)
+        if (instance == null) return;
+
+        // --- 1. ATUALIZAR RECORDES ABSOLUTOS ---
+        int recordePontos = PlayerPrefs.GetInt("highscore", 0);
+        float melhorTempo = PlayerPrefs.GetFloat("melhor_tempo", 9999f);
+
+        if (score > recordePontos)
         {
             PlayerPrefs.SetInt("highscore", score);
             instance.highScore = score;
         }
 
-        float melhorTempoSalvo = PlayerPrefs.GetFloat("melhor_tempo", 9999f);
-        if (instance.tempoDaFase < melhorTempoSalvo && instance.tempoDaFase > 1f)
+        if (instance.tempoDaFase < melhorTempo && instance.tempoDaFase > 1f)
         {
             PlayerPrefs.SetFloat("melhor_tempo", instance.tempoDaFase);
             instance.tempoRecordeAnterior = instance.tempoDaFase;
         }
+
+        // --- 2. ADICIONAR AO HISTÓRICO (Para o HistoricoDisplay) ---
+        string historicoAtual = PlayerPrefs.GetString("historico_partidas", "");
+        // Formato: Pontos|Tempo
+        string novaEntrada = $"{score}|{instance.tempoDaFase:F2}";
+
+        if (string.IsNullOrEmpty(historicoAtual))
+        {
+            historicoAtual = novaEntrada;
+        }
+        else
+        {
+            // Mantém apenas as últimas 10 partidas para não sobrecarregar
+            List<string> listaEntradas = historicoAtual.Split(',').ToList();
+            listaEntradas.Add(novaEntrada);
+
+            if (listaEntradas.Count > 10)
+            {
+                listaEntradas.RemoveAt(0); // Remove a mais antiga
+            }
+
+            historicoAtual = string.Join(",", listaEntradas);
+        }
+
+        PlayerPrefs.SetString("historico_partidas", historicoAtual);
+
+        // --- 3. LIMPEZA FINAL ---
+        instance.LimparObjetosDaCena();
+
+        // Salva fisicamente no disco
         PlayerPrefs.Save();
-        UpdateUIElements();
+        Debug.Log("<color=green>GameManager: Recordes e Histórico salvos com sucesso!</color>");
     }
 
     public static void SalvarNoHistorico(int pontos, float tempo)
     {
-        string historicoRaw = PlayerPrefs.GetString("historico_partidas", "");
-        string novaEntrada = pontos + "|" + tempo.ToString("F2");
-        historicoRaw = string.IsNullOrEmpty(historicoRaw) ? novaEntrada : novaEntrada + "," + historicoRaw;
-        string[] entradas = historicoRaw.Split(',');
-        if (entradas.Length > 10) historicoRaw = string.Join(",", entradas.Take(10));
-        PlayerPrefs.SetString("historico_partidas", historicoRaw);
+        // 1. Pega o que já existe
+        string historicoAtual = PlayerPrefs.GetString("historico_partidas", "");
+
+        // 2. Cria a nova entrada formatada como o Display espera (PONTOS|TEMPO)
+        string novaEntrada = $"{pontos}|{tempo:F2}";
+
+        // 3. Junta ao histórico (separando por vírgula se já houver algo)
+        if (string.IsNullOrEmpty(historicoAtual))
+        {
+            historicoAtual = novaEntrada;
+        }
+        else
+        {
+            // Limita o histórico para não crescer infinitamente (ex: as últimas 10)
+            string[] todas = historicoAtual.Split(',');
+            if (todas.Length >= 10)
+                historicoAtual = string.Join(",", todas.Skip(1).ToArray()) + "," + novaEntrada;
+            else
+                historicoAtual += "," + novaEntrada;
+        }
+
+        // 4. Salva de volta
+        PlayerPrefs.SetString("historico_partidas", historicoAtual);
         PlayerPrefs.Save();
     }
 
@@ -315,7 +367,7 @@ public class GameManager : MonoBehaviour
         gameIsOver = true;
         PlayerPrefs.SetInt("score", score);
 
-        if (score > highScore) SaveHighScore();
+        if (score > highScore) SalvarDadosPartida();
 
         if (nivelAtual == 3 && GameSettings.instance != null &&
             GameSettings.instance.dificuldadeSelecionada == GameSettings.Dificuldade.Dificil)
@@ -365,7 +417,7 @@ public class GameManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        SaveHighScore();
+        SalvarDadosPartida();
         ResetScore();
     }
 }
