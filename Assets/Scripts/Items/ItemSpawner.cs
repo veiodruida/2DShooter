@@ -6,9 +6,9 @@ public class ItemSpawner : MonoBehaviour
     public GameObject shieldPrefab;
     public GameObject healthPrefab;
     public GameObject TiroPrefab;
-    public GameObject bombaPrefab; // NOVO: Arraste o Prefab da Bomba aqui
+    public GameObject bombaPrefab;
 
-    [Header("Configurações de Dificuldade")]
+    [Header("Configurações de Dificuldade (Fallback)")]
     [Range(1, 3)]
     public int nivelDificuldade = 1;
 
@@ -20,58 +20,62 @@ public class ItemSpawner : MonoBehaviour
 
     void Start()
     {
+        // 1. Primeiro define o tempo (do Arquivo ou do Inspector)
         AdjustDifficulty();
-        // Começa a spawnar após 2 segundos, repetindo conforme a dificuldade
+
+        // 2. Só depois inicia o Invoke com o tempo correto
         InvokeRepeating("SpawnRandomItem", 2f, tempoEntreSpawn);
     }
 
     void AdjustDifficulty()
     {
-        // Mantive os teus tempos originais
-        if (nivelDificuldade == 1) tempoEntreSpawn = 2f;
-        else if (nivelDificuldade == 2) tempoEntreSpawn = 4f;
-        else tempoEntreSpawn = 30f;
+        // Tenta buscar do arquivo de configuração global
+        if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
+        {
+            tempoEntreSpawn = GameSettings.instance.configAtual.tempoSpawnItens;
+            Debug.Log($"<color=cyan>[CONFIG ARQUIVO]</color> ItemSpawner: tempoEntreSpawn definido para {tempoEntreSpawn}s");
+        }
+        else
+        {
+            // Se não houver arquivo, mantém a tua lógica original do Inspector
+            if (nivelDificuldade == 1) tempoEntreSpawn = 2f;
+            else if (nivelDificuldade == 2) tempoEntreSpawn = 4f;
+            else tempoEntreSpawn = 30f;
+
+            Debug.Log($"<color=yellow>[INSPECTOR]</color> ItemSpawner: Usando fallback manual ({tempoEntreSpawn}s)");
+        }
     }
 
     void SpawnRandomItem()
     {
-        // 1. Escolhe a posição aleatória
         float posX = Random.Range(limiteX.x, limiteX.y);
         float posY = Random.Range(limiteY.x, limiteY.y);
         Vector3 posicaoAleatoria = new Vector3(posX, posY, 0);
 
-        // 2. Lógica de sorteio para 4 itens (25% de chance para cada)
         GameObject prefabParaCriar = null;
         float sorteio = Random.value;
 
+        // Mantida a tua lógica de 25% de chance para cada um
         if (sorteio < 0.25f)
         {
             prefabParaCriar = healthPrefab;
-           // prefabParaCriar = bombaPrefab; // Agora a bomba também pode aparecer!
-
         }
         else if (sorteio < 0.50f)
         {
             prefabParaCriar = shieldPrefab;
-            //prefabParaCriar = bombaPrefab; // Agora a bomba também pode aparecer!
-
         }
         else if (sorteio < 0.75f)
         {
             prefabParaCriar = TiroPrefab;
-            //prefabParaCriar = bombaPrefab; // Agora a bomba também pode aparecer!
-
         }
         else
         {
-            prefabParaCriar = bombaPrefab; // Agora a bomba também pode aparecer!
+            prefabParaCriar = bombaPrefab;
         }
 
-        // 3. Cria o item
         if (prefabParaCriar != null)
         {
             Instantiate(prefabParaCriar, posicaoAleatoria, Quaternion.identity);
-            // Debug.Log("<color=yellow>Item criado:</color> " + prefabParaCriar.name);
         }
         else
         {

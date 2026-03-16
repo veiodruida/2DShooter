@@ -12,20 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6e54c5acbd9d9b468ccbff7ead2e69c, type: 3}
   m_Name: Easy-USA
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyData
-  velocidadeInimigoComum: 5
-  intervaloTiroInimigo: 5
-  tempoSpawnInimigos: 2
-  tempoSpawnItens: 4
-  vidasIniciais: 3
+  velocidadeInimigoComum: 1
+  intervaloTiroInimigo: 1
+  tempoSpawnInimigos: 1
+  tempoSpawnItens: 1
+  vidasIniciais: 2
   taxaDeTiro: 0.1
   velocidadePlayer: 10
-  velocidadeBossBase: 2.5
+  velocidadeBossBase: 2
   navesParaAbrirEscudo: 10
   vidaDoEscudoEstagio2: 15
   intervaloBombaBoss: 3
   velocidadeBombaBoss: 10
-  intervaloFuria1: 5
-  velocidadeFuria1: 5
-  intervaloFuria2: 7
-  velocidadeFuria2: 10
+  intervaloFuria1: 0.1
+  velocidadeFuria1: 2
+  intervaloFuria2: 0.2
+  velocidadeFuria2: 1
   multiplicadorDanoRecebido: 1
+  multiplicadorVidaInimigo: 1

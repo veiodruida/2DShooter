@@ -68,6 +68,9 @@ public class UIManager : MonoBehaviour
     {
         pauseAction.Enable();
         SceneManager.sceneLoaded += AoMudarDeCena;
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void OnDisable()
@@ -80,15 +83,25 @@ public class UIManager : MonoBehaviour
     {
         isPaused = false;
         Time.timeScale = 1f;
+
+        // Re-ativa as ações de input
         pauseAction.Disable();
         pauseAction.Enable();
 
         eventSystem = Object.FindFirstObjectByType<EventSystem>();
 
+        // Busca as páginas da cena atual
         pages = Resources.FindObjectsOfTypeAll<UIPage>()
             .Where(p => p.gameObject.scene == cena).ToList();
 
         foreach (var p in pages) p.gameObject.SetActive(false);
+
+        // BUSCA DINÂMICA DO TEXTO RECORD (Evita o erro de sumir o texto)
+        if (textoGhost == null)
+        {
+            GameObject obj = GameObject.Find("TextoRecorde"); // Garante que o nome na hierarquia seja este
+            if (obj != null) textoGhost = obj.GetComponent<TextMeshProUGUI>();
+        }
 
         if (cena.name == "MainMenu")
         {
@@ -99,7 +112,7 @@ public class UIManager : MonoBehaviour
         else
         {
             allowPause = true;
-            ConfigurarCursor(false);
+            ConfigurarCursor(true); // MANTÉM O CURSOR ATIVO PARA O JOGO
         }
         UpdateUI();
     }
@@ -174,17 +187,40 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         if (pauseAction != null && pauseAction.triggered) TogglePause();
-        AtualizarTextoGhost();
-        AnimarBotaoFuria();
+
+        // Só atualiza o Ghost se estivermos no jogo e houver um recorde válido
+        if (GameManager.instance != null && GameManager.instance.tempoRecordeAnterior < 9999f)
+        {
+            AtualizarTextoGhost();
+            AnimarBotaoFuria();
+        }
     }
+    /*
+    private void Update()
+    {
+        if (pauseAction != null && pauseAction.triggered) TogglePause();
+        AtualizarTextoGhost();
+        
+    }*/
 
     private void AtualizarTextoGhost()
     {
         if (textoGhost == null || GameManager.instance == null) return;
+
         float recorde = GameManager.instance.tempoRecordeAnterior;
-        if (recorde > 0 && !GameManager.instance.gameIsOver)
+
+        // Se o recorde for o valor padrão (9999), não mostramos o comparador ainda
+        if (recorde >= 9999f)
+        {
+            textoGhost.text = "";
+            return;
+        }
+
+        if (!GameManager.instance.gameIsOver)
         {
             float diferenca = GameManager.instance.tempoDaFase - recorde;
+
+            // Lógica de cores: Verde se estiver mais rápido (-), Vermelho se estiver lento (+)
             textoGhost.text = "RECORD: " + (diferenca < 0 ? "" : "+") + diferenca.ToString("F2") + "s";
             textoGhost.color = diferenca < 0 ? Color.green : Color.red;
         }

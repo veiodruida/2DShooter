@@ -40,6 +40,9 @@ public class GameManager : MonoBehaviour
     public int nivelAtual = 1;
     public GameSettings.Dificuldade dificuldadeSelecionada;
 
+    [Header("Cursor Settings")]
+    public Texture2D cursorCustomizado;
+
     private int numberOfEnemiesFoundAtStart;
 
     [HideInInspector]
@@ -51,6 +54,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        Time.timeScale = 1f;
         if (instance == null) instance = this;
         else { DestroyImmediate(this); return; }
 
@@ -59,18 +63,67 @@ public class GameManager : MonoBehaviour
             player = Object.FindFirstObjectByType<Controller>().gameObject;
         }
     }
+    void GerarLogDiagnostico()
+    {
+        if (GameSettings.instance == null || GameSettings.instance.configAtual == null)
+        {
+            Debug.LogError("<color=red>[ERRO CRÍTICO]</color> GameManager: Arquivo de configuração não encontrado!");
+            return;
+        }
 
-    // No GameManager.cs
+        DifficultyData cfg = GameSettings.instance.configAtual;
+        string dificuldadeNome = GameSettings.instance.dificuldadeSelecionada.ToString();
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.AppendLine($"<color=white>==========================================</color>");
+        sb.AppendLine($"<color=cyan><b>DIAGNÓSTICO DE DIFICULDADE: {dificuldadeNome.ToUpper()}</b></color>");
+        sb.AppendLine($"<color=white>==========================================</color>");
+
+        // Seção Player
+        sb.AppendLine($"<color=lime><b>[PLAYER]</b></color>");
+        sb.AppendLine($" - Vidas: {cfg.vidasIniciais}");
+        sb.AppendLine($" - Velocidade: {cfg.velocidadePlayer}");
+        sb.AppendLine($" - Cadência Tiro: {cfg.taxaDeTiro}s");
+
+        // Seção Inimigos e Spawns
+        sb.AppendLine($"<color=orange><b>[SISTEMA & SPAWNS]</b></color>");
+        sb.AppendLine($" - Spawn Inimigos: {cfg.tempoSpawnInimigos}s");
+        sb.AppendLine($" - Spawn Itens: {cfg.tempoSpawnItens}s");
+        sb.AppendLine($" - Vel. Inimigo Base: {cfg.velocidadeInimigoComum}");
+        sb.AppendLine($" - Recarga Tiro Inimigo: {cfg.intervaloTiroInimigo}s");
+
+        // Seção Boss
+        sb.AppendLine($"<color=magenta><b>[BOSS MOTHERSHIP]</b></color>");
+        sb.AppendLine($" - Escudo abre após: {cfg.navesParaAbrirEscudo} naves");
+        sb.AppendLine($" - Vida Escudo (E2): {cfg.vidaDoEscudoEstagio2}");
+        sb.AppendLine($" - Fúria 1 (Tiro/Vel): {cfg.intervaloFuria1}s / {cfg.velocidadeFuria1}");
+        sb.AppendLine($" - Fúria 2 (Tiro/Vel): {cfg.intervaloFuria2}s / {cfg.velocidadeFuria2}");
+
+        // Seção Global
+        sb.AppendLine($"<color=yellow><b>[GLOBAL]</b></color>");
+        sb.AppendLine($" - Multiplicador de Dano: {cfg.multiplicadorDanoRecebido}x");
+        sb.AppendLine($"<color=white>==========================================</color>");
+
+        Debug.Log(sb.ToString());
+    }
+    
     void Start()
     {
+        if (cursorCustomizado != null)
+        {
+            Vector2 hotSpot = new Vector2(cursorCustomizado.width / 2f, cursorCustomizado.height / 2f);
+            Cursor.SetCursor(cursorCustomizado, hotSpot, CursorMode.Auto);
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined; // Mantém o mouse dentro da janela
+        }
+
+        // 1. RODAR O STARTUP (Carrega PlayerPrefs e Reseta Arma)
+        HandleStartUp();
+        Time.timeScale = 1f;
         if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
         {
             var cfg = GameSettings.instance.configAtual;
-            Debug.Log($"<color=cyan>=== VERIFICAÇÃO DE INÍCIO DE FASE ===</color>");
-            Debug.Log($"<color=cyan>Dificuldade Selecionada: {GameSettings.instance.dificuldadeSelecionada}</color>");
-            Debug.Log($"<color=cyan>Arquivo de Configuração: {cfg.name}</color>");
-            Debug.Log($"<color=cyan>Velocidade Inimigo: {cfg.velocidadeInimigoComum} | Vidas Player: {cfg.vidasIniciais}</color>");
-            Debug.Log($"<color=cyan>Velocidade Boss (Base): {cfg.velocidadeBossBase} | Boss Fúria 2: {cfg.velocidadeFuria2}</color>");
+            GerarLogDiagnostico();
         }
         else
         {
@@ -132,6 +185,12 @@ public class GameManager : MonoBehaviour
 
     public float GetDificuldadeMultiplier()
     {
+        // Garantir que a variável local esteja sincronizada com o GameSettings antes do switch
+        if (GameSettings.instance != null)
+        {
+            dificuldadeSelecionada = GameSettings.instance.dificuldadeSelecionada;
+        }
+
         switch (dificuldadeSelecionada)
         {
             case GameSettings.Dificuldade.Facil: return 0.7f;
@@ -144,15 +203,27 @@ public class GameManager : MonoBehaviour
 
     public int CalcularVidaInimigo(int vidaBase)
     {
-        float mult = GetDificuldadeMultiplier();
-        float fatorNivel = 1f + (nivelAtual - 1) * 0.2f;
-        return Mathf.RoundToInt(vidaBase * mult * fatorNivel);
+        // 1. Tenta buscar o multiplicador do arquivo de dificuldade
+        if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
+        {
+            float multiplicador = GameSettings.instance.configAtual.multiplicadorVidaInimigo;
+
+            // Se a vida base for 10 e o multiplicador for 1.5, retorna 15
+            return Mathf.RoundToInt(vidaBase * multiplicador);
+        }
+
+        // 2. Fallback caso o GameSettings não esteja pronto
+        return vidaBase;
     }
 
     public int CalcularPontuacaoFinalBoss()
     {
-        int pontosPerdidos = Mathf.FloorToInt(tempoDaFase * penalidadePorSegundo);
-        return Mathf.Max(scoreBaseBoss - pontosPerdidos, 500);
+        int pontosBase = 500;
+        if (GameSettings.instance != null && GameSettings.instance.dificuldadeSelecionada == GameSettings.Dificuldade.Furia)
+        {
+            return pontosBase * 2; // Dobro de pontos no modo Fúria
+        }
+        return pontosBase;
     }
 
     public int CalcularPontuacaoFinalDaFase()
@@ -217,6 +288,25 @@ public class GameManager : MonoBehaviour
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
     }
 
+    public void LimparObjetosDaCena()
+    {
+        // 1. Criamos uma lista com as Tags que queremos remover
+        string[] tagsParaLimpar = { "EnemyProjectile", "Items", "PlayerProjectile", "Enemy" };
+
+        foreach (string tag in tagsParaLimpar)
+        {
+            // 2. Buscamos todos os objetos com essa Tag
+            GameObject[] objetos = GameObject.FindGameObjectsWithTag(tag);
+
+            foreach (GameObject obj in objetos)
+            {
+                Destroy(obj);
+            }
+        }
+
+        Debug.Log("<color=cyan>GameManager: Cena limpa de entidades temporárias.</color>");
+    }
+
     public void LevelCleared()
     {
         if (gameIsOver) return;
@@ -243,6 +333,7 @@ public class GameManager : MonoBehaviour
             UIManager.instance.GoToPageByName(nomePaginaVitoria);
             if (victoryEffect != null) Instantiate(victoryEffect, transform.position, transform.rotation);
         }
+        LimparObjetosDaCena();
     }
 
     public void GameOver()
@@ -259,6 +350,7 @@ public class GameManager : MonoBehaviour
             UIManager.instance.ConfigurarCursor(true);
             UIManager.instance.GoToPageByName(nomePaginaGameOver);
         }
+        LimparObjetosDaCena();
     }
 
     public void ReiniciarFase()
@@ -269,6 +361,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
 
     private void OnApplicationQuit()
     {
