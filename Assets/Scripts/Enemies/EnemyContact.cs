@@ -2,17 +2,17 @@ using UnityEngine;
 
 public class EnemyContact : MonoBehaviour
 {
-    [Header("ConfiguraÁıes de Dano")]
+    [Header("Configura√ß√µes de Dano")]
     public int danoNoPlayer = 1;
-    public int danoNoInimigoAoBater = 1; // Quanto de vida o prÛprio inimigo perde no impacto
+    public int danoNoInimigoAoBater = 1; // Quanto de vida o pr√≥prio inimigo perde no impacto
 
-    // Esta funÁ„o detecta quando o inimigo encosta em algo
+    // Esta fun√ß√£o detecta quando o inimigo encosta em algo
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // 1. Tenta encontrar o script Health no objeto que o inimigo bateu
         Health saudeDoPlayer = collision.GetComponentInParent<Health>();
 
-        // 2. Se n„o achou no pai, tenta no prÛprio objeto
+        // 2. Se n√£o achou no pai, tenta no pr√≥prio objeto
         if (saudeDoPlayer == null) saudeDoPlayer = collision.GetComponent<Health>();
 
         // 3. Se achou o script Health e o TeamId for 0 (Player)
@@ -23,7 +23,7 @@ public class EnemyContact : MonoBehaviour
 
             if (escudo != null && escudo.gameObject.activeSelf)
             {
-                // Se o escudo estiver ativo, ele explode e o player n„o perde vida
+                // Se o escudo estiver ativo, ele explode e o player n√£o perde vida
                 escudo.gameObject.SetActive(false);
                 Debug.Log("Inimigo bateu no Escudo!");
             }
@@ -34,8 +34,8 @@ public class EnemyContact : MonoBehaviour
                 Debug.Log("Inimigo bateu no Player e causou dano!");
             }
 
-            // 2. DANO NO PR”PRIO INIMIGO (Em vez de Destroy imediato)
-            Health minhaSaude = GetComponent<Health>(); // Tenta pegar o script Health do prÛprio inimigo
+            // 2. DANO NO PR√ìPRIO INIMIGO (Em vez de Destroy imediato)
+            Health minhaSaude = GetComponent<Health>(); // Tenta pegar o script Health do pr√≥prio inimigo
 
             if (minhaSaude != null)
             {
@@ -45,7 +45,7 @@ public class EnemyContact : MonoBehaviour
             }
             else
             {
-                // Caso o inimigo n„o tenha um script Health, ele ainda se destrÛi
+                // Caso o inimigo n√£o tenha um script Health, ele ainda se destr√≥i
                 // (Isso evita que inimigos "imortais" fiquem colidindo sem parar)
                 Destroy(gameObject);
             }

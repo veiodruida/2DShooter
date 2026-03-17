@@ -93,7 +93,7 @@ MonoBehaviour:
   dificuldadeNormal: {fileID: 11400000, guid: 2fae2c3d128fa954fb59b22475edaf2d, type: 2}
   dificuldadeDificil: {fileID: 11400000, guid: 971f35cdfd61d064a839c7751be45e04, type: 2}
   dificuldadeFuria: {fileID: 11400000, guid: 7ebc54f566492ce48be32f69b155aafc, type: 2}
-  flagUSA: {fileID: 0}
-  flagRussia: {fileID: 0}
-  flagNKorea: {fileID: 0}
-  flagCUBA: {fileID: 0}
+  flagUSA: {fileID: -1585742179058297288, guid: fc6817e6c4ba33d45950f35561f5c654, type: 3}
+  flagRussia: {fileID: -8312717415296961672, guid: d738aa998df9a7d45a73ea88760f765a, type: 3}
+  flagNKorea: {fileID: 337303107246095233, guid: d704f260f6fa7904688ee10cb2d50c49, type: 3}
+  flagCUBA: {fileID: 5927982024037784371, guid: 31dff3a0716d5e940bd3c3b69f388aee, type: 3}
