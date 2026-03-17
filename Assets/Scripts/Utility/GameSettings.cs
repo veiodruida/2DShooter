@@ -14,7 +14,7 @@ public class GameSettings : MonoBehaviour
 
     public enum Dificuldade { Facil, Medio, Dificil, Furia }
 
-    [Header("Configuração Ativa")]
+    [Header("Configuracao Ativa")]
     public Dificuldade dificuldadeSelecionada = Dificuldade.Facil;
     public DifficultyData configAtual;
     public int nivelAtual = 1;
@@ -61,5 +61,8 @@ public class GameSettings : MonoBehaviour
             case Dificuldade.Dificil: configAtual = dificuldadeDificil; break;
             case Dificuldade.Furia: configAtual = dificuldadeFuria; break;
         }
+
+        if (configAtual == null)
+            Debug.LogError($"GameSettings: DifficultyData para '{dificuldadeSelecionada}' nao esta atribuido no Inspector!");
     }
 }
