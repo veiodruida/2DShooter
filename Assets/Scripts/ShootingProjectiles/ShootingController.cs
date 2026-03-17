@@ -120,9 +120,12 @@ public class ShootingController : MonoBehaviour
             rotationEuler.z += Random.Range(-projectileSpread, projectileSpread);
             proj.transform.rotation = Quaternion.Euler(rotationEuler);
 
-            // 4. Gestão do ProjectileHolder
+            // 4. Gestão do ProjectileHolder (cache para evitar Find repetido a cada tiro)
             if (projectileHolder == null)
-                projectileHolder = GameObject.Find("ProjectileHolder")?.transform;
+            {
+                GameObject holder = GameObject.Find("ProjectileHolder");
+                if (holder != null) projectileHolder = holder.transform;
+            }
 
             if (projectileHolder != null) proj.transform.SetParent(projectileHolder);
         }

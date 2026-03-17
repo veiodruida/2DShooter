@@ -5,21 +5,21 @@ using System.Collections.Generic;
 
 public class ScreenClearBomb : MonoBehaviour
 {
-    [Header("Configurações de Inventário")]
+    [Header("Configuracoes de Inventario")]
     public int bombasAtuais = 0;
     public int maximoDeBombas = 5;
 
     [Header("Input (Novo Sistema)")]
     public InputAction detonateAction;
 
-    [Header("Configurações do Projétil")]
+    [Header("Configuracoes do Projetil")]
     public GameObject bombProjectilePrefab; // O prefab que brilha e cresce
     public Transform pontoDeDisparo;
 
-    [Header("Efeitos de Explosão")]
+    [Header("Efeitos de Explosao")]
     public GameObject[] efeitosExplosao;
 
-    [Header("Tags de Projéteis")]
+    [Header("Tags de Projeteis")]
     public string[] tagsDeTiro = { "EnemyProjectile" };
 
     private void OnEnable() => detonateAction.Enable();
@@ -44,24 +44,25 @@ public class ScreenClearBomb : MonoBehaviour
 
     void LancarNucleoBomba()
     {
+        if (bombProjectilePrefab == null || pontoDeDisparo == null) return;
+
         bombasAtuais--;
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
 
-        // Cria o núcleo que vai viajar e crescer
-        GameObject projétil = Instantiate(bombProjectilePrefab, pontoDeDisparo.position, Quaternion.identity);
+        // Cria o nucleo que vai viajar e crescer
+        GameObject projetil = Instantiate(bombProjectilePrefab, pontoDeDisparo.position, Quaternion.identity);
 
-        // Passa a referência deste script para o projétil saber quem ativar depois
-        PlayerBomb bp = projétil.GetComponent<PlayerBomb>();
-        bp = projétil.GetComponent<PlayerBomb>();
+        // Passa a referencia deste script para o projetil saber quem ativar depois
+        PlayerBomb bp = projetil.GetComponent<PlayerBomb>();
         if (bp != null) bp.Inicializar(this);
     }
 
-    // Esta é a tua função antiga, mas agora chamada pelo projétil quando ele para
+    // Esta e a funcao antiga, mas agora chamada pelo projetil quando ele para
     public void AtivarLimpezaTotal()
     {
         StartCoroutine(OndaDeChoque());
     }
-    // Esta é a função que o projétil vai procurar!
+    // Esta e a funcao que o projetil vai procurar!
     public void AtivarOndaDeChoque()
     {
         StartCoroutine(OndaDeChoque());
@@ -77,29 +78,37 @@ public class ScreenClearBomb : MonoBehaviour
             CameraShake.instance.Shake(0.5f, 0.4f);
         }
 
-        // Limpeza instantânea de balas (como tinhas antes)
+        // Limpeza instantanea de balas
         foreach (string tag in tagsDeTiro)
         {
             GameObject[] tiros = GameObject.FindGameObjectsWithTag(tag);
             foreach (GameObject tiro in tiros) Destroy(tiro);
         }
 
+        Health myHealth = GetComponent<Health>();
+        if (myHealth == null) yield break;
+        int playerTeam = myHealth.teamId;
+
+        // Snapshot dos alvos ANTES do loop: so inclui quem esta vulneravel AGORA.
+        // Evita que a nave mae seja atingida apos o escudo morrer no meio da explosao.
+        Health[] todosOsHealth = Object.FindObjectsByType<Health>(FindObjectsSortMode.None);
+        List<Health> alvosValidos = new List<Health>();
+        foreach (Health h in todosOsHealth)
+        {
+            if (h == null) continue;
+            if (h.teamId != playerTeam && h.gameObject != this.gameObject && !h.isAlwaysInvincible)
+                alvosValidos.Add(h);
+        }
+
         while (timer < duracao)
         {
-            Health[] inimigosVivos = Object.FindObjectsByType<Health>(FindObjectsSortMode.None);
-            int playerTeam = GetComponent<Health>().teamId;
-
-            foreach (Health h in inimigosVivos)
+            foreach (Health h in alvosValidos)
             {
                 if (h == null) continue;
-                if (h.teamId != playerTeam && h.gameObject != this.gameObject)
-                {
-                    // O TakeDamage agora já filtra AlwaysInvincible, mas checamos aqui por performance
-                    h.TakeDamage(15);
-                }
+                h.TakeDamage(15);
             }
 
-            timer += 0.1f; // Em vez de rodar todo frame, roda a cada 0.1s
+            timer += 0.1f;
             yield return new WaitForSeconds(0.1f);
         }
     }

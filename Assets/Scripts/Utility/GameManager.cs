@@ -177,7 +177,7 @@ public class GameManager : MonoBehaviour
     public void IncrementEnemiesDefeated()
     {
         enemiesDefeated++;
-        if (enemiesDefeated >= enemiesToDefeat && gameIsWinnable && !GameObject.Find("MotherShip"))
+        if (enemiesDefeated >= enemiesToDefeat && gameIsWinnable && Object.FindFirstObjectByType<MotherShip>() == null)
         {
             LevelCleared();
         }
@@ -243,7 +243,11 @@ public class GameManager : MonoBehaviour
     public static void AddScore(int scoreAmount)
     {
         score += scoreAmount;
-        if (score > instance.highScore) SalvarDadosPartida();
+        if (score > instance.highScore)
+        {
+            instance.highScore = score;
+            PlayerPrefs.SetInt("highscore", score);
+        }
         UpdateUIElements();
     }
 

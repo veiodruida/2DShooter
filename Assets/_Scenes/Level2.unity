@@ -2989,6 +2989,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: inGameUI
       objectReference: {fileID: 0}
+    - target: {fileID: 4894382147398705523, guid: 8e714e3c71728184ca4d2877e5f283db, type: 3}
+      propertyPath: m_Name
+      value: VictoryPage
+      objectReference: {fileID: 0}
+    - target: {fileID: 6315797291989635925, guid: 8e714e3c71728184ca4d2877e5f283db, type: 3}
+      propertyPath: m_Name
+      value: PausePage
+      objectReference: {fileID: 0}
+    - target: {fileID: 6840441636023639801, guid: 8e714e3c71728184ca4d2877e5f283db, type: 3}
+      propertyPath: m_Name
+      value: GameOverPage
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
