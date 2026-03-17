@@ -3612,17 +3612,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1043102960277887521, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
+      propertyPath: limiteX.x
+      value: -21
+      objectReference: {fileID: 0}
+    - target: {fileID: 1043102960277887521, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
+      propertyPath: limiteX.y
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 1043102960277887521, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
+      propertyPath: limiteY.x
+      value: -21
+      objectReference: {fileID: 0}
+    - target: {fileID: 1043102960277887521, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
+      propertyPath: limiteY.y
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 1043102960277887521, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
+      propertyPath: nivelDificuldade
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2226249563226905185, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
       propertyPath: m_Name
       value: ItemManager
       objectReference: {fileID: 0}
     - target: {fileID: 7860117143545360838, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.74824
+      value: 13.24
       objectReference: {fileID: 0}
     - target: {fileID: 7860117143545360838, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.2964
+      value: -22.93
       objectReference: {fileID: 0}
     - target: {fileID: 7860117143545360838, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3963,6 +3983,10 @@ PrefabInstance:
       propertyPath: myRigidbody
       value: 
       objectReference: {fileID: 7809266785580384015}
+    - target: {fileID: 7757960526826039249, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
+      propertyPath: isInvincible
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7757960526826039249, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
       propertyPath: isAlwaysInvincible
       value: 0

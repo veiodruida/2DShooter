@@ -8,28 +8,28 @@ public class ItemSpawner : MonoBehaviour
     public GameObject TiroPrefab;
     public GameObject bombaPrefab;
 
-    [Header("ConfiguraÁıes de Dificuldade (Fallback)")]
+    [Header("Configura√ß√µes de Dificuldade (Fallback)")]
     [Range(1, 3)]
     public int nivelDificuldade = 1;
 
     private float tempoEntreSpawn;
 
-    [Header("¡rea de Spawn")]
-    public Vector2 limiteX = new Vector2(-8, 8);
-    public Vector2 limiteY = new Vector2(-4, 4);
+    [Header("√Årea de Spawn")]
+    public Vector2 limiteX = new Vector2(-21, 11);
+    public Vector2 limiteY = new Vector2(-21, 11);
 
     void Start()
     {
         // 1. Primeiro define o tempo (do Arquivo ou do Inspector)
         AdjustDifficulty();
 
-        // 2. SÛ depois inicia o Invoke com o tempo correto
+        // 2. S√≥ depois inicia o Invoke com o tempo correto
         InvokeRepeating("SpawnRandomItem", 2f, tempoEntreSpawn);
     }
 
     void AdjustDifficulty()
     {
-        // Tenta buscar do arquivo de configuraÁ„o global
+        // Tenta buscar do arquivo de configura√ß√£o global
         if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
         {
             tempoEntreSpawn = GameSettings.instance.configAtual.tempoSpawnItens;
@@ -37,7 +37,7 @@ public class ItemSpawner : MonoBehaviour
         }
         else
         {
-            // Se n„o houver arquivo, mantÈm a tua lÛgica original do Inspector
+            // Se n√£o houver arquivo, mant√©m a tua l√≥gica original do Inspector
             if (nivelDificuldade == 1) tempoEntreSpawn = 2f;
             else if (nivelDificuldade == 2) tempoEntreSpawn = 4f;
             else tempoEntreSpawn = 30f;
@@ -55,7 +55,7 @@ public class ItemSpawner : MonoBehaviour
         GameObject prefabParaCriar = null;
         float sorteio = Random.value;
 
-        // Mantida a tua lÛgica de 25% de chance para cada um
+        // Mantida a tua l√≥gica de 25% de chance para cada um
         if (sorteio < 0.25f)
         {
             prefabParaCriar = healthPrefab;
@@ -79,7 +79,7 @@ public class ItemSpawner : MonoBehaviour
         }
         else
         {
-            Debug.LogError("ERRO: Um dos prefabs no ItemSpawner n„o foi arrastado no Inspector!");
+            Debug.LogError("ERRO: Um dos prefabs no ItemSpawner n√£o foi arrastado no Inspector!");
         }
     }
 }

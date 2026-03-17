@@ -82,7 +82,15 @@ public class Enemy : MonoBehaviour
 
     void AplicarConfiguracoes(DifficultyData config)
     {
-        moveSpeed = config.velocidadeInimigoComum;
+        // Se formos a MotherShip, usamos a velocidade do Boss, senão a comum
+        if (GetComponent<MotherShip>() != null)
+        {
+            moveSpeed = config.velocidadeBossBase;
+        }
+        else
+        {
+            moveSpeed = config.velocidadeInimigoComum;
+        }
 
         if (guns.Count == 0) guns.AddRange(GetComponentsInChildren<ShootingController>());
 

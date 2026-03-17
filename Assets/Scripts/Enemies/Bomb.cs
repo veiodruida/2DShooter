@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
-    [Header("ConfiguraÁıes de Movimento")]
+    [Header("Configura√ß√µes de Movimento")]
     public float velocidade = 3f;
     public float velocidadeRotacaoVisual = 100f;
 
     [Header("Sistema de Curva (Steering)")]
-    [Tooltip("Qu„o r·pido a bomba consegue virar (0 = reto, 10 = curva fechada)")]
+    [Tooltip("Qu√£o r√°pido a bomba consegue virar (0 = reto, 10 = curva fechada)")]
     public float forcaDaCurva = 2f;
 
     private Transform alvo;
@@ -19,7 +19,7 @@ public class Bomb : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) alvo = player.transform;
 
-        // 2. Define a direÁ„o inicial (para baixo)
+        // 2. Define a dire√ß√£o inicial (para baixo)
         direcaoAtual = Vector3.down;
 
         // 3. Ajusta a dificuldade baseado no GameManager e GameSettings
@@ -27,16 +27,16 @@ public class Bomb : MonoBehaviour
     }
 
     /// <summary>
-    /// Aplica multiplicadores de velocidade e curva baseados no modo de jogo e nÌvel.
+    /// Aplica multiplicadores de velocidade e curva baseados no modo de jogo e n√≠vel.
     /// </summary>
     void AjustarDificuldade()
     {
-        // Verifica se as inst‚ncias necess·rias existem
+        // Verifica se as inst√¢ncias necess√°rias existem
         if (GameManager.instance != null && GameSettings.instance != null)
         {
             var dif = GameSettings.instance.dificuldadeSelecionada;
 
-            // LÛgica especÌfica para o Modo F˙ria (Cuba Mode)
+            // L√≥gica espec√≠fica para o Modo F√∫ria (Cuba Mode)
             if (dif == GameSettings.Dificuldade.Furia)
             {
                 forcaDaCurva *= 2.5f;
@@ -44,11 +44,11 @@ public class Bomb : MonoBehaviour
             }
             else
             {
-                // C·lculo genÈrico para F·cil, MÈdio e DifÌcil
+                // C√°lculo gen√©rico para F√°cil, M√©dio e Dif√≠cil
                 float nivelDificuldade = (int)dif;
                 forcaDaCurva *= (1f + (nivelDificuldade * 0.2f));
 
-                // Escalonamento por nÌvel da fase
+                // Escalonamento por n√≠vel da fase
                 velocidade *= (1f + (GameSettings.instance.nivelAtual * 0.1f));
             }
         }
@@ -58,28 +58,28 @@ public class Bomb : MonoBehaviour
     {
         if (alvo != null)
         {
-            // L”GICA DE CURVA SUAVE (Steering)
-            // Normaliza a direÁ„o para onde o jogador est·
+            // L√ìGICA DE CURVA SUAVE (Steering)
+            // Normaliza a dire√ß√£o para onde o jogador est√°
             Vector3 direcaoDesejada = (alvo.position - transform.position).normalized;
 
-            // Interpola a direÁ„o atual com a desejada usando Slerp (Spherical Linear Interpolation)
-            // Isso cria o efeito de perseguiÁ„o curva em vez de uma virada instant‚nea
+            // Interpola a dire√ß√£o atual com a desejada usando Slerp (Spherical Linear Interpolation)
+            // Isso cria o efeito de persegui√ß√£o curva em vez de uma virada instant√¢nea
             direcaoAtual = Vector3.Slerp(direcaoAtual, direcaoDesejada, Time.deltaTime * forcaDaCurva);
 
             transform.position += direcaoAtual * velocidade * Time.deltaTime;
         }
         else
         {
-            // Se o alvo (Player) for nulo/destruÌdo, mantÈm a ˙ltima direÁ„o calculada
+            // Se o alvo (Player) for nulo/destru√≠do, mant√©m a √∫ltima dire√ß√£o calculada
             transform.position += direcaoAtual * velocidade * Time.deltaTime;
         }
 
-        // RotaÁ„o visual constante (efeito de girar no prÛprio eixo Z)
+        // Rota√ß√£o visual constante (efeito de girar no pr√≥prio eixo Z)
         transform.Rotate(Vector3.forward * velocidadeRotacaoVisual * Time.deltaTime);
     }
 
     /// <summary>
-    /// OtimizaÁ„o: DestrÛi o projÈtil quando ele sai da vis„o da c‚mera
+    /// Otimiza√ß√£o: Destr√≥i o proj√©til quando ele sai da vis√£o da c√¢mera
     /// </summary>
     private void OnBecameInvisible()
     {

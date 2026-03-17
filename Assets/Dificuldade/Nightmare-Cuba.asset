@@ -12,15 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6e54c5acbd9d9b468ccbff7ead2e69c, type: 3}
   m_Name: Nightmare-Cuba
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyData
-  tempoSpawnItens: 4
-  velocidadeInimigoComum: 5
-  vidasIniciais: 3
+  velocidadeInimigoComum: 11
+  intervaloTiroInimigo: 1.5
+  tempoSpawnInimigos: 0.6
+  tempoSpawnItens: 2.5
+  vidasIniciais: 1
   taxaDeTiro: 0.15
-  navesParaAbrirEscudo: 10
-  vidaDoEscudoEstagio2: 15
-  intervaloBombaBoss: 3
-  velocidadeBombaBoss: 10
-  intervaloFuria1: 1.5
-  velocidadeFuria1: 12
-  intervaloFuria2: 0.8
-  velocidadeFuria2: 16
+  velocidadePlayer: 10
+  velocidadeBossBase: 3
+  navesParaAbrirEscudo: 50
+  vidaDoEscudoEstagio2: 300
+  intervaloBombaBoss: 1.5
+  velocidadeBombaBoss: 15
+  intervaloFuria1: 1
+  velocidadeFuria1: 18
+  intervaloFuria2: 0.5
+  velocidadeFuria2: 25
+  multiplicadorDanoRecebido: 2.5
+  multiplicadorVidaInimigo: 8.0

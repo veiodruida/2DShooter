@@ -20,6 +20,7 @@ public class ShootingController : MonoBehaviour
 
     [Header("Effects")]
     public GameObject fireEffect;
+    public AudioSource fireSound;
 
     [Header("Power Up Tiro")]
     [Range(1, 3)]
@@ -89,6 +90,7 @@ public class ShootingController : MonoBehaviour
         {
             SpawnProjectile();
             if (fireEffect != null) Instantiate(fireEffect, transform.position, transform.rotation);
+            if (fireSound != null) fireSound.Play();
             lastFired = Time.timeSinceLevelLoad;
         }
     }

@@ -12,20 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6e54c5acbd9d9b468ccbff7ead2e69c, type: 3}
   m_Name: Hard-NorthKorea
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyData
-  velocidadeInimigoComum: 5
-  intervaloTiroInimigo: 4
-  tempoSpawnInimigos: 2
-  tempoSpawnItens: 4
-  vidasIniciais: 3
+  velocidadeInimigoComum: 9
+  intervaloTiroInimigo: 2.5
+  tempoSpawnInimigos: 1
+  tempoSpawnItens: 3
+  vidasIniciais: 2
   taxaDeTiro: 0.15
   velocidadePlayer: 10
-  velocidadeBossBase: 2.5
-  navesParaAbrirEscudo: 10
-  vidaDoEscudoEstagio2: 15
-  intervaloBombaBoss: 3
-  velocidadeBombaBoss: 10
-  intervaloFuria1: 1.5
-  velocidadeFuria1: 5
-  intervaloFuria2: 0.8
-  velocidadeFuria2: 16
-  multiplicadorDanoRecebido: 1
+  velocidadeBossBase: 2
+  navesParaAbrirEscudo: 30
+  vidaDoEscudoEstagio2: 150
+  intervaloBombaBoss: 2.5
+  velocidadeBombaBoss: 11
+  intervaloFuria1: 2
+  velocidadeFuria1: 12
+  intervaloFuria2: 1
+  velocidadeFuria2: 18
+  multiplicadorDanoRecebido: 1.5
+  multiplicadorVidaInimigo: 4.0

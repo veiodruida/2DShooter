@@ -12,20 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6e54c5acbd9d9b468ccbff7ead2e69c, type: 3}
   m_Name: Regular-Russia
   m_EditorClassIdentifier: Assembly-CSharp::DifficultyData
-  velocidadeInimigoComum: 5
-  intervaloTiroInimigo: 4
-  tempoSpawnInimigos: 2
+  velocidadeInimigoComum: 6
+  intervaloTiroInimigo: 3.5
+  tempoSpawnInimigos: 1.5
   tempoSpawnItens: 4
   vidasIniciais: 3
-  taxaDeTiro: 0.2
-  velocidadePlayer: 10
-  velocidadeBossBase: 2.5
-  navesParaAbrirEscudo: 10
-  vidaDoEscudoEstagio2: 15
-  intervaloBombaBoss: 3
-  velocidadeBombaBoss: 10
+  taxaDeTiro: 0.15
+  velocidadePlayer: 11
+  velocidadeBossBase: 1.2
+  navesParaAbrirEscudo: 20
+  vidaDoEscudoEstagio2: 80
+  intervaloBombaBoss: 3.5
+  velocidadeBombaBoss: 8
   intervaloFuria1: 3
-  velocidadeFuria1: 12
+  velocidadeFuria1: 8
   intervaloFuria2: 2
-  velocidadeFuria2: 16
-  multiplicadorDanoRecebido: 1
+  velocidadeFuria2: 12
+  multiplicadorDanoRecebido: 1.0
+  multiplicadorVidaInimigo: 2.5

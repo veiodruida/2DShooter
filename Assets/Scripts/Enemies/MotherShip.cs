@@ -5,7 +5,7 @@ public class MotherShip : MonoBehaviour
 {
     private Health minhaSaude;
 
-    [Header("Configurações do Escudo")]
+    [Header("ConfiguraÃ§Ãµes do Escudo")]
     public Health escudoHealth;
     public int totalNavesParaEnviar = 10;
     private int navesEnviadas = 0;
@@ -15,27 +15,27 @@ public class MotherShip : MonoBehaviour
     private bool aguardandoLimpezaDeNaves = false;
     private bool estagio2Ativo = false;
 
-    [Header("Configurações de Spawn")]
+    [Header("ConfiguraÃ§Ãµes de Spawn")]
     public GameObject[] inimigosPrefabs;
     public Transform[] pontosDeSaida;
     public float intervaloSpawn = 5f;
 
-    [Header("Configurações de Ataque")]
+    [Header("ConfiguraÃ§Ãµes de Ataque")]
     public GameObject bombaPrefab;
     public Transform pontoDisparoBomba;
     public float intervaloBomba = 3f;
 
-    [Header("Configurações de Fúria (Nível 1)")]
+    [Header("ConfiguraÃ§Ãµes de FÃºria (NÃ­vel 1)")]
     public float intervaloBombaFuria1 = 1.0f;
     public float velocidadeBombaFuria1 = 10f;
 
-    [Header("Configurações de Fúria (Nível 2)")]
+    [Header("ConfiguraÃ§Ãµes de FÃºria (NÃ­vel 2)")]
     public float intervaloBombaFuria2 = 0.5f;
     public float velocidadeBombaFuria2 = 15f;
 
     private int nivelFuriaAtual = 0;
 
-    [Header("Configurações de Ataque por Contato")]
+    [Header("ConfiguraÃ§Ãµes de Ataque por Contato")]
     public int danoAoJogador = 1;
     public float forcaRicochete = 10f;
 
@@ -51,10 +51,10 @@ public class MotherShip : MonoBehaviour
     {
         minhaSaude = GetComponent<Health>();
 
-        // 1. SINCRONIZAÇÃO COM O DICULT DATA
+        // 1. SINCRONIZAÃ‡ÃƒO COM O DICULT DATA
         if (GameSettings.instance == null || GameSettings.instance.configAtual == null)
         {
-            Debug.LogWarning("MotherShip: GameSettings não encontrado! Usando valores do Inspector.");
+            Debug.LogWarning("MotherShip: GameSettings nÃ£o encontrado! Usando valores do Inspector.");
         }
         else
         {
@@ -66,6 +66,7 @@ public class MotherShip : MonoBehaviour
             intervaloBombaFuria2 = config.intervaloFuria2;
             velocidadeBombaFuria1 = config.velocidadeFuria1;
             velocidadeBombaFuria2 = config.velocidadeFuria2;
+            intervaloSpawn = config.tempoSpawnInimigos;
 
             // Ajuste do dano de contacto baseado no multiplicador do arquivo
             danoAoJogador = Mathf.RoundToInt(1 * config.multiplicadorDanoRecebido);
@@ -85,15 +86,15 @@ public class MotherShip : MonoBehaviour
             minhaSaude.maximumHealth = vidaFinal;
             minhaSaude.currentHealth = vidaFinal;
 
-            // Usando a função que já existe no teu GameManager para o escudo
+            // Usando a funÃ§Ã£o que jÃ¡ existe no teu GameManager para o escudo
             vidaEscudoEstagio2 = GameManager.instance.CalcularVidaInimigo(vidaEscudoEstagio2);
         }
 
-        // ... resto do teu código (Inicialização Visual, Invokes, etc) ...
+        // ... resto do teu cÃ³digo (InicializaÃ§Ã£o Visual, Invokes, etc) ...
         InicializarComponentes();
     }
 
-    // Apenas para manter a organização, movi o resto do teu Start para cá
+    // Apenas para manter a organizaÃ§Ã£o, movi o resto do teu Start para cÃ¡
     void InicializarComponentes()
     {
         foreach (GameObject fogo in fogosEffects) { if (fogo != null) fogo.SetActive(false); }
@@ -122,7 +123,7 @@ public class MotherShip : MonoBehaviour
         VerificarEstadoIncendio();
         MonitorarEscudo();
 
-        // Feedback Visual do Escudo Vulnerável
+        // Feedback Visual do Escudo VulnerÃ¡vel
         if (estagio2Ativo && escudoHealth != null && escudoHealth.gameObject.activeSelf)
         {
             SpriteRenderer sr = escudoHealth.GetComponent<SpriteRenderer>();
@@ -144,7 +145,7 @@ public class MotherShip : MonoBehaviour
             {
                 minhaSaude.isAlwaysInvincible = false;
                 if (minhaSaude.characterSprite != null) minhaSaude.characterSprite.color = Color.white;
-                Debug.Log("<color=red>Atenção:</color> Nave Mãe vulnerável!");
+                Debug.Log("<color=red>AtenÃ§Ã£o:</color> Nave MÃ£e vulnerÃ¡vel!");
             }
         }
     }
@@ -162,7 +163,7 @@ public class MotherShip : MonoBehaviour
             if (pctVida <= 0.40f && !fogo3Ligado) AtivarFogo(2, ref fogo3Ligado);
             if (pctVida <= 0.25f && !fogo4Ligado) AtivarFogo(3, ref fogo4Ligado);
 
-            // GATILHO MODO FÚRIA
+            // GATILHO MODO FÃšRIA
             if (pctVida <= 0.25f && nivelFuriaAtual < 2)
             {
                 AtivarModoFuria(2);
@@ -243,7 +244,7 @@ public class MotherShip : MonoBehaviour
             {
                 if (nivelFuriaAtual == 2) scriptBomba.velocidade = velocidadeBombaFuria2;
                 else if (nivelFuriaAtual == 1) scriptBomba.velocidade = velocidadeBombaFuria1;
-                // Caso contrário usa a velocidade base definida no prefab ou script Bomb
+                // Caso contrÃ¡rio usa a velocidade base definida no prefab ou script Bomb
             }
         }
     }
