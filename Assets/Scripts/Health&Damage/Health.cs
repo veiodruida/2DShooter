@@ -28,6 +28,8 @@ public class Health : MonoBehaviour
     [Header("Effects & Polish")]
     public GameObject deathEffect;
     public GameObject hitEffect;
+    public AudioSource hitSound;
+    public AudioSource deathSound;
 
     private SpriteRenderer spriteRenderer;
     private bool estaPiscando = false;
@@ -106,6 +108,7 @@ public class Health : MonoBehaviour
 
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
         if (hitEffect != null) Instantiate(hitEffect, transform.position, transform.rotation);
+        if (hitSound != null) hitSound.Play();
 
         CheckDeath();
     }
@@ -126,6 +129,11 @@ public class Health : MonoBehaviour
         if (boss != null) boss.FinalizarBoss();
 
         if (deathEffect != null) Instantiate(deathEffect, transform.position, transform.rotation);
+        if (deathSound != null)
+        {
+            // Criamos um objeto temporário para o som tocar até o fim, já que este objeto será destruído
+            AudioSource.PlayClipAtPoint(deathSound.clip, transform.position, deathSound.volume);
+        }
 
         if (boss != null)
         {

@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     public bool printDebugOfWinnableStatus = true;
     public string nomePaginaVitoria = "VictoryPage"; // Mudado para string
     public GameObject victoryEffect;
+    public AudioSource victorySound;
 
     [Header("Configurações de Nível de Dificuldade")]
     public int nivelAtual = 1;
@@ -51,6 +52,7 @@ public class GameManager : MonoBehaviour
     [Header("Configurações de Game Over")]
     public string nomePaginaGameOver = "GameOverPage"; // Mudado para string
     public GameObject gameOverEffect;
+    public AudioSource gameOverSound;
 
     private void Awake()
     {
@@ -388,6 +390,7 @@ public class GameManager : MonoBehaviour
             UIManager.instance.UpdateUI();
             UIManager.instance.GoToPageByName(nomePaginaVitoria);
             if (victoryEffect != null) Instantiate(victoryEffect, transform.position, transform.rotation);
+            if (victorySound != null) victorySound.Play();
         }
         LimparObjetosDaCena();
     }
@@ -399,6 +402,12 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f; // TRAVA O JOGO
 
         if (gameOverEffect != null) Instantiate(gameOverEffect, transform.position, transform.rotation);
+        if (gameOverSound != null)
+        {
+            // Usamos PlayClipAtPoint porque o Time.timeScale 0 pode afetar AudioSources comuns em alguns casos,
+            // e também garante que o som toque mesmo se o GameManager for mexido.
+            AudioSource.PlayClipAtPoint(gameOverSound.clip, Camera.main.transform.position, gameOverSound.volume);
+        }
 
         if (UIManager.instance != null)
         {
