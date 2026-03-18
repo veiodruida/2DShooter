@@ -47,7 +47,7 @@ public class PlayerBomb : MonoBehaviour
     {
         if (scriptPai != null)
         {
-            scriptPai.AtivarOndaDeChoque();
+            scriptPai.AtivarOndaDeChoque(this.transform.position);
         }
         Destroy(gameObject);
     }
