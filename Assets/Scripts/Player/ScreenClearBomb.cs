@@ -12,6 +12,9 @@ public class ScreenClearBomb : MonoBehaviour
     public float tempoParaExplodirNoAudio = 1.0f;
     [Range(0f, 1f)] public float volumeGeral = 1.0f;
 
+    [Header("Efeito de Partículas")]
+    public GameObject prefabParticulasResiduo; // Adicionado apenas este campo
+
     [Header("Configuracoes de Inventario")]
     public int bombasAtuais = 0;
     public int maximoDeBombas = 5;
@@ -71,7 +74,6 @@ public class ScreenClearBomb : MonoBehaviour
         // --- TOCA O SOM EM 2D REAL ---
         if (somCompletoBomba != null)
         {
-            // PlayOneShot permite que o som de 3s toque até o fim
             myAudioSource.PlayOneShot(somCompletoBomba, volumeGeral);
         }
 
@@ -85,10 +87,20 @@ public class ScreenClearBomb : MonoBehaviour
         }
     }
 
-    public void AtivarLimpezaTotal() => AtivarOndaDeChoque();
+    public void AtivarLimpezaTotal() => AtivarOndaDeChoque(transform.position);
 
-    public void AtivarOndaDeChoque()
+    public void AtivarOndaDeChoque(Vector3 posicaoDaExplosao)
     {
+        // 1. Criar partículas no local da BOMBA
+        if (prefabParticulasResiduo != null)
+        {
+            Instantiate(prefabParticulasResiduo, posicaoDaExplosao, Quaternion.identity);
+        }
+
+        // 2. Criar explosão visual no local da BOMBA
+        SpawnExplosao(posicaoDaExplosao);
+
+        // 3. Iniciar a rotina de dano
         StartCoroutine(OndaDeChoque());
     }
 
@@ -141,7 +153,8 @@ public class ScreenClearBomb : MonoBehaviour
         if (efeitosExplosao != null && efeitosExplosao.Length > 0)
         {
             int index = Random.Range(0, efeitosExplosao.Length);
-            Instantiate(efeitosExplosao[index], posicao, Quaternion.identity);
+            if (efeitosExplosao[index] != null)
+                Instantiate(efeitosExplosao[index], posicao, Quaternion.identity);
         }
     }
 }
