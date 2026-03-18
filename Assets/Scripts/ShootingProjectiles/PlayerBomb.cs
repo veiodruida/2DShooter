@@ -4,7 +4,7 @@ public class PlayerBomb : MonoBehaviour
 {
     [Header("Configurações de Voo")]
     public float velocidade = 8f;
-    public float tempoAteEstourar = 1.5f;
+    public float tempoDeVida = 1.5f;
 
     [Header("Controlo de Tamanho")]
     public float tamanhoInicial = 0.2f;
@@ -26,10 +26,10 @@ public class PlayerBomb : MonoBehaviour
         transform.Translate(Vector3.up * velocidade * Time.deltaTime);
 
         // Crescimento Linear Lento
-        if (timerCrescimento < tempoAteEstourar)
+        if (timerCrescimento < tempoDeVida)
         {
             timerCrescimento += Time.deltaTime;
-            float progresso = timerCrescimento / tempoAteEstourar;
+            float progresso = timerCrescimento / tempoDeVida;
 
             // Suaviza o crescimento (opcional, deixa mais orgânico)
             float progressoSuave = Mathf.SmoothStep(0f, 1f, progresso);
