@@ -170,5 +170,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpItem
   tipoStatus: 1
-  quantidade: 1
+  quantidadeBase: 3
   efeitoColeta: {fileID: 0}
+  somColetaEscudo: {fileID: 0}
+  somColetaVida: {fileID: 8300000, guid: eac70a7460def8e4496957f610e6a0cd, type: 3}
+  somColetaTiro: {fileID: 0}
+  somColetaBomba: {fileID: 0}
+  volumeColeta: 2

@@ -10,10 +10,11 @@ public class ScreenClearBomb : MonoBehaviour
     public AudioClip somCompletoBomba;
     [Tooltip("Momento do 'BOOM' no áudio (Ex: 1.0)")]
     public float tempoParaExplodirNoAudio = 1.0f;
-    [Range(0f, 1f)] public float volumeGeral = 1.0f;
+    [Range(0f, 1f)] public float volumeGeral = 0.8f;
 
-    [Header("Efeito de Partículas")]
-    public GameObject prefabParticulasResiduo; // Adicionado apenas este campo
+    [Header("Efeitos Visuais")]
+    public GameObject prefabParticulasResiduo;
+    public GameObject[] efeitosExplosao;
 
     [Header("Configuracoes de Inventario")]
     public int bombasAtuais = 0;
@@ -26,9 +27,6 @@ public class ScreenClearBomb : MonoBehaviour
     public GameObject bombProjectilePrefab;
     public Transform pontoDeDisparo;
 
-    [Header("Efeitos de Explosao")]
-    public GameObject[] efeitosExplosao;
-
     [Header("Tags de Projeteis")]
     public string[] tagsDeTiro = { "EnemyProjectile" };
 
@@ -38,9 +36,9 @@ public class ScreenClearBomb : MonoBehaviour
     {
         myAudioSource = GetComponent<AudioSource>();
 
-        // --- CONFIGURAÇÃO FORÇADA DE ÁUDIO 2D ---
+        // Força as configurações 2D para não bugar
         myAudioSource.playOnAwake = false;
-        myAudioSource.spatialBlend = 0f; // 0 = 2D total (Volume não muda com a distância)
+        myAudioSource.spatialBlend = 0f;
         myAudioSource.loop = false;
     }
 
@@ -71,48 +69,48 @@ public class ScreenClearBomb : MonoBehaviour
         bombasAtuais--;
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
 
-        // --- TOCA O SOM EM 2D REAL ---
+        // --- TOCA O SOM SEM CORTAR ---
         if (somCompletoBomba != null)
         {
+            // Se o som travou antes, o PlayOneShot aqui vai rodar de forma independente
             myAudioSource.PlayOneShot(somCompletoBomba, volumeGeral);
         }
 
         GameObject projetil = Instantiate(bombProjectilePrefab, pontoDeDisparo.position, Quaternion.identity);
 
-        PlayerBomb bp = projetil.GetComponent<PlayerBomb>();
-        if (bp != null)
+        PlayerBomb bp = projetil.GetComponent<Health>() != null ? projetil.GetComponent<PlayerBomb>() : projetil.GetComponent<PlayerBomb>();
+
+        // Pegando o componente de forma segura
+        PlayerBomb bombComponent = projetil.GetComponent<PlayerBomb>();
+        if (bombComponent != null)
         {
-            bp.Inicializar(this);
-            bp.tempoDeVida = tempoParaExplodirNoAudio;
+            bombComponent.Inicializar(this);
+            bombComponent.tempoDeVida = tempoParaExplodirNoAudio;
         }
     }
 
-    public void AtivarLimpezaTotal() => AtivarOndaDeChoque(transform.position);
-
-    public void AtivarOndaDeChoque(Vector3 posicaoDaExplosao)
+    // Recebe a posição da bomba para estourar no lugar certo
+    public void AtivarOndaDeChoque(Vector3 posicaoDaBomba)
     {
-        // 1. Criar partículas no local da BOMBA
         if (prefabParticulasResiduo != null)
         {
-            Instantiate(prefabParticulasResiduo, posicaoDaExplosao, Quaternion.identity);
+            Instantiate(prefabParticulasResiduo, posicaoDaBomba, Quaternion.identity);
         }
 
-        // 2. Criar explosão visual no local da BOMBA
-        SpawnExplosao(posicaoDaExplosao);
+        SpawnExplosao(posicaoDaBomba);
 
-        // 3. Iniciar a rotina de dano
         StartCoroutine(OndaDeChoque());
     }
+
+    // Caso algo chame sem posição (retrocompatibilidade)
+    public void AtivarLimpezaTotal() => AtivarOndaDeChoque(transform.position);
 
     IEnumerator OndaDeChoque()
     {
         float duracao = 0.5f;
         float timer = 0f;
 
-        if (CameraShake.instance != null)
-        {
-            CameraShake.instance.Shake(0.6f, 0.4f);
-        }
+        if (CameraShake.instance != null) CameraShake.instance.Shake(0.6f, 0.4f);
 
         foreach (string tag in tagsDeTiro)
         {

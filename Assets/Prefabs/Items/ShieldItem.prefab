@@ -142,7 +142,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adf49165e8d9b5345ab59f81dfe41b43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  vidasParaDar: 3
+  tipoStatus: 0
+  quantidadeBase: 3
+  efeitoColeta: {fileID: 0}
+  somColetaEscudo: {fileID: 8300000, guid: 064782681c66a9b498209cd94ad5e289, type: 3}
+  somColetaVida: {fileID: 0}
+  somColetaTiro: {fileID: 0}
+  somColetaBomba: {fileID: 0}
+  volumeColeta: 2
 --- !u!50 &5583131221648222196
 Rigidbody2D:
   serializedVersion: 5

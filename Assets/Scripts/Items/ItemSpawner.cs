@@ -59,17 +59,14 @@ public class ItemSpawner : MonoBehaviour
         if (sorteio < 0.25f)
         {
             prefabParaCriar = healthPrefab;
-            prefabParaCriar = bombaPrefab;
         }
         else if (sorteio < 0.50f)
         {
             prefabParaCriar = shieldPrefab;
-            prefabParaCriar = bombaPrefab;
         }
         else if (sorteio < 0.75f)
         {
-            //prefabParaCriar = TiroPrefab;
-            prefabParaCriar = bombaPrefab;
+            prefabParaCriar = TiroPrefab;
         }
         else
         {
