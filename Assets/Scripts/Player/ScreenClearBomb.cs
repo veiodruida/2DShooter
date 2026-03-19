@@ -6,14 +6,15 @@ using System.Collections.Generic;
 [RequireComponent(typeof(AudioSource))]
 public class ScreenClearBomb : MonoBehaviour
 {
-    [Header("ConfiguraÁıes de ¡udio (2D Fixo)")]
-    public AudioClip somCompletoBomba;
-    [Tooltip("Momento do 'BOOM' no ·udio (Ex: 1.0)")]
+    [Header("Configura√ß√µes de √Åudio (2D Fixo)")]
+    public AudioClip somLaunchBomba;
+    public AudioClip somExplosao;
+    [Tooltip("Momento do 'BOOM' no √°udio (Ex: 1.0)")]
     public float tempoParaExplodirNoAudio = 1.0f;
     [Range(0f, 1f)] public float volumeGeral = 1.0f;
 
-    [Header("Efeito de PartÌculas")]
-    public GameObject prefabParticulasResiduo; // Adicionado apenas este campo
+    [Header("Efeito de Part√≠culas")]
+    public GameObject prefabParticulasResiduo;
 
     [Header("Configuracoes de Inventario")]
     public int bombasAtuais = 0;
@@ -32,16 +33,15 @@ public class ScreenClearBomb : MonoBehaviour
     [Header("Tags de Projeteis")]
     public string[] tagsDeTiro = { "EnemyProjectile" };
 
-    private AudioSource myAudioSource;
-
     private void Awake()
     {
-        myAudioSource = GetComponent<AudioSource>();
-
-        // --- CONFIGURA«√O FOR«ADA DE ¡UDIO 2D ---
-        myAudioSource.playOnAwake = false;
-        myAudioSource.spatialBlend = 0f; // 0 = 2D total (Volume n„o muda com a dist‚ncia)
-        myAudioSource.loop = false;
+        // Limpamos o AudioSource local se ele n√£o for usado para mais nada
+        AudioSource myAudioSource = GetComponent<AudioSource>();
+        if (myAudioSource != null)
+        {
+            myAudioSource.playOnAwake = false;
+            myAudioSource.spatialBlend = 0f;
+        }
     }
 
     private void OnEnable() => detonateAction.Enable();
@@ -71,10 +71,10 @@ public class ScreenClearBomb : MonoBehaviour
         bombasAtuais--;
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
 
-        // --- TOCA O SOM EM 2D REAL ---
-        if (somCompletoBomba != null)
+        // --- SOM 2D PURO (LAN√áAMENTO) ---
+        if (somLaunchBomba != null)
         {
-            myAudioSource.PlayOneShot(somCompletoBomba, volumeGeral);
+            Audio2DManager.Play2D(somLaunchBomba, volumeGeral);
         }
 
         GameObject projetil = Instantiate(bombProjectilePrefab, pontoDeDisparo.position, Quaternion.identity);
@@ -91,16 +91,18 @@ public class ScreenClearBomb : MonoBehaviour
 
     public void AtivarOndaDeChoque(Vector3 posicaoDaExplosao)
     {
-        // 1. Criar partÌculas no local da BOMBA
+        // --- SOM 2D PURO (EXPLOS√ÉO) ---
+        if (somExplosao != null)
+        {
+            Audio2DManager.Play2D(somExplosao, volumeGeral);
+        }
+
         if (prefabParticulasResiduo != null)
         {
             Instantiate(prefabParticulasResiduo, posicaoDaExplosao, Quaternion.identity);
         }
 
-        // 2. Criar explos„o visual no local da BOMBA
         SpawnExplosao(posicaoDaExplosao);
-
-        // 3. Iniciar a rotina de dano
         StartCoroutine(OndaDeChoque());
     }
 
