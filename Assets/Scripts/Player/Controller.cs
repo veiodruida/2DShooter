@@ -93,7 +93,8 @@ public class Controller : MonoBehaviour
                 }
                 else if (!isMoving && engineSound.isPlaying)
                 {
-                    engineSound.Stop();
+                    engineSound.Play();
+                    engineSound.volume = 0.6f;
                 }
             }
         }

@@ -48,6 +48,13 @@ public class ItemSpawner : MonoBehaviour
 
     void SpawnRandomItem()
     {
+        // Se o jogo acabou ou o Boss foi derrotado, paramos de dar spawn
+        if (GameManager.instance != null && GameManager.instance.gameIsOver)
+        {
+            CancelInvoke("SpawnRandomItem");
+            return;
+        }
+
         float posX = Random.Range(limiteX.x, limiteX.y);
         float posY = Random.Range(limiteY.x, limiteY.y);
         Vector3 posicaoAleatoria = new Vector3(posX, posY, 0);
@@ -59,17 +66,17 @@ public class ItemSpawner : MonoBehaviour
         if (sorteio < 0.25f)
         {
             prefabParaCriar = healthPrefab;
-            prefabParaCriar = bombaPrefab;
+           // prefabParaCriar = bombaPrefab;
         }
         else if (sorteio < 0.50f)
         {
             prefabParaCriar = shieldPrefab;
-            prefabParaCriar = bombaPrefab;
+            //prefabParaCriar = bombaPrefab;
         }
         else if (sorteio < 0.75f)
         {
-            //prefabParaCriar = TiroPrefab;
-            prefabParaCriar = bombaPrefab;
+            prefabParaCriar = TiroPrefab;
+            //prefabParaCriar = bombaPrefab;
         }
         else
         {
