@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerBomb : MonoBehaviour
 {
-    [Header("ConfiguraÁıes de Voo")]
+    [Header("Configura√ß√µes de Voo")]
     public float velocidade = 8f;
     public float tempoDeVida = 1.5f;
 
@@ -13,7 +13,7 @@ public class PlayerBomb : MonoBehaviour
     private ScreenClearBomb scriptPai;
     private float timerCrescimento = 0f;
 
-    // Mudamos o tipo do par‚metro para aceitar o script do Player
+    // Mudamos o tipo do par√¢metro para aceitar o script do Player
     public void Inicializar(ScreenClearBomb pai)
     {
         scriptPai = pai;
@@ -31,7 +31,7 @@ public class PlayerBomb : MonoBehaviour
             timerCrescimento += Time.deltaTime;
             float progresso = timerCrescimento / tempoDeVida;
 
-            // Suaviza o crescimento (opcional, deixa mais org‚nico)
+            // Suaviza o crescimento (opcional, deixa mais org√¢nico)
             float progressoSuave = Mathf.SmoothStep(0f, 1f, progresso);
             float tamanhoAtual = Mathf.Lerp(tamanhoInicial, tamanhoFinal, progressoSuave);
 
