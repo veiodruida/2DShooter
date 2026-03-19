@@ -143,8 +143,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   tipoStatus: 3
-  quantidade: 3
-  efeitoColeta: {fileID: 0}
+  quantidadeBase: 3
+  efeitoColeta: {fileID: 7171741839353268336, guid: c7701ddc87b12164b87dda4083951e6d, type: 3}
+  corDasParticulas: {r: 0.9622642, g: 0.21456167, b: 0, a: 1}
+  somColeta: {fileID: 8300000, guid: bb7011f92e1b89f4280b801bb77f20b3, type: 3}
+  volumeColeta: 1
 --- !u!50 &5583131221648222196
 Rigidbody2D:
   serializedVersion: 5
