@@ -16,7 +16,7 @@ MonoBehaviour:
   intervaloTiroInimigo: 5
   tempoSpawnInimigos: 2
   tempoSpawnItens: 6
-  vidasIniciais: 5
+  vidasIniciais: 3
   taxaDeTiro: 0.15
   velocidadePlayer: 12
   velocidadeBossBase: 0.8
