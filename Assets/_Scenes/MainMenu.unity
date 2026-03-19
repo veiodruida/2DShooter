@@ -787,6 +787,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: MainMenuBridge, Assembly-CSharp
       objectReference: {fileID: 0}
+    - target: {fileID: 2565159413683193015, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2816445442142313667, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 591.4362
@@ -845,6 +849,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3516097344970016745, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3811690633151816528, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3936081892801357234, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
