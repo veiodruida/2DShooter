@@ -136,7 +136,13 @@ public class Health : MonoBehaviour
     public void Die()
     {
         Debug.Log($"<color=yellow>Die() chamado em: {gameObject.name}</color>");
-        
+        // --- NOVA LÓGICA PARA ASTEROIDES ---
+        Asteroid ast = GetComponent<Asteroid>();
+        if (ast != null)
+        {
+            ast.DividirOuExplodir(); // <--- CHAMA AQUI
+        }
+
         MotherShip boss = GetComponent<MotherShip>();
         if (boss != null) boss.FinalizarBoss();
 
@@ -198,7 +204,16 @@ public class Health : MonoBehaviour
     void HandleDeathWithoutLives()
     {
         if (gameObject.CompareTag("Player") && GameManager.instance != null) GameManager.instance.GameOver();
+
         if (gameObject.CompareTag("Shield")) { gameObject.SetActive(false); return; }
+
+        // Se for Asteroid, vamos garantir que ele suma AGORA
+        if (gameObject.CompareTag("Asteroid"))
+        {
+            Debug.Log("Destruindo Asteroide Definitivamente");
+            Destroy(this.gameObject);
+            return; // Sai da função aqui para garantir que não execute lógicas de inimigo normal
+        }
 
         Enemy enemyScript = GetComponent<Enemy>();
         if (enemyScript != null) enemyScript.DoBeforeDestroy();
