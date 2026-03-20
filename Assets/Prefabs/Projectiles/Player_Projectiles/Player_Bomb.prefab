@@ -193,6 +193,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBomb
   velocidade: 5
-  tempoAteEstourar: 1.5
+  tempoDeVida: 1.5
+  alvo: {fileID: 1940442665237305757, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
+  forcaDaCurva: 5
   tamanhoInicial: 0.05
   tamanhoFinal: 0.3

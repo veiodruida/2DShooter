@@ -173,6 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bomb
   velocidade: 3
   velocidadeRotacaoVisual: 100
+  forcaDaCurva: 2
 --- !u!114 &-1211627088207640441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,14 +192,16 @@ MonoBehaviour:
   currentHealth: 1
   invincibilityTime: 0
   isAlwaysInvincible: 0
+  isInvincible: 0
   characterSprite: {fileID: 0}
-  blinkInterval: 0
+  tempoInvisivel: 3
   useLives: 0
   currentLives: 3
   maximumLives: 5
-  tempoInvisivel: 3
   deathEffect: {fileID: 2452382815751308013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
   hitEffect: {fileID: 6229913163069739088, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
+  hitSound: {fileID: 5893807288569042745, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
+  deathSound: {fileID: 7808391201307655013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
 --- !u!114 &3308376677132137131
 MonoBehaviour:
   m_ObjectHideFlags: 0
