@@ -1224,7 +1224,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963360626}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
@@ -1708,7 +1708,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2816445442142313667, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 591.4362
+      value: 591.94
       objectReference: {fileID: 0}
     - target: {fileID: 2816445442142313667, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1830,6 +1830,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: MainMenuBridge, Assembly-CSharp
       objectReference: {fileID: 0}
+    - target: {fileID: 3936081893650688908, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3936081893650688911, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_Camera
       value: 
@@ -1853,6 +1857,14 @@ PrefabInstance:
     - target: {fileID: 3936081894354360884, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_RaycastTarget
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3936081894354360885, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3936081894354360885, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.0000042915344
       objectReference: {fileID: 0}
     - target: {fileID: 3936081894393520864, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
