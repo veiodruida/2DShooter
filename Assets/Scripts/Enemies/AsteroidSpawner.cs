@@ -11,11 +11,9 @@ public class AsteroidSpawner : MonoBehaviour
     [Tooltip("Tempo máximo entre um asteroide e outro")]
     public float intervaloMax = 3.5f;
 
-    [Header("Limites de Spawn (Área de Surgimento)")]
-    [Tooltip("Largura total da área de spawn")]
-    public float larguraSpawn = 25f;
-    [Tooltip("Altura total da área de spawn")]
-    public float alturaSpawn = 15f;
+    [Header("Área de Spawn")]
+    public Vector2 limiteX = new Vector2(-21, 11);
+    public Vector2 limiteY = new Vector2(-21, 11);
 
     [Header("Dificuldade (Opcional)")]
     public bool aumentarFrequenciaNoModoFuria = true;
@@ -55,19 +53,19 @@ public class AsteroidSpawner : MonoBehaviour
         switch (lado)
         {
             case 0: // TOPO
-                posicaoSpawn = new Vector3(Random.Range(-larguraSpawn / 2f, larguraSpawn / 2f), alturaSpawn / 2f, 0);
+                posicaoSpawn = new Vector3(Random.Range(limiteX.x, limiteX.y), limiteY.y, 0);
                 direcao = new Vector3(Random.Range(-0.5f, 0.5f), -1, 0).normalized;
                 break;
             case 1: // BAIXO
-                posicaoSpawn = new Vector3(Random.Range(-larguraSpawn / 2f, larguraSpawn / 2f), -alturaSpawn / 2f, 0);
+                posicaoSpawn = new Vector3(Random.Range(limiteX.x, limiteX.y), limiteY.x, 0);
                 direcao = new Vector3(Random.Range(-0.5f, 0.5f), 1, 0).normalized;
                 break;
             case 2: // ESQUERDA
-                posicaoSpawn = new Vector3(-larguraSpawn / 2f, Random.Range(-alturaSpawn / 2f, alturaSpawn / 2f), 0);
+                posicaoSpawn = new Vector3(limiteX.x, Random.Range(limiteY.x, limiteY.y), 0);
                 direcao = new Vector3(1, Random.Range(-0.5f, 0.5f), 0).normalized;
                 break;
             case 3: // DIREITA
-                posicaoSpawn = new Vector3(larguraSpawn / 2f, Random.Range(-alturaSpawn / 2f, alturaSpawn / 2f), 0);
+                posicaoSpawn = new Vector3(limiteX.y, Random.Range(limiteY.x, limiteY.y), 0);
                 direcao = new Vector3(-1, Random.Range(-0.5f, 0.5f), 0).normalized;
                 break;
         }
@@ -102,6 +100,9 @@ public class AsteroidSpawner : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         // Desenha o retângulo da área de spawn
-        Gizmos.DrawWireCube(Vector3.zero, new Vector3(larguraSpawn, alturaSpawn, 1));
+        float largura = limiteX.y - limiteX.x;
+        float altura = limiteY.y - limiteY.x;
+        Vector3 centro = new Vector3(limiteX.x + largura / 2f, limiteY.x + altura / 2f, 0);
+        Gizmos.DrawWireCube(centro, new Vector3(largura, altura, 1));
     }
 }
