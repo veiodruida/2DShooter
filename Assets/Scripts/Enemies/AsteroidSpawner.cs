@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class AsteroidSpawner : MonoBehaviour
 {
-    [Header("ConfiguraÁıes do Prefab")]
+    [Header("Configura√ß√µes do Prefab")]
     public GameObject asteroidPrefab;
 
     [Header("Ritmo de Jogo")]
-    [Tooltip("Tempo mÌnimo entre um asteroide e outro")]
+    [Tooltip("Tempo m√≠nimo entre um asteroide e outro")]
     public float intervaloMin = 1.0f;
-    [Tooltip("Tempo m·ximo entre um asteroide e outro")]
+    [Tooltip("Tempo m√°ximo entre um asteroide e outro")]
     public float intervaloMax = 3.5f;
 
-    [Header("Limites de Spawn (¡rea de Surgimento)")]
-    [Tooltip("Largura total da tela onde podem surgir")]
-    public float larguraSpawn = 20f;
-    [Tooltip("Altura acima da c‚mera onde nascem")]
-    public float alturaSpawn = 12f;
+    [Header("Limites de Spawn (√Årea de Surgimento)")]
+    [Tooltip("Largura total da √°rea de spawn")]
+    public float larguraSpawn = 25f;
+    [Tooltip("Altura total da √°rea de spawn")]
+    public float alturaSpawn = 15f;
 
     [Header("Dificuldade (Opcional)")]
     public bool aumentarFrequenciaNoModoFuria = true;
@@ -46,16 +46,42 @@ public class AsteroidSpawner : MonoBehaviour
     {
         if (asteroidPrefab == null) return;
 
-        // 1. Calcula posiÁ„o X aleatÛria em toda a largura definida
-        float posX = Random.Range(-larguraSpawn / 2f, larguraSpawn / 2f);
+        Vector3 posicaoSpawn = Vector3.zero;
+        Vector3 direcao = Vector3.zero;
 
-        // 2. Define a posiÁ„o de nascimento (fora da vis„o da c‚mera)
-        Vector3 posicaoSpawn = new Vector3(posX, alturaSpawn, 0);
+        // Escolhe um lado aleat√≥rio (0: Topo, 1: Baixo, 2: Esquerda, 3: Direita)
+        int lado = Random.Range(0, 4);
 
-        // 3. Cria o asteroide
+        switch (lado)
+        {
+            case 0: // TOPO
+                posicaoSpawn = new Vector3(Random.Range(-larguraSpawn / 2f, larguraSpawn / 2f), alturaSpawn / 2f, 0);
+                direcao = new Vector3(Random.Range(-0.5f, 0.5f), -1, 0).normalized;
+                break;
+            case 1: // BAIXO
+                posicaoSpawn = new Vector3(Random.Range(-larguraSpawn / 2f, larguraSpawn / 2f), -alturaSpawn / 2f, 0);
+                direcao = new Vector3(Random.Range(-0.5f, 0.5f), 1, 0).normalized;
+                break;
+            case 2: // ESQUERDA
+                posicaoSpawn = new Vector3(-larguraSpawn / 2f, Random.Range(-alturaSpawn / 2f, alturaSpawn / 2f), 0);
+                direcao = new Vector3(1, Random.Range(-0.5f, 0.5f), 0).normalized;
+                break;
+            case 3: // DIREITA
+                posicaoSpawn = new Vector3(larguraSpawn / 2f, Random.Range(-alturaSpawn / 2f, alturaSpawn / 2f), 0);
+                direcao = new Vector3(-1, Random.Range(-0.5f, 0.5f), 0).normalized;
+                break;
+        }
+
+        // Cria o asteroide
         GameObject novoAsteroid = Instantiate(asteroidPrefab, posicaoSpawn, Quaternion.identity);
+        
+        // Define a dire√ß√£o antes do Start do asteroide rodar
+        Asteroid astScript = novoAsteroid.GetComponent<Asteroid>();
+        if (astScript != null)
+        {
+            astScript.direcaoMovimento = direcao;
+        }
 
-        // MantÈm a hierarquia limpa
         novoAsteroid.transform.parent = this.transform;
     }
 
@@ -63,7 +89,6 @@ public class AsteroidSpawner : MonoBehaviour
     {
         tempoParaProximoSpawn = Random.Range(intervaloMin, intervaloMax);
 
-        // LÛgica do Modo F˙ria 2 (conforme sua configuraÁ„o)
         if (aumentarFrequenciaNoModoFuria && GameManager.instance != null)
         {
             if (GameSettings.instance != null && GameSettings.instance.dificuldadeSelecionada == GameSettings.Dificuldade.Furia)
@@ -76,12 +101,7 @@ public class AsteroidSpawner : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        // Desenha a linha de spawn no topo
-        Vector3 centroTopo = new Vector3(0, alturaSpawn, 0);
-        Gizmos.DrawWireCube(centroTopo, new Vector3(larguraSpawn, 0.5f, 1));
-
-        // Desenha uma caixa sugerindo a ·rea de jogo para ajudar no ajuste
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(Vector3.zero, new Vector3(larguraSpawn, alturaSpawn * 2, 1));
+        // Desenha o ret√¢ngulo da √°rea de spawn
+        Gizmos.DrawWireCube(Vector3.zero, new Vector3(larguraSpawn, alturaSpawn, 1));
     }
 }

@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class Asteroid : MonoBehaviour
 {
-    [Header("Movimento e RotaÁ„o")]
+    [Header("Movimento e Rota√ß√£o")]
     public float velocidadeMin = 2f;
     public float velocidadeMax = 5f;
     public float rotacaoMin = 30f;
     public float rotacaoMax = 100f;
 
-    [Header("ConfiguraÁıes de Divis„o")]
-    public int geracaoAtual = 0; // 0 = Grande, 1 = MÈdio, 2 = Pequeno
+    [Header("Configura√ß√µes de Divis√£o")]
+    public int geracaoAtual = 0; // 0 = Grande, 1 = M√©dio, 2 = Pequeno
     public int limiteGeracoes = 2;
     public int quantidadeFilhos = 2;
     public float multiplicadorEscalaFilho = 0.5f;
@@ -17,47 +17,52 @@ public class Asteroid : MonoBehaviour
     [Header("Efeitos")]
     public GameObject particulasExplosao;
 
-    private float velocidadeReal;
+    [HideInInspector] public float velocidadeReal;
+    public Vector3 direcaoMovimento = Vector3.zero;
+
     private float rotacaoReal;
     private float direcaoRotacao;
-    private Vector3 direcaoMovimento = Vector3.down;
     private bool estaDestruindo = false;
+
     void Start()
     {
-        // Define valores aleatÛrios no nascimento
-        velocidadeReal = Random.Range(velocidadeMin, velocidadeMax);
+        // Define valores aleat√≥rios no nascimento
+        if (velocidadeReal <= 0) velocidadeReal = Random.Range(velocidadeMin, velocidadeMax);
+        
         rotacaoReal = Random.Range(rotacaoMin, rotacaoMax);
         direcaoRotacao = (Random.value > 0.5f) ? 1f : -1f;
 
-        // Se for o asteroide original (GeraÁ„o 0), d· um tamanho aleatÛrio inicial
+        // Se for o asteroide original (Gera√ß√£o 0), d√° um tamanho aleat√≥rio inicial
         if (geracaoAtual == 0)
         {
             float tam = Random.Range(1.5f, 2.5f);
             transform.localScale = new Vector3(tam, tam, 1);
         }
 
-        // DireÁ„o levemente aleatÛria para n„o descerem todos em linha reta perfeita
-        direcaoMovimento = new Vector3(Random.Range(-0.2f, 0.2f), -1, 0).normalized;
+        // Se a dire√ß√£o n√£o foi definida pelo spawner, usa o padr√£o (baixo)
+        if (direcaoMovimento == Vector3.zero)
+        {
+            direcaoMovimento = new Vector3(Random.Range(-0.2f, 0.2f), -1, 0).normalized;
+        }
     }
 
     void Update()
     {
-        // Move para baixo no espaÁo global
+        // Move no espa√ßo global
         transform.Translate(direcaoMovimento * velocidadeReal * Time.deltaTime, Space.World);
 
-        // Gira no prÛprio eixo
+        // Gira no pr√≥prio eixo
         transform.Rotate(0, 0, direcaoRotacao * rotacaoReal * Time.deltaTime);
 
-        // DESTRUI«√O: SÛ destrÛi se passar MUITO dos limites da c‚mera
-        // Se sua c‚mera termina em Y = -10, coloque -15 para garantir que ele sumiu da vis„o
+        // DESTRUI√á√ÉO: S√≥ destr√≥i se passar MUITO dos limites da c√¢mera
         if (transform.position.y < -35f || transform.position.y > 35f ||
-            transform.position.x > 30f || transform.position.x < -30f)
+            transform.position.x > 35f || transform.position.x < -35f)
         {
             Destroy(gameObject);
         }
     }
 
-    // Chamado pelo Health.cs no mÈtodo Die()
+    // Chamado pelo Health.cs no m√©todo Die()
     public void DividirOuExplodir()
     {
         if (estaDestruindo) return;
@@ -72,7 +77,7 @@ public class Asteroid : MonoBehaviour
             SoltarParticulas();
         }
 
-        // Opcional: Desativar o colisor imediatamente para n„o levar "double damage"
+        // Desativar o colisor imediatamente
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
     }
@@ -84,14 +89,14 @@ public class Asteroid : MonoBehaviour
             GameObject filhoGO = Instantiate(gameObject, transform.position, Quaternion.identity);
             Asteroid filhoScript = filhoGO.GetComponent<Asteroid>();
 
-            // Configura o filho para a prÛxima geraÁ„o
+            // Configura o filho para a pr√≥xima gera√ß√£o
             filhoScript.geracaoAtual = geracaoAtual + 1;
             filhoGO.transform.localScale = transform.localScale * multiplicadorEscalaFilho;
 
-            // Faz o filho ser um pouco mais r·pido que o pai
+            // Faz o filho ser um pouco mais r√°pido que o pai
             filhoScript.velocidadeReal = velocidadeReal * 1.2f;
 
-            // D· uma direÁ„o lateral para se separarem
+            // D√° uma dire√ß√£o lateral para se separarem
             float desvioX = (i == 0) ? -0.5f : 0.5f;
             filhoScript.direcaoMovimento = new Vector3(direcaoMovimento.x + desvioX, direcaoMovimento.y, 0).normalized;
         }
@@ -102,7 +107,7 @@ public class Asteroid : MonoBehaviour
         if (particulasExplosao != null)
         {
             GameObject fx = Instantiate(particulasExplosao, transform.position, Quaternion.identity);
-            Destroy(fx, 2f); // Garante limpeza da memÛria
+            Destroy(fx, 2f); // Garante limpeza da mem√≥ria
         }
     }
 }
