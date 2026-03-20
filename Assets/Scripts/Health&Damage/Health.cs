@@ -75,7 +75,15 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(int damageAmount)
     {
-        if (isAlwaysInvincible || isInvincible) return;
+        Debug.Log($"<color=yellow>TakeDamage() chamado em: {gameObject.name}, isInvincible: {isInvincible}, invincibilityTime: {invincibilityTime}</color>");
+        
+        if (isAlwaysInvincible || isInvincible)
+        {
+            Debug.Log($"<color=orange>IGNORADO - Inimigo invencível!</color>");
+            return;
+        }
+        
+        Debug.Log($"<color=cyan>Dano recebido: {damageAmount}</color>");
         
         if (gameObject.CompareTag("Player") && GameSettings.instance != null)
         {
@@ -83,14 +91,11 @@ public class Health : MonoBehaviour
             damageAmount = Mathf.RoundToInt(damageAmount * mult);
         }
 
-
         if (invincibilityTime > 0)
         {
             isInvincible = true;
             timeToBecomeDamagableAgain = Time.time + invincibilityTime;
 
-            // O AVISO RESOLVE-SE AQUI:
-            // Agora estamos a USAR o valor de 'estaPiscando' para decidir se começa o efeito.
             if (characterSprite != null && !estaPiscando)
             {
                 StartCoroutine(EfeitoPiscar());
@@ -115,23 +120,38 @@ public class Health : MonoBehaviour
 
     bool CheckDeath()
     {
+        Debug.Log($"<color=blue>CheckDeath - currentHealth: {currentHealth}, name: {gameObject.name}</color>");
+        
         if (currentHealth <= 0)
         {
+            Debug.Log($"<color=red>INIMIGO MORTO! Chamando Die()</color>");
             Die();
             return true;
         }
+        
+        Debug.Log($"<color=orange>Inimigo ainda vivo. Health: {currentHealth}</color>");
         return false;
     }
 
     public void Die()
     {
+        Debug.Log($"<color=yellow>Die() chamado em: {gameObject.name}</color>");
+        
         MotherShip boss = GetComponent<MotherShip>();
         if (boss != null) boss.FinalizarBoss();
 
-        if (deathEffect != null) Instantiate(deathEffect, transform.position, transform.rotation);
+        if (deathEffect != null)
+        {
+            Debug.Log($"<color=green>Instanciando deathEffect em: {transform.position}</color>");
+            Instantiate(deathEffect, transform.position, transform.rotation);
+        }
+        else
+        {
+            Debug.Log($"<color=red>deathEffect é NULL no: {gameObject.name}</color>");
+        }
+
         if (deathSound != null)
         {
-            // Criamos um objeto temporário para o som tocar até o fim, já que este objeto será destruído
             AudioSource.PlayClipAtPoint(deathSound.clip, transform.position, deathSound.volume);
         }
 

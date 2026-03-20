@@ -159,13 +159,14 @@ MonoBehaviour:
   isAlwaysInvincible: 0
   isInvincible: 0
   characterSprite: {fileID: 0}
-  blinkInterval: 0.1
-  useLives: 0
-  currentLives: 3
-  maximumLives: 5
   tempoInvisivel: 3
+  useLives: 0
+  currentLives: 0
+  maximumLives: 0
   deathEffect: {fileID: 2452382815751308013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
   hitEffect: {fileID: 6229913163069739088, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
+  hitSound: {fileID: 5893807288569042745, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
+  deathSound: {fileID: 7808391201307655013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
 --- !u!50 &5724781533654324104
 Rigidbody2D:
   serializedVersion: 5
@@ -271,7 +272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teamId: 1
   damageAmount: 10
-  hitEffect: {fileID: 0}
+  hitEffect: {fileID: 6229913163069739088, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
   destroyAfterDamage: 1
   dealDamageOnTriggerEnter: 1
   dealDamageOnTriggerStay: 1

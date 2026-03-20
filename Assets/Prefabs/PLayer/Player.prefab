@@ -136,9 +136,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcba33f7f009a424e8f7a603aaec8262, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Controller
-  myRigidbody: {fileID: 0}
+  myRigidbody: {fileID: 3071271792905132556}
+  mobileMoveJoystick: {fileID: 0}
+  mobileLookJoystick: {fileID: 0}
   moveSpeed: 10
   rotationSpeed: 60
+  smoothTime: 0.15
   turbineAnimator: {fileID: 3103540752278705010}
   moveAction:
     m_Name: Move
@@ -206,7 +209,7 @@ MonoBehaviour:
       m_Action: Look
       m_Flags: 0
     m_Flags: 0
-  aimMode: 0
+  aimMode: 2
   movementMode: 2
   shieldObject: {fileID: 2525626308453027572}
   startEngineSound: {fileID: 6396562975632264767}
@@ -228,16 +231,17 @@ MonoBehaviour:
   maximumHealth: 1
   currentHealth: 1
   invincibilityTime: 3
-  isAlwaysInvincible: 1
+  isAlwaysInvincible: 0
   isInvincible: 0
   characterSprite: {fileID: 436226943169484091}
-  blinkInterval: 0.01
+  tempoInvisivel: 3
   useLives: 1
   currentLives: 3
   maximumLives: 3
-  tempoInvisivel: 3
   deathEffect: {fileID: 6218169049356006189, guid: 68794701c80057447857bb433e54c579, type: 3}
   hitEffect: {fileID: 5156419567158778961, guid: d35295653acdbe24081a5caee3d9c353, type: 3}
+  hitSound: {fileID: 4625570402135317304, guid: d35295653acdbe24081a5caee3d9c353, type: 3}
+  deathSound: {fileID: 3451089215068300000, guid: 68794701c80057447857bb433e54c579, type: 3}
 --- !u!50 &3071271792905132556
 Rigidbody2D:
   serializedVersion: 5
@@ -352,9 +356,10 @@ MonoBehaviour:
       m_Action: Fire
       m_Flags: 0
     m_Flags: 0
-  fireRate: 0.05
+  fireRateBase: 0.15
   projectileSpread: 1
   fireEffect: {fileID: 8000435538804692873, guid: 40a02cfccf2ecb94db6958f6772d74d7, type: 3}
+  fireSound: {fileID: 0}
   weaponLevel: 1
 --- !u!114 &2707695389140076033
 MonoBehaviour:
@@ -368,6 +373,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9ffb675228a02549b7b948db2801f3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScreenClearBomb
+  somLaunchBomba: {fileID: 8300000, guid: 9b01f288976c9b74b81e6685d5ad9a27, type: 3}
+  somExplosao: {fileID: 8300000, guid: f427503b291daf34f8bd5778cea194c9, type: 3}
+  tempoParaExplodirNoAudio: 1
+  volumeGeral: 1
+  prefabParticulasResiduo: {fileID: 959379273785769899, guid: 147c4bc04baf55641b39cc65eb29e1dd, type: 3}
   bombasAtuais: 0
   maximoDeBombas: 5
   detonateAction:
@@ -617,7 +627,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 3bb0bc83f945ef94cada9b3c795977cd, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -740,6 +750,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2002533460549390314}
     m_Modifications:
+    - target: {fileID: 329879916216467214, guid: 4a79c50ede0c2e849aca5c2f1c6a92ca, type: 3}
+      propertyPath: hitSound
+      value: 
+      objectReference: {fileID: 4625570402135317304, guid: d35295653acdbe24081a5caee3d9c353, type: 3}
+    - target: {fileID: 329879916216467214, guid: 4a79c50ede0c2e849aca5c2f1c6a92ca, type: 3}
+      propertyPath: hitEffect
+      value: 
+      objectReference: {fileID: 5156419567158778961, guid: d35295653acdbe24081a5caee3d9c353, type: 3}
+    - target: {fileID: 329879916216467214, guid: 4a79c50ede0c2e849aca5c2f1c6a92ca, type: 3}
+      propertyPath: deathSound
+      value: 
+      objectReference: {fileID: 3451089215068300000, guid: 68794701c80057447857bb433e54c579, type: 3}
+    - target: {fileID: 329879916216467214, guid: 4a79c50ede0c2e849aca5c2f1c6a92ca, type: 3}
+      propertyPath: deathEffect
+      value: 
+      objectReference: {fileID: 6218169049356006189, guid: 68794701c80057447857bb433e54c579, type: 3}
     - target: {fileID: 5182291960608970504, guid: 4a79c50ede0c2e849aca5c2f1c6a92ca, type: 3}
       propertyPath: m_Name
       value: shield_buble

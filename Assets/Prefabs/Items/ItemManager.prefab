@@ -48,6 +48,6 @@ MonoBehaviour:
   healthPrefab: {fileID: 4233252830194245230, guid: 52439e88be5ae8c46a68a21be85c7eba, type: 3}
   TiroPrefab: {fileID: 8340899225136180974, guid: 7c52f5ab55e96cc4ebeebe29188a9c85, type: 3}
   bombaPrefab: {fileID: 8340899225136180974, guid: 00a6dd757cd667344a2fc6dd9bb59fb7, type: 3}
-  nivelDificuldade: 2
-  limiteX: {x: -7, y: 7}
-  limiteY: {x: -9, y: 8}
+  nivelDificuldade: 1
+  limiteX: {x: -21, y: 11}
+  limiteY: {x: -21, y: 11}
