@@ -8,7 +8,7 @@ public class MotherShip : MonoBehaviour
     [Header("Configurações do Escudo")]
     public Health escudoHealth;
     public int totalNavesParaEnviar = 10;
-    private int navesEnviadas = 0;
+    public int navesEnviadas = 0; 
     public int vidaEscudoEstagio2 = 15;
 
     private List<GameObject> navesVivas = new List<GameObject>();

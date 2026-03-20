@@ -31,9 +31,9 @@ public class GameManager : MonoBehaviour
     [Header("Progresso e Vitória")]
     public bool gameIsWinnable = true;
     public int enemiesToDefeat = 10;
-    private int enemiesDefeated = 0;
+    public int enemiesDefeated = 0; 
     public bool printDebugOfWinnableStatus = true;
-    public string nomePaginaVitoria = "VictoryPage"; // Mudado para string
+    public string nomePaginaVitoria = "VictoryPage";
     public GameObject victoryEffect;
     public AudioSource victorySound;
 
