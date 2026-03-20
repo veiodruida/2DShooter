@@ -98,7 +98,22 @@ public class Damage : MonoBehaviour
                 {
                     Instantiate(hitEffect, transform.position, transform.rotation, null);
                 }
-                if (destroyAfterDamage)
+                
+                // Se o alvo é o Player (teamId 0) e este é um inimigo (teamId 1)
+                // o inimigo também sofre dano
+                if (collisionGameObject.CompareTag("Player") && this.teamId != 0)
+                {
+                    Health minhaHealth = GetComponent<Health>();
+                    if (minhaHealth != null)
+                    {
+                        Debug.Log($"<color=yellow>Inimigo sofreu {damageAmount} de dano por colisão com Player!</color>");
+                        minhaHealth.TakeDamage(damageAmount); // Agora usa damageAmount!
+                        return;
+                    }
+                }
+                
+                // Apenas destroi se for projétil (não inimigo colidindo)
+                if (destroyAfterDamage && !gameObject.CompareTag("Enemy"))
                 {
                     if (gameObject.GetComponent<Enemy>() != null)
                     {
