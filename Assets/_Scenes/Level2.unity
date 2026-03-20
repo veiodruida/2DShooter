@@ -674,6 +674,29 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
+--- !u!1 &399662962 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2226249563226905185, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
+  m_PrefabInstance: {fileID: 3687459915380285481}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &399662963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399662962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a03a5adc3e2974aa3022aa96218f31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AsteroidSpawner
+  asteroidPrefab: {fileID: 4762709477250367634, guid: b289e07895452244383cb41b59b6d359, type: 3}
+  intervaloMin: 1.5
+  intervaloMax: 4
+  larguraSpawn: 30
+  alturaSpawn: 30
+  aumentarFrequenciaNoModoFuria: 1
 --- !u!1001 &446796212
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1961,11 +1984,11 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1040415391}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 6863f84fb72922c479ebecc849abe751, type: 3}
+  m_Resource: {fileID: 8300000, guid: a49e291e9e189ca47bf49672d5c292ba, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.51
   m_Pitch: 1
@@ -4041,11 +4064,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7860117143545360838, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 13.24
+      value: -4.6
       objectReference: {fileID: 0}
     - target: {fileID: 7860117143545360838, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -22.93
+      value: 4.4
       objectReference: {fileID: 0}
     - target: {fileID: 7860117143545360838, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4082,7 +4105,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2226249563226905185, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 399662963}
   m_SourcePrefab: {fileID: 100100000, guid: 9d27630009231a348a89e205e34b8faa, type: 3}
 --- !u!1001 &5915817677557011400
 PrefabInstance:

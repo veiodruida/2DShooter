@@ -94,34 +94,41 @@ public class Damage : MonoBehaviour
             if (collidedHealth.teamId != this.teamId)
             {
                 collidedHealth.TakeDamage(damageAmount);
+
                 if (hitEffect != null)
                 {
                     Instantiate(hitEffect, transform.position, transform.rotation, null);
                 }
-                
-                // Se o alvo é o Player (teamId 0) e este é um inimigo (teamId 1)
-                // o inimigo também sofre dano
-                if (collisionGameObject.CompareTag("Player") && this.teamId != 0)
+
+                // Lógica de dano mútuo (Player ou Asteroid batendo em algo)
+                if ((collisionGameObject.CompareTag("Player") || collisionGameObject.CompareTag("Asteroid")) && this.teamId != 0)
                 {
                     Health minhaHealth = GetComponent<Health>();
                     if (minhaHealth != null)
                     {
-                        Debug.Log($"<color=yellow>Inimigo sofreu {damageAmount} de dano por colisão com Player!</color>");
-                        minhaHealth.TakeDamage(damageAmount); // Agora usa damageAmount!
+                        minhaHealth.TakeDamage(damageAmount);
                         return;
                     }
                 }
-                
-                // Apenas destroi se for projétil (não inimigo colidindo)
-                if (destroyAfterDamage && !gameObject.CompareTag("Enemy"))
+
+                // AJUSTE AQUI: O projétil deve sumir ao atingir Inimigos OU Asteroides
+                if (destroyAfterDamage && !gameObject.CompareTag("Enemy") && !gameObject.CompareTag("Asteroid"))
                 {
-                    if (gameObject.GetComponent<Enemy>() != null)
+                    // Se for um inimigo (nave) colidindo, chama o DoBeforeDestroy
+                    Enemy enemyScript = GetComponent<Enemy>();
+                    if (enemyScript != null)
                     {
-                        gameObject.GetComponent<Enemy>().DoBeforeDestroy();
+                        enemyScript.DoBeforeDestroy();
                     }
+                    Destroy(this.gameObject);
+                }
+                // Caso seja um tiro/laser (que normalmente não tem tag Enemy nem Asteroid)
+                else if (destroyAfterDamage && !gameObject.CompareTag("Player"))
+                {
                     Destroy(this.gameObject);
                 }
             }
         }
     }
 }
+
