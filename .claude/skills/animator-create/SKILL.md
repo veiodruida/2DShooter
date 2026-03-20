@@ -1,4 +1,4 @@
-﻿---
+---
 name: animator-create
 description: Create Unity's AnimatorController asset files. Creates folders recursively if they do not exist. Each path should start with 'Assets/' and end with '.controller'.
 ---
@@ -7,15 +7,29 @@ description: Create Unity's AnimatorController asset files. Creates folders recu
 
 ## How to Call
 
-### CLI (Direct Tool Execution)
-
-Execute this tool directly via command line:
-
 ```bash
-npx unity-mcp-cli run-tool animator-create --input '{
+unity-mcp-cli run-tool animator-create --input '{
   "sourcePaths": "string_value"
 }'
 ```
+
+> For complex input (multi-line strings, code), save the JSON to a file and use:
+> ```bash
+> unity-mcp-cli run-tool animator-create --input-file args.json
+> ```
+>
+> Or pipe via stdin (recommended):
+> ```bash
+> unity-mcp-cli run-tool animator-create --input-file - <<'EOF'
+> {"param": "value"}
+> EOF
+> ```
+
+
+### Troubleshooting
+
+If `unity-mcp-cli` is not found, either install it globally (`npm install -g unity-mcp-cli`) or use `npx unity-mcp-cli` instead.
+Read the /unity-initial-setup skill for detailed installation instructions.
 
 ## Input
 
