@@ -37,6 +37,16 @@ public class GameManager : MonoBehaviour
     public GameObject victoryEffect;
     public AudioSource victorySound;
 
+     [Header("Configurações de Game Over")]
+    public string nomePaginaGameOver = "GameOverPage"; // Mudado para string
+    public GameObject gameOverEffect;
+    public AudioSource gameOverSound;
+
+    [Header("Configurações de Musica Fundo")]
+    public AudioSource bgmSource;
+    public float tempoDeFade = 1.5f;
+
+
     [Header("Configurações de Nível de Dificuldade")]
     public int nivelAtual = 1;
     public GameSettings.Dificuldade dificuldadeSelecionada;
@@ -49,10 +59,9 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool gameIsOver = false;
 
-    [Header("Configurações de Game Over")]
-    public string nomePaginaGameOver = "GameOverPage"; // Mudado para string
-    public GameObject gameOverEffect;
-    public AudioSource gameOverSound;
+   
+
+
 
     private void Awake()
     {
@@ -390,7 +399,7 @@ public class GameManager : MonoBehaviour
             UIManager.instance.UpdateUI();
             UIManager.instance.GoToPageByName(nomePaginaVitoria);
             if (victoryEffect != null) Instantiate(victoryEffect, transform.position, transform.rotation);
-            if (victorySound != null) victorySound.Play();
+            if (victorySound != null) StartCoroutine(TransicaoMusicaVitoria());
         }
         LimparObjetosDaCena();
     }
@@ -400,6 +409,8 @@ public class GameManager : MonoBehaviour
         if (gameIsOver) return;
         gameIsOver = true;
         Time.timeScale = 0f; // TRAVA O JOGO
+        // Paramos o BGM imediatamente para o som de Game Over brilhar
+        if (bgmSource != null) StartCoroutine(TransicaoMusicaVitoria());
 
         if (gameOverEffect != null) Instantiate(gameOverEffect, transform.position, transform.rotation);
         if (gameOverSound != null)
@@ -426,7 +437,24 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+    IEnumerator TransicaoMusicaVitoria()
+    {
+        if (bgmSource != null)
+        {
+            float volumeInicial = bgmSource.volume;
+            for (float t = 0; t < tempoDeFade; t += Time.deltaTime)
+            {
+                bgmSource.volume = Mathf.Lerp(volumeInicial, 0, t / tempoDeFade);
+                yield return null;
+            }
+            bgmSource.Stop();
+            bgmSource.volume = volumeInicial; // Deixa o volume pronto para o próximo restart
+        }
 
+        // Toca o som de fim de jogo se for o último nível, senão toca o de vitória normal
+        if (nivelAtual == 3 && gameOverSound != null) gameOverSound.Play();
+        else if (victorySound != null) victorySound.Play();
+    }
 
     private void OnApplicationQuit()
     {
