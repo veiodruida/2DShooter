@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -2003890914777251417}
   - component: {fileID: 6020931118487972950}
   - component: {fileID: -1693276996495579158}
+  - component: {fileID: -5355594510246912759}
   m_Layer: 10
   m_Name: Enemy_DiagonalProjectile 1_0
   m_TagString: EnemyProjectile
@@ -213,8 +214,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Damage
   teamId: 1
   damageAmount: 1
-  hitEffect: {fileID: 0}
+  hitEffect: {fileID: 772346753889214456, guid: 4333782c388b9854b901838850365c22, type: 3}
   destroyAfterDamage: 1
   dealDamageOnTriggerEnter: 1
   dealDamageOnTriggerStay: 0
   dealDamageOnCollision: 0
+--- !u!114 &-5355594510246912759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940634707089963652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52c9a4613bbc6ce4b809b21678067793, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  teamId: 0
+  defaultHealth: 1
+  maximumHealth: 1
+  currentHealth: 1
+  invincibilityTime: 3
+  isAlwaysInvincible: 0
+  isInvincible: 0
+  characterSprite: {fileID: 0}
+  tempoInvisivel: 3
+  useLives: 0
+  currentLives: 3
+  maximumLives: 5
+  deathEffect: {fileID: 2452382815751308013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
+  hitEffect: {fileID: 6229913163069739088, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
+  hitSound: {fileID: 5893807288569042745, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
+  deathSound: {fileID: 0}
