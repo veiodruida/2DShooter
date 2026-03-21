@@ -91,20 +91,42 @@ public class Asteroid : MonoBehaviour
     {
         for (int i = 0; i < quantidadeFilhos; i++)
         {
-            GameObject filhoGO = Instantiate(gameObject, transform.position, Quaternion.identity);
+            // FÚRIA: Expulsão espacial. Nascem com um offset horizontal para escaparem do foco da explosão da calhau mãe.
+            float desvioPosX = (i == 0) ? -0.8f : 0.8f;
+            Vector3 posNascer = transform.position + new Vector3(desvioPosX, 0, 0);
+
+            GameObject filhoGO = Instantiate(gameObject, posNascer, Quaternion.identity);
             Asteroid filhoScript = filhoGO.GetComponent<Asteroid>();
+
+            // O clone em Unity herda variáveis privadas do pai morto. Ressuscitamos a booleana fundamental!
+            filhoScript.estaDestruindo = false;
+
+            // FÚRIA: Invulnerabilidade (i-frames). Desativa o colisor para que o raio de explosão atual não os mate instantaneamente!
+            Collider2D filhoCol = filhoGO.GetComponent<Collider2D>();
+            if (filhoCol != null)
+            {
+                filhoCol.enabled = false;
+                filhoScript.Invoke("AtivarColisorProtegido", 0.35f); // 0.35 segundos fantasmas
+            }
 
             // Configura o filho para a próxima geração
             filhoScript.geracaoAtual = geracaoAtual + 1;
             filhoGO.transform.localScale = transform.localScale * multiplicadorEscalaFilho;
 
-            // Faz o filho ser um pouco mais rápido que o pai
-            filhoScript.velocidadeReal = velocidadeReal * 1.2f;
+            // FÚRIA: Velocidade massivamente superior (Expelidos agressivamente)
+            filhoScript.velocidadeReal = velocidadeReal * 1.8f;
 
-            // Dá uma direção lateral para se separarem
-            float desvioX = (i == 0) ? -0.5f : 0.5f;
-            filhoScript.direcaoMovimento = new Vector3(direcaoMovimento.x + desvioX, direcaoMovimento.y, 0).normalized;
+            // FÚRIA: Ângulos de dispersão oblíquos e hostis para espalhar caoticamente
+            float desvioDirX = (i == 0) ? Random.Range(-1.6f, -0.6f) : Random.Range(0.6f, 1.6f);
+            float desvioDirY = Random.Range(-0.4f, 0.4f);
+            filhoScript.direcaoMovimento = new Vector3(direcaoMovimento.x + desvioDirX, direcaoMovimento.y + desvioDirY, 0).normalized;
         }
+    }
+
+    void AtivarColisorProtegido()
+    {
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = true;
     }
 
     void SoltarParticulas()
