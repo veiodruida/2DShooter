@@ -21,7 +21,7 @@ public class RecordDisplay : MonoBehaviour
         }
         else
         {
-            textoTempoRecorde.text = "MELHOR TEMPO: ---";
+            textoTempoRecorde.text = "BEST TIME: ---";
         }
     }
 

@@ -1097,7 +1097,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 418, y: -70}
+  m_AnchoredPosition: {x: 459, y: -145}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &843581474
@@ -1129,8 +1129,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190335
+  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1840,7 +1840,7 @@ PrefabInstance:
       objectReference: {fileID: 521604785}
     - target: {fileID: 3936081893875274733, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3936081893875274735, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_RaycastTarget
@@ -1956,12 +1956,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6275624368621631229, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_text
-      value: "RANK   |   POINTS   |   TIME \nRANK   |   POINTS   |   TIME \nRANK  
+      value: "---------------------------------------\nRANK   |   POINTS   |   TIME  
+        |   MODE        \nRANK   |   POINTS   |   TIME \nRANK   |   POINTS   |  
+        TIME \nRANK   |   POINTS   |   TIME \nRANK   |   POINTS   |   TIME \nRANK  
         |   POINTS   |   TIME \nRANK   |   POINTS   |   TIME \nRANK   |   POINTS  
         |   TIME \nRANK   |   POINTS   |   TIME \nRANK   |   POINTS   |   TIME \nRANK  
         |   POINTS   |   TIME \nRANK   |   POINTS   |   TIME \nRANK   |   POINTS  
-        |   TIME \nRANK   |   POINTS   |   TIME \nRANK   |   POINTS   |   TIME \nRANK  
-        |   POINTS   |   TIME "
+        |   TIME "
       objectReference: {fileID: 0}
     - target: {fileID: 6275624368621631229, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_Enabled
@@ -1981,7 +1982,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6275624368621631229, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_margin.y
-      value: 70.76169
+      value: 75.36505
+      objectReference: {fileID: 0}
+    - target: {fileID: 6275624368621631229, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
+      propertyPath: m_margin.z
+      value: 12.659225
       objectReference: {fileID: 0}
     - target: {fileID: 6275624368621631229, guid: 395330b6cfb66f246a4c7682cf797c5e, type: 3}
       propertyPath: m_fontSizeBase
