@@ -50,42 +50,50 @@ public class AsteroidSpawner : MonoBehaviour
     {
         if (asteroidPrefab == null) return;
 
+        // Pega os limites do jogo via CameraController, mas mantém limiteX e limiteY do Inspector intactos para o Spawn Externo!
+        Vector2 alvoCameraX = limiteX;
+        Vector2 alvoCameraY = limiteY;
+
+        CameraController cam = FindFirstObjectByType<CameraController>();
+        if (cam != null)
+        {
+            alvoCameraX = new Vector2(cam.minBounds.x, cam.maxBounds.x);
+            alvoCameraY = new Vector2(cam.minBounds.y, cam.maxBounds.y);
+        }
+
         Vector3 posicaoSpawn = Vector3.zero;
         Vector3 direcao = Vector3.zero;
 
-        // Escolhe um lado aleatório (0: Topo, 1: Baixo, 2: Esquerda, 3: Direita)
         int lado = Random.Range(0, 4);
 
+        // Nasce estritamente na borda Externa definida no Inspector (limiteX e limiteY originais do Spawner)
         switch (lado)
         {
             case 0: // TOPO
                 posicaoSpawn = new Vector3(Random.Range(limiteX.x, limiteX.y), limiteY.y, 0);
-                direcao = new Vector3(Random.Range(-0.5f, 0.5f), -1, 0).normalized;
                 break;
             case 1: // BAIXO
                 posicaoSpawn = new Vector3(Random.Range(limiteX.x, limiteX.y), limiteY.x, 0);
-                direcao = new Vector3(Random.Range(-0.5f, 0.5f), 1, 0).normalized;
                 break;
             case 2: // ESQUERDA
                 posicaoSpawn = new Vector3(limiteX.x, Random.Range(limiteY.x, limiteY.y), 0);
-                direcao = new Vector3(1, Random.Range(-0.5f, 0.5f), 0).normalized;
                 break;
             case 3: // DIREITA
                 posicaoSpawn = new Vector3(limiteX.y, Random.Range(limiteY.x, limiteY.y), 0);
-                direcao = new Vector3(-1, Random.Range(-0.5f, 0.5f), 0).normalized;
                 break;
         }
 
-        // Cria o asteroide
+        // MAGIA FÚRIA: Traçar reta implacável mirando exatamente na área de jogo (os limites da câmara)
+        Vector3 alvoAleatorioNaEcra = new Vector3(Random.Range(alvoCameraX.x, alvoCameraX.y), Random.Range(alvoCameraY.x, alvoCameraY.y), 0);
+        direcao = (alvoAleatorioNaEcra - posicaoSpawn).normalized;
+
         GameObject novoAsteroid = Instantiate(asteroidPrefab, posicaoSpawn, Quaternion.identity);
 
-        // Define a direção e tamanho antes do Start do asteroide rodar
         Asteroid astScript = novoAsteroid.GetComponent<Asteroid>();
         if (astScript != null)
         {
             astScript.direcaoMovimento = direcao;
 
-            // Define tamanho aleatório
             float tam = Random.Range(tamanhoMin, tamanhoMax);
             novoAsteroid.transform.localScale = new Vector3(tam, tam, 1);
             astScript.tamanhoDefinido = true;
