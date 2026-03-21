@@ -13,6 +13,7 @@ TagManager:
   - PlayerProjectile
   - Asteroid
   - Boss
+  - Bomb
   layers:
   - Default
   - TransparentFX

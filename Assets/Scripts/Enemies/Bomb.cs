@@ -76,6 +76,30 @@ public class Bomb : MonoBehaviour
 
         // Rotação visual constante (efeito de girar no próprio eixo Z)
         transform.Rotate(Vector3.forward * velocidadeRotacaoVisual * Time.deltaTime);
+
+        // FÚRIA OVERRIDE: O Unity Physics Matrix quebrou quando mudaste a Layer/Tag para "Bomb" ou porque
+        // os prefabs não têm Rigidbody2D. Isto força ativamente a zona espacial.
+        Collider2D[] colisoesForcadas = Physics2D.OverlapCircleAll(transform.position, 0.7f);
+        foreach (Collider2D col in colisoesForcadas)
+        {
+            if (col.CompareTag("Asteroid"))
+            {
+                // Força a explosão dupla (nativa lá em baixo)
+                OnTriggerEnter2D(col); 
+            }
+            else if (col.CompareTag("PlayerProjectile"))
+            {
+                // Força a Bomba a receber o tiro e apaga o projétil
+                Health myHealth = GetComponent<Health>();
+                Damage procDamage = col.GetComponent<Damage>();
+                int dmg = procDamage != null ? procDamage.damageAmount : 1;
+                
+                if (myHealth != null) myHealth.TakeDamage(dmg);
+                else Destroy(gameObject);
+
+                Destroy(col.gameObject);
+            }
+        }
     }
 
     /// <summary>
@@ -88,10 +112,12 @@ public class Bomb : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Colisão com Asteroide - Bomb garante sua morte c/ explosão
+        // Colisão com Asteroide - Bomb garante sua morte c/ explosão e ferindo a pedra.
         if (other.CompareTag("Asteroid"))
         {
-            // O Asteroide já se auto-danifica no script Asteroid.cs. Evitamos duplicar o trigger.
+            // O Spawner e o Unity podem atrasar/excluir eventos simultâneos, forçamos dano daqui.
+            Health asteroidHealth = other.GetComponent<Health>();
+            if (asteroidHealth != null) asteroidHealth.TakeDamage(999);
             
             Health myHealth = GetComponent<Health>();
             if (myHealth != null) 

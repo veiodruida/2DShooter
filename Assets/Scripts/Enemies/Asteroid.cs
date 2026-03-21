@@ -111,6 +111,11 @@ public class Asteroid : MonoBehaviour
     {
         if (particulasExplosao != null)
         {
+            if (particulasExplosao.GetComponent<Projectile>() != null)
+            {
+                Debug.LogWarning("FÚRIA ABSOLUTA: particulasExplosao no Asteroide é um Tiro/Projétil! Ignorando.");
+                return;
+            }
             GameObject fx = Instantiate(particulasExplosao, transform.position, Quaternion.identity);
             Destroy(fx, 2f); // Garante limpeza da memória
         }
