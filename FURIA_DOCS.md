@@ -36,7 +36,18 @@
   `camHalfWidth = aspect * orthoSize`
 
 ### 2.6 User Interface (Sync Layer)
-- **`UIManager.cs` & Modules (`UiShieldDisplay.cs`, `UIHealthDisplay.cs`)**: For bulletproof synchronization, no UI updates manually via standard `Update()`. They all inherit from our base class `UIelement.cs`. On `Start()`, they auto-locate their Scene target (`GameObject.FindGameObjectWithTag("Player")`) and cache references. `UIManager.instance.UpdateUI()` broadcasts changes passively.
+- **`UIManager.cs` & Modules (`UiShieldDisplay.cs`, `UIHealthDisplay.cs`)**: For bulletproof synchronization, all UI components must inherit from `UIelement.cs` and implement auto-location in `UpdateUI()`:
+  ```csharp
+  if (playerHealth == null) {
+      GameObject player = GameObject.FindGameObjectWithTag("Player");
+      if (player != null) playerHealth = player.GetComponent<Health>();
+  }
+  ```
+  **RULE:** Never trust Inspector references for UI components in dynamic levels (1, 2, 3). Always use Tag-based recovery as a fallback.
+
+### 2.7 Boss Phases & Asset Swapping
+- **`MotherShip.cs` Event:** When transitioning to Stage 2 (`AtivarEstagio2()`), do NOT just change `SpriteRenderer.color`. 
+- **RULE:** Use physical Asset swapping. Assign the High-Res variant (e.g. `retro_buble_boss_red`) to the `spriteEscudoEstagio2` field and swap the `sr.sprite` dynamically. This preserves pixel density and the intended "Boss Mode" visual identity.
 
 ---
 
