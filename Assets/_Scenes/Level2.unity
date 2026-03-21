@@ -3989,10 +3989,6 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5388958102619714466, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
-      propertyPath: spriteEscudoEstagio2
-      value: 
-      objectReference: {fileID: -3168324640971537483, guid: a7ee7b7ed55ef6647846154677b0f732, type: 3}
-    - target: {fileID: 5388958102619714466, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
       propertyPath: inimigosPrefabs.Array.size
       value: 5
       objectReference: {fileID: 0}
@@ -4335,18 +4331,6 @@ PrefabInstance:
       propertyPath: mobileMoveJoystick
       value: 
       objectReference: {fileID: 65182030}
-    - target: {fileID: 7757960526826039249, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
-      propertyPath: hitSound
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7757960526826039249, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
-      propertyPath: isInvincible
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7757960526826039249, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
-      propertyPath: isAlwaysInvincible
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

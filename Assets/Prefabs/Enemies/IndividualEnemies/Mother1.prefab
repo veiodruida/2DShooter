@@ -548,6 +548,7 @@ MonoBehaviour:
   totalNavesParaEnviar: 20
   navesEnviadas: 0
   vidaEscudoEstagio2: 100
+  spriteEscudoEstagio2: {fileID: -3168324640971537483, guid: a7ee7b7ed55ef6647846154677b0f732, type: 3}
   inimigosPrefabs:
   - {fileID: 8282131552441171991, guid: 576cba70e4daccf488dda522850ba325, type: 3}
   - {fileID: 111767558614867189, guid: cfd62ad4c55daa942bae8f75211b08e0, type: 3}
