@@ -1,18 +1,21 @@
-﻿using UnityEngine;
+using UnityEngine;
 using TMPro;
 using System.Linq;
+using System.Collections.Generic;
 
 public class HistoricoDisplay : MonoBehaviour
 {
     public TextMeshProUGUI textoLista;
 
-    void Start()
+    void OnEnable()
     {
         MostrarHistorico();
     }
 
     void MostrarHistorico()
     {
+        if (textoLista == null) return;
+
         string historicoRaw = PlayerPrefs.GetString("historico_partidas", "");
 
         if (string.IsNullOrEmpty(historicoRaw))
@@ -21,26 +24,50 @@ public class HistoricoDisplay : MonoBehaviour
             return;
         }
 
-        string[] entradas = historicoRaw.Split(',');
-        string textoFormatado = " RANK   |   POINTS   |   TIME \n";
-        textoFormatado += "----------------------------------\n";
+        var partidas = new List<(int pontos, string tempo, string dif)>();
 
-        for (int i = 0; i < entradas.Length; i++)
+        foreach (string entrada in historicoRaw.Split(','))
         {
-            if (string.IsNullOrEmpty(entradas[i])) continue;
+            string e = entrada.Trim();
+            if (string.IsNullOrEmpty(e)) continue;
 
-            string[] dados = entradas[i].Split('|');
+            // Suporta novo formato (;) e formato legado (|)
+            char sep = e.Contains(';') ? ';' : '|';
+            string[] dados = e.Split(sep);
 
-            // Se a entrada estiver mal formatada, ignora para nao dar erro
             if (dados.Length < 2) continue;
 
-            string pontos = dados[0];
-            string tempo = dados[1];
+            int p = int.TryParse(dados[0].Trim(), out int parsed) ? parsed : 0;
+            string t = dados.Length > 1 ? dados[1].Trim() : "0.00";
+            string d = dados.Length > 2 ? dados[2].Trim() : "N/A";
 
-            textoFormatado += $" #{i + 1:D2}    |   {pontos.PadLeft(5)} pts   |   {tempo}s\n";
+            partidas.Add((p, t, d));
         }
 
-        textoLista.text = textoFormatado;
+        if (partidas.Count == 0)
+        {
+            textoLista.text = "No Records Found";
+            return;
+        }
+
+        var top10 = partidas.OrderByDescending(x => x.pontos).Take(10).ToList();
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("<color=yellow> RANK | POINTS  |  TIME  | MODE</color>");
+        sb.AppendLine("<color=white>----------------------------------</color>");
+
+        for (int i = 0; i < top10.Count; i++)
+        {
+            var item = top10[i];
+            string rank   = $"#{i + 1:D2}".PadRight(4);
+            string points = item.pontos.ToString().PadLeft(6);
+            string time   = item.tempo.PadLeft(6);
+            string mode   = item.dif.PadRight(7);
+
+            sb.AppendLine($" {rank} | {points} | {time}s | {mode}");
+        }
+
+        textoLista.text = sb.ToString();
     }
 
     public void LimparTudo()

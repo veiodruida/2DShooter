@@ -17,12 +17,9 @@ public class Controller : MonoBehaviour
     public float moveSpeed = 10.0f;
     public float rotationSpeed = 60f;
 
-    [Header("Motor Physics (Integrated)")]
+    [Header("Motor Physics")]
+    [Tooltip("Rampa do motor em segundos (ex: 0.3 = breve aceleração)")]
     public float accelerationTime = 0.3f;
-    private Vector2 currentVelocitySmoothing;
-
-    [Header("Smooth Input (Legacy)")]
-    public float smoothTime = 0.15f;
     private Vector2 currentInputVector;
     private Vector2 smoothInputVelocity;
 
@@ -130,15 +127,15 @@ public class Controller : MonoBehaviour
             LookAtPoint(mousePos);
         }
 
-        // 3. Suavização do Input (Mantendo o "Feeling" original)
+        // 3. Suavização do Input com AccelerationTime (Efeito de Motor: rampa breve)
         currentInputVector = Vector2.SmoothDamp(
             currentInputVector,
             moveInput,
             ref smoothInputVelocity,
-            smoothTime
+            accelerationTime
         );
 
-        // 4. Executa Movimento (Integrado com Física)
+        // 4. Executa Movimento (idêntico ao original)
         MovePlayer(currentInputVector);
 
         // 5. Animação e Som
@@ -166,29 +163,19 @@ public class Controller : MonoBehaviour
     {
         if (movementMode == MovementModes.Astroids)
         {
-            Vector2 force = transform.up * movement.y * moveSpeed * (1.0f / accelerationTime);
+            Vector2 force = transform.up * movement.y * moveSpeed * Time.deltaTime;
             myRigidbody.AddForce(force);
-            
             float rotationChange = movement.x * rotationSpeed * Time.deltaTime;
             transform.Rotate(0, 0, -rotationChange);
         }
         else
         {
-            // Movimento Relativo ao Mouse (W vai para frente) + Rampa de Aceleração
+            // ORIGINAL: WASD move em espaço mundial (W=cima ecrã, S=baixo, A=esq, D=dir)
+            // A nave aponta para o mouse mas o movimento é independente da rotação
             if (lockXCoordinate) movement.x = 0;
             if (lockYCoordinate) movement.y = 0;
 
-            // Calcula direção de mundo baseada na nave
-            Vector2 worldDirection = (transform.up * movement.y) + (transform.right * movement.x);
-            Vector2 targetVelocity = worldDirection * moveSpeed;
-
-            // SmoothDamp na velocidade física para o efeito de motor (0.3s)
-            myRigidbody.linearVelocity = Vector2.SmoothDamp(
-                myRigidbody.linearVelocity, 
-                targetVelocity, 
-                ref currentVelocitySmoothing, 
-                accelerationTime
-            );
+            transform.position += (Vector3)(movement * moveSpeed * Time.deltaTime);
         }
     }
 

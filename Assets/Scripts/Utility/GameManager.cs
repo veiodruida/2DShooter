@@ -38,14 +38,13 @@ public class GameManager : MonoBehaviour
     public AudioSource victorySound;
 
      [Header("Configurações de Game Over")]
-    public string nomePaginaGameOver = "GameOverPage"; // Mudado para string
+    public string nomePaginaGameOver = "GameOverPage";
     public GameObject gameOverEffect;
     public AudioSource gameOverSound;
 
     [Header("Configurações de Musica Fundo")]
     public AudioSource bgmSource;
     public float tempoDeFade = 1.5f;
-
 
     [Header("Configurações de Nível de Dificuldade")]
     public int nivelAtual = 1;
@@ -59,9 +58,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool gameIsOver = false;
 
-   
-
-
+    // Flag estática — garante salvamento único por sessão de jogo
+    private static bool hasSavedThisMatch = false;
 
     private void Awake()
     {
@@ -74,6 +72,7 @@ public class GameManager : MonoBehaviour
             player = Object.FindFirstObjectByType<Controller>().gameObject;
         }
     }
+
     void GerarLogDiagnostico()
     {
         if (GameSettings.instance == null || GameSettings.instance.configAtual == null)
@@ -89,32 +88,23 @@ public class GameManager : MonoBehaviour
         sb.AppendLine($"<color=white>==========================================</color>");
         sb.AppendLine($"<color=cyan><b>DIAGNÓSTICO DE DIFICULDADE: {dificuldadeNome.ToUpper()}</b></color>");
         sb.AppendLine($"<color=white>==========================================</color>");
-
-        // Seção Player
         sb.AppendLine($"<color=lime><b>[PLAYER]</b></color>");
         sb.AppendLine($" - Vidas: {cfg.vidasIniciais}");
         sb.AppendLine($" - Velocidade: {cfg.velocidadePlayer}");
         sb.AppendLine($" - Cadência Tiro: {cfg.taxaDeTiro}s");
-
-        // Seção Inimigos e Spawns
         sb.AppendLine($"<color=orange><b>[SISTEMA & SPAWNS]</b></color>");
         sb.AppendLine($" - Spawn Inimigos: {cfg.tempoSpawnInimigos}s");
         sb.AppendLine($" - Spawn Itens: {cfg.tempoSpawnItens}s");
         sb.AppendLine($" - Vel. Inimigo Base: {cfg.velocidadeInimigoComum}");
         sb.AppendLine($" - Recarga Tiro Inimigo: {cfg.intervaloTiroInimigo}s");
-
-        // Seção Boss
         sb.AppendLine($"<color=magenta><b>[BOSS MOTHERSHIP]</b></color>");
         sb.AppendLine($" - Escudo abre após: {cfg.navesParaAbrirEscudo} naves");
         sb.AppendLine($" - Vida Escudo (E2): {cfg.vidaDoEscudoEstagio2}");
         sb.AppendLine($" - Fúria 1 (Tiro/Vel): {cfg.intervaloFuria1}s / {cfg.velocidadeFuria1}");
         sb.AppendLine($" - Fúria 2 (Tiro/Vel): {cfg.intervaloFuria2}s / {cfg.velocidadeFuria2}");
-
-        // Seção Global
         sb.AppendLine($"<color=yellow><b>[GLOBAL]</b></color>");
         sb.AppendLine($" - Multiplicador de Dano: {cfg.multiplicadorDanoRecebido}x");
         sb.AppendLine($"<color=white>==========================================</color>");
-
         Debug.Log(sb.ToString());
     }
     
@@ -125,20 +115,35 @@ public class GameManager : MonoBehaviour
             Vector2 hotSpot = new Vector2(cursorCustomizado.width / 2f, cursorCustomizado.height / 2f);
             Cursor.SetCursor(cursorCustomizado, hotSpot, CursorMode.Auto);
             Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.Confined; // Mantém o mouse dentro da janela
+            Cursor.lockState = CursorLockMode.Confined;
         }
 
-        // 1. RODAR O STARTUP (Carrega PlayerPrefs e Reseta Arma)
         HandleStartUp();
+        // CRÍTICO: Reseta a flag no início de cada cena de jogo
+        hasSavedThisMatch = false;
         Time.timeScale = 1f;
+
         if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
         {
-            var cfg = GameSettings.instance.configAtual;
             GerarLogDiagnostico();
         }
         else
         {
             Debug.LogError("CUIDADO: Level 1 iniciado sem GameSettings ou sem arquivo DifficultyData!");
+        }
+    }
+
+    /// <summary>Mapeia o enum de dificuldade para o nome da nação exibido no jogo.</summary>
+    public static string GetDificuldadeNome()
+    {
+        if (GameSettings.instance == null) return "N/A";
+        switch (GameSettings.instance.dificuldadeSelecionada)
+        {
+            case GameSettings.Dificuldade.Facil:   return "USA";
+            case GameSettings.Dificuldade.Medio:   return "RUSSIA";
+            case GameSettings.Dificuldade.Dificil: return "N.KOREA";
+            case GameSettings.Dificuldade.Furia:   return "CUBA";
+            default:                               return "???";
         }
     }
 
@@ -180,7 +185,6 @@ public class GameManager : MonoBehaviour
             Controller playerController = player.GetComponent<Controller>();
             if (playerController != null)
             {
-                // Ativa o shield com o máximo de vidas
                 playerController.GanharEscudo(playerController.shieldObject != null
                     ? playerController.shieldObject.GetComponent<Health>().maximumLives
                     : 3);
@@ -212,7 +216,6 @@ public class GameManager : MonoBehaviour
 
     public float GetDificuldadeMultiplier()
     {
-        // Garantir que a variável local esteja sincronizada com o GameSettings antes do switch
         if (GameSettings.instance != null)
         {
             dificuldadeSelecionada = GameSettings.instance.dificuldadeSelecionada;
@@ -230,16 +233,11 @@ public class GameManager : MonoBehaviour
 
     public int CalcularVidaInimigo(int vidaBase)
     {
-        // 1. Tenta buscar o multiplicador do arquivo de dificuldade
         if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
         {
             float multiplicador = GameSettings.instance.configAtual.multiplicadorVidaInimigo;
-
-            // Se a vida base for 10 e o multiplicador for 1.5, retorna 15
             return Mathf.RoundToInt(vidaBase * multiplicador);
         }
-
-        // 2. Fallback caso o GameSettings não esteja pronto
         return vidaBase;
     }
 
@@ -248,7 +246,7 @@ public class GameManager : MonoBehaviour
         int pontosBase = 500;
         if (GameSettings.instance != null && GameSettings.instance.dificuldadeSelecionada == GameSettings.Dificuldade.Furia)
         {
-            return pontosBase * 2; // Dobro de pontos no modo Fúria
+            return pontosBase * 2;
         }
         return pontosBase;
     }
@@ -285,9 +283,22 @@ public class GameManager : MonoBehaviour
         UpdateUIElements();
     }
 
+    /// <summary>
+    /// Salva o resultado da partida atual no histórico.
+    /// Protegida por flag estática para garantir chamada única por sessão.
+    /// </summary>
     public static void SalvarDadosPartida()
     {
         if (instance == null) return;
+
+        // GUARD: Uma única execução por cena de jogo
+        if (hasSavedThisMatch)
+        {
+            Debug.Log("<color=orange>GameManager: SalvarDadosPartida ignorado (já salvo nesta partida).</color>");
+            return;
+        }
+        hasSavedThisMatch = true;
+        Debug.Log("<color=green>GameManager: Salvando partida...</color>");
 
         // --- 1. ATUALIZAR RECORDES ABSOLUTOS ---
         int recordePontos = PlayerPrefs.GetInt("highscore", 0);
@@ -305,65 +316,32 @@ public class GameManager : MonoBehaviour
             instance.tempoRecordeAnterior = instance.tempoDaFase;
         }
 
-        // --- 2. ADICIONAR AO HISTÓRICO (Para o HistoricoDisplay) ---
+        // --- 2. ADICIONAR AO HISTÓRICO ---
+        // CRÍTICO: InvariantCulture força '.' como decimal (locale PT/BR usa ',' o que quebra o split por ',')
+        string difNome = GetDificuldadeNome();
+        string tempoFormatado = instance.tempoDaFase.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+        string novaEntrada = $"{score};{tempoFormatado};{difNome}";
+
         string historicoAtual = PlayerPrefs.GetString("historico_partidas", "");
-        // Formato: Pontos|Tempo
-        string novaEntrada = $"{score}|{instance.tempoDaFase:F2}";
 
-        if (string.IsNullOrEmpty(historicoAtual))
-        {
-            historicoAtual = novaEntrada;
-        }
-        else
-        {
-            // Mantém apenas as últimas 10 partidas para não sobrecarregar
-            List<string> listaEntradas = historicoAtual.Split(',').ToList();
-            listaEntradas.Add(novaEntrada);
+        List<string> listaEntradas = string.IsNullOrEmpty(historicoAtual)
+            ? new List<string>()
+            : historicoAtual.Split(',').Where(e => !string.IsNullOrEmpty(e.Trim())).ToList();
 
-            if (listaEntradas.Count > 10)
-            {
-                listaEntradas.RemoveAt(0); // Remove a mais antiga
-            }
+        listaEntradas.Add(novaEntrada);
 
-            historicoAtual = string.Join(",", listaEntradas);
-        }
+        // Mantém apenas as últimas 50 entradas (display mostra apenas top 10)
+        if (listaEntradas.Count > 50)
+            listaEntradas = listaEntradas.Skip(listaEntradas.Count - 50).ToList();
 
-        PlayerPrefs.SetString("historico_partidas", historicoAtual);
+        PlayerPrefs.SetString("historico_partidas", string.Join(",", listaEntradas));
 
-        // --- 3. LIMPEZA FINAL ---
+        // --- 3. LIMPEZA E PERSISTÊNCIA ---
+        PlayerPrefs.SetInt("score", score);
+        PlayerPrefs.Save();
+
         instance.LimparObjetosDaCena();
-
-        // Salva fisicamente no disco
-        PlayerPrefs.Save();
-        Debug.Log("<color=green>GameManager: Recordes e Histórico salvos com sucesso!</color>");
-    }
-
-    public static void SalvarNoHistorico(int pontos, float tempo)
-    {
-        // 1. Pega o que já existe
-        string historicoAtual = PlayerPrefs.GetString("historico_partidas", "");
-
-        // 2. Cria a nova entrada formatada como o Display espera (PONTOS|TEMPO)
-        string novaEntrada = $"{pontos}|{tempo:F2}";
-
-        // 3. Junta ao histórico (separando por vírgula se já houver algo)
-        if (string.IsNullOrEmpty(historicoAtual))
-        {
-            historicoAtual = novaEntrada;
-        }
-        else
-        {
-            // Limita o histórico para não crescer infinitamente (ex: as últimas 10)
-            string[] todas = historicoAtual.Split(',');
-            if (todas.Length >= 10)
-                historicoAtual = string.Join(",", todas.Skip(1).ToArray()) + "," + novaEntrada;
-            else
-                historicoAtual += "," + novaEntrada;
-        }
-
-        // 4. Salva de volta
-        PlayerPrefs.SetString("historico_partidas", historicoAtual);
-        PlayerPrefs.Save();
+        Debug.Log($"<color=green>GameManager: Histórico salvo! Entrada: {novaEntrada}</color>");
     }
 
     public static void UpdateUIElements()
@@ -373,14 +351,11 @@ public class GameManager : MonoBehaviour
 
     public void LimparObjetosDaCena()
     {
-        // 1. Criamos uma lista com as Tags que queremos remover
         string[] tagsParaLimpar = { "EnemyProjectile", "Items", "PlayerProjectile", "Enemy" };
 
         foreach (string tag in tagsParaLimpar)
         {
-            // 2. Buscamos todos os objetos com essa Tag
             GameObject[] objetos = GameObject.FindGameObjectsWithTag(tag);
-
             foreach (GameObject obj in objetos)
             {
                 Destroy(obj);
@@ -392,15 +367,13 @@ public class GameManager : MonoBehaviour
 
     public void LevelCleared()
     {
-        // Se já for vitória, ignora. Se for GameOver, permite sobrescrever.
-        // (Nota: UIManager.GoToPageByName já fecha a página anterior)
-        Time.timeScale = 1f; 
+        // Restaurar timeScale (pode ter sido travado pelo GameOver simultâneo)
+        Time.timeScale = 1f;
 
         score = CalcularPontuacaoFinalDaFase();
         gameIsOver = true;
-        PlayerPrefs.SetInt("score", score);
-
-        if (score > highScore) SalvarDadosPartida();
+        
+        SalvarDadosPartida(); // Protegido pela flag — só executa uma vez
 
         if (nivelAtual == 3 && GameSettings.instance != null &&
             GameSettings.instance.dificuldadeSelecionada == GameSettings.Dificuldade.Dificil)
@@ -426,15 +399,13 @@ public class GameManager : MonoBehaviour
     {
         if (gameIsOver) return;
         gameIsOver = true;
-        Time.timeScale = 0f; // TRAVA O JOGO
-        // Paramos o BGM imediatamente para o som de Game Over brilhar
+        Time.timeScale = 0f;
+
         if (bgmSource != null) StartCoroutine(TransicaoMusicaVitoria());
 
         if (gameOverEffect != null) Instantiate(gameOverEffect, transform.position, transform.rotation);
         if (gameOverSound != null)
         {
-            // Usamos PlayClipAtPoint porque o Time.timeScale 0 pode afetar AudioSources comuns em alguns casos,
-            // e também garante que o som toque mesmo se o GameManager for mexido.
             AudioSource.PlayClipAtPoint(gameOverSound.clip, Camera.main.transform.position, gameOverSound.volume);
         }
 
@@ -444,6 +415,8 @@ public class GameManager : MonoBehaviour
             UIManager.instance.ConfigurarCursor(true);
             UIManager.instance.GoToPageByName(nomePaginaGameOver);
         }
+        
+        SalvarDadosPartida(); // Protegido pela flag — só executa uma vez
         LimparObjetosDaCena();
     }
 
@@ -455,6 +428,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
     IEnumerator TransicaoMusicaVitoria()
     {
         if (bgmSource != null)
@@ -466,10 +440,9 @@ public class GameManager : MonoBehaviour
                 yield return null;
             }
             bgmSource.Stop();
-            bgmSource.volume = volumeInicial; // Deixa o volume pronto para o próximo restart
+            bgmSource.volume = volumeInicial;
         }
 
-        // Toca o som de fim de jogo se for o último nível, senão toca o de vitória normal
         if (nivelAtual == 3 && gameOverSound != null) gameOverSound.Play();
         else if (victorySound != null) victorySound.Play();
     }
