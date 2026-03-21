@@ -22,6 +22,16 @@ public class Controller : MonoBehaviour
     private Vector2 currentInputVector;
     private Vector2 smoothInputVelocity;
 
+    [Header("Acceleration Settings")]
+    public float acceleration = 20f;
+    public float deceleration = 10f;
+    public float maxAccelerationTime = 0.5f;
+    public float maxDecelerationTime = 0.5f;
+    private float currentSpeed = 0f;
+    private float targetSpeed = 0f;
+    private bool isAccelerating = false;
+    private float accelerationProgress = 0f;
+
     [Header("Animation")]
     public Animator turbineAnimator;
 
@@ -86,6 +96,7 @@ public class Controller : MonoBehaviour
     void Update()
     {
         HandleInput();
+        HandleAcceleration();
     }
 
     private void HandleInput()
@@ -158,6 +169,57 @@ public class Controller : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void HandleAcceleration()
+    {
+        // Determinar se o jogador está a mover-se
+        bool isMoving = currentInputVector.sqrMagnitude > 0.01f;
+
+        // Se estiver a mover, acelerar
+        if (isMoving)
+        {
+            if (!isAccelerating)
+            {
+                isAccelerating = true;
+                accelerationProgress = 0f;
+            }
+
+            // Aumentar velocidade gradualmente
+            float speedIncrease = acceleration * Time.deltaTime;
+            currentSpeed = Mathf.Min(currentSpeed + speedIncrease, moveSpeed);
+            accelerationProgress += Time.deltaTime;
+
+            // Chegar à velocidade máxima
+            if (accelerationProgress >= maxAccelerationTime)
+            {
+                isAccelerating = false;
+                accelerationProgress = 0f;
+            }
+        }
+        // Se parar de mover, desacelerar
+        else
+        {
+            if (isAccelerating)
+            {
+                // Desacelerar gradualmente
+                float speedDecrease = deceleration * Time.deltaTime;
+                currentSpeed = Mathf.Max(currentSpeed - speedDecrease, 0f);
+                accelerationProgress += Time.deltaTime;
+
+                // Chegar à velocidade zero
+                if (accelerationProgress >= maxDecelerationTime)
+                {
+                    isAccelerating = false;
+                    accelerationProgress = 0f;
+                    currentSpeed = 0f;
+                }
+            }
+        }
+
+        // Aplicar a velocidade atual ao movimento
+        Vector3 movementVector = new Vector3(currentInputVector.x, currentInputVector.y, 0) * currentSpeed;
+        MovePlayer(movementVector);
     }
 
     private void MovePlayer(Vector3 movement)

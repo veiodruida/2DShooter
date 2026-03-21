@@ -24,16 +24,14 @@ public class Damage : MonoBehaviour
     public bool dealDamageOnTriggerStay = false;
     [Tooltip("Whether or not to apply damage on non-trigger collider collisions")]
     public bool dealDamageOnCollision = false;
+    [Tooltip("Force to apply to the object hit (knockback/repulsion)")]
+    public float repulsionForce = 0f;
 
     /// <summary>
     /// Description: 
     /// Standard Unity function called whenever a Collider2D enters any attached 2D trigger collider
     /// Inputs:
-    /// Collider2D collision
-    /// Returns:
-    /// void (no return)
     /// </summary>
-    /// <param name="collision">The Collider2D that set of the function call</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (dealDamageOnTriggerEnter)
@@ -46,11 +44,7 @@ public class Damage : MonoBehaviour
     /// Description:
     /// Standard Unity function called every frame a Collider2D stays in any attached 2D trigger collider
     /// Inputs:
-    /// Collider2D collision
-    /// Returns:
-    /// void (no return)
     /// </summary>
-    /// <param name="collision">The Collider2D that set of the function call</param>
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (dealDamageOnTriggerStay)
@@ -63,11 +57,7 @@ public class Damage : MonoBehaviour
     /// Description:
     /// Standard Unity function called when a Collider2D hits another Collider2D (non-triggers)
     /// Inputs:
-    /// Collision2D collision
-    /// Returns:
-    /// void (no return)
     /// </summary>
-    /// <param name="collision">The Collision2D that set of the function call</param>
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (dealDamageOnCollision)
@@ -81,11 +71,7 @@ public class Damage : MonoBehaviour
     /// This function deals damage to a health component if the collided 
     /// with gameobject has a health component attached AND it is on a different team.
     /// Inputs:
-    /// GameObject collisionGameObject
-    /// Returns:
-    /// void (no return)
     /// </summary>
-    /// <param name="collisionGameObject">The game object that has been collided with</param>
     private void DealDamage(GameObject collisionGameObject)
     {
         Health collidedHealth = collisionGameObject.GetComponent<Health>();
@@ -95,14 +81,32 @@ public class Damage : MonoBehaviour
             {
                 collidedHealth.TakeDamage(damageAmount);
 
-                // PREVENÇÃO DE TIRO FANTASMA: Abolir HitEffect partindo diretamente do Asteroide no script Damage
-                // O Asteroide já trata os seus visuais em Health.cs. Isto barra o glitch fatal do projétil sem sentido.
+                // Protocolo de Repulsão (Ricochete/Resistência)
+                if (repulsionForce > 0)
+                {
+                    Rigidbody2D rb = collisionGameObject.GetComponentInParent<Rigidbody2D>();
+                    if (rb == null) rb = collisionGameObject.GetComponent<Rigidbody2D>();
+
+                    if (rb != null)
+                    {
+                        // Direção oposta ao ponto de impacto para criar o efeito de ricochete
+                        Vector2 forceDirection = (collisionGameObject.transform.position - transform.position).normalized;
+                        
+                        // Zera a velocidade atual para garantir que o ricochete seja limpo e imediato
+                        rb.linearVelocity = Vector2.zero;
+                        rb.AddForce(forceDirection * repulsionForce, ForceMode2D.Impulse);
+                        
+                        Debug.Log($"<color=orange>FÚRIA:</color> Repulsão aplicada em {collisionGameObject.name} com força {repulsionForce}");
+                    }
+                }
+
+                // PREVENÇÃO DE TIRO FANTASMA...
                 if (hitEffect != null && !this.gameObject.CompareTag("Asteroid"))
                 {
                     Instantiate(hitEffect, transform.position, transform.rotation, null);
                 }
 
-                // Lógica de dano mútuo (Player ou Asteroid batendo em algo)
+                // Lógica de dano mútuo...
                 if ((collisionGameObject.CompareTag("Player") || collisionGameObject.CompareTag("Asteroid")) && this.teamId != 0)
                 {
                     Health minhaHealth = GetComponent<Health>();
@@ -113,21 +117,14 @@ public class Damage : MonoBehaviour
                     }
                 }
 
-                // Inimigos colidindo com o Escudo devem explodir (Die) em vez de só sumir (Destroy)
+                // Inimigos colidindo com o Escudo...
                 if (destroyAfterDamage && !gameObject.CompareTag("Player"))
                 {
-                    // Se for Asteroide ignoramos auto-destruição genérica (ele tem seu próprio split)
                     if (gameObject.CompareTag("Asteroid")) return;
 
                     Health myHealth = GetComponent<Health>();
-                    if (myHealth != null)
-                    {
-                        myHealth.Die();
-                    }
-                    else
-                    {
-                        Destroy(this.gameObject);
-                    }
+                    if (myHealth != null) myHealth.Die();
+                    else Destroy(this.gameObject);
                 }
             }
         }

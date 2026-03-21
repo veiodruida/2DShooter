@@ -293,10 +293,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
+  teamId: 1
   damageAmount: 1
+  repulsionForce: 15
   hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
   destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
+  dealDamageOnTriggerEnter: 1
   dealDamageOnTriggerStay: 0
   dealDamageOnCollision: 1
