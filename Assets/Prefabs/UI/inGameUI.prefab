@@ -616,6 +616,7 @@ GameObject:
   - component: {fileID: 2128546877633071668}
   - component: {fileID: 7116612505467848543}
   - component: {fileID: 374980274382098346}
+  - component: {fileID: 111222333444555}
   m_Layer: 5
   m_Name: ButtonBomb
   m_TagString: Untagged
@@ -2759,7 +2760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8834734170784175514, guid: bd6372cac36cf86438b3d3537ac67e40, type: 3}
       propertyPath: onlyOnMobile
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3219,7 +3220,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1304955669154038258, guid: b66fd64baee7c044a8b8d52f92fd88ff, type: 3}
       propertyPath: onlyOnMobile
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1304955669154038258, guid: b66fd64baee7c044a8b8d52f92fd88ff, type: 3}
       propertyPath: snapsToTouch
@@ -3483,3 +3484,16 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5454860797921983517, guid: a4c1ce3b5eca5574b9a65860cf6b8ed3, type: 3}
   m_PrefabInstance: {fileID: 8541811579372800172}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &111222333444555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2956907208211265653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 493c222c5ea975f4f8c2cfeb1d3d337a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MobileOnlyVisibility
+
