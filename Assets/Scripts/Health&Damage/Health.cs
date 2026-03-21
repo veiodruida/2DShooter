@@ -207,12 +207,17 @@ public class Health : MonoBehaviour
 
         if (gameObject.CompareTag("Shield")) { gameObject.SetActive(false); return; }
 
-        // Se for Asteroid, vamos garantir que ele suma AGORA
+        // Se for Asteroid, executa a lógica normal de divisão/explisão
         if (gameObject.CompareTag("Asteroid"))
         {
-            Debug.Log("Destruindo Asteroide Definitivamente");
+            Debug.Log("Asteroide morto - executando DividirOuExplodir");
+            Asteroid ast = GetComponent<Asteroid>();
+            if (ast != null)
+            {
+                ast.DividirOuExplodir();
+            }
             Destroy(this.gameObject);
-            return; // Sai da função aqui para garantir que não execute lógicas de inimigo normal
+            return;
         }
 
         Enemy enemyScript = GetComponent<Enemy>();
