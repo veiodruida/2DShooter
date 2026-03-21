@@ -185,6 +185,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5713966510806056000}
   - component: {fileID: -780115082085155600}
+  - component: {fileID: 5867224765808989126}
+  - component: {fileID: 1732521982663072737}
   m_Layer: 0
   m_Name: LowerRightCornerAsteroidWall
   m_TagString: Boundary
@@ -271,3 +273,49 @@ PolygonCollider2D:
       - {x: 0.58778536, y: -0.80901694}
       - {x: 1.3218756, y: 0.07481569}
   m_UseDelaunayMesh: 1
+--- !u!50 &5867224765808989126
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5510500780715556110}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &1732521982663072737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5510500780715556110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Damage
+  teamId: 0
+  damageAmount: 1
+  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
+  destroyAfterDamage: 0
+  dealDamageOnTriggerEnter: 0
+  dealDamageOnTriggerStay: 0
+  dealDamageOnCollision: 1
