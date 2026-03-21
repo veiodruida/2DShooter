@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8022954021460962557}
   - component: {fileID: 4327850106528714602}
   - component: {fileID: 584683058982610388}
+  - component: {fileID: 8802425309261549971}
   m_Layer: 8
   m_Name: StraightShooter
   m_TagString: Enemy
@@ -83,8 +84,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 112383389
+  m_SortingLayer: 3
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -1981481647227881137, guid: 78c80fc007bdeed409c072293dcce1c1, type: 3}
@@ -134,11 +135,11 @@ MonoBehaviour:
   moveSpeed: 2
   scoreValue: 5
   followTarget: {fileID: 0}
-  followRange: 30
+  followRange: 100
   guns:
-  - {fileID: 8282131553695226666}
+  - {fileID: 8282131553695226666, guid: 69bb62ab0a22b454ab3c1a7e6c5a110a, type: 3}
   shootMode: 1
-  movementMode: 2
+  movementMode: 1
   scrollDirection: {x: 1, y: 0, z: 0}
 --- !u!114 &8022954021460962557
 MonoBehaviour:
@@ -158,11 +159,16 @@ MonoBehaviour:
   currentHealth: 3
   invincibilityTime: 0
   isAlwaysInvincible: 0
+  isInvincible: 0
+  characterSprite: {fileID: 0}
+  tempoInvisivel: 3
   useLives: 0
-  currentLives: 3
-  maximumLives: 5
+  currentLives: 0
+  maximumLives: 0
   deathEffect: {fileID: 2452382815751308013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
   hitEffect: {fileID: 6229913163069739088, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
+  hitSound: {fileID: 5893807288569042745, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
+  deathSound: {fileID: 7808391201307655013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
 --- !u!50 &4327850106528714602
 Rigidbody2D:
   serializedVersion: 5
@@ -179,17 +185,17 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 55d60502848c29547bd83e2964c3190b, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 0
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  m_CollisionDetection: 1
+  m_Constraints: 4
 --- !u!60 &584683058982610388
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -200,7 +206,7 @@ PolygonCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 55d60502848c29547bd83e2964c3190b, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -220,7 +226,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -236,16 +242,41 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.02304387, y: 0.4431101}
-      - {x: -0.04343486, y: 0.3860395}
-      - {x: -0.41783214, y: 0.012124777}
-      - {x: -0.41783214, y: -0.14605439}
-      - {x: -0.4107151, y: -0.15775728}
-      - {x: 0.01616764, y: -0.53649855}
-      - {x: 0.4437735, y: -0.13073087}
-      - {x: 0.44377327, y: -0.06328368}
-      - {x: 0.43339705, y: 0.021777749}
+    - - {x: 0.009154081, y: 0.63062215}
+      - {x: -0.1267736, y: 0.49715734}
+      - {x: -0.41088724, y: 0.21352696}
+      - {x: -0.42477703, y: 0.13174176}
+      - {x: -0.4037702, y: 0.07836938}
+      - {x: -0.35399723, y: 0.0073194504}
+      - {x: -0.6394594, y: -0.29742634}
+      - {x: -0.3312657, y: -0.6183108}
+      - {x: 0.01616764, y: -0.34666377}
+      - {x: 0.3312552, y: -0.6169476}
+      - {x: 0.65479064, y: -0.29313254}
+      - {x: 0.3963735, y: -0.0013003349}
+      - {x: 0.42988372, y: 0.07067227}
+      - {x: 0.43682837, y: 0.14506364}
+      - {x: 0.4403417, y: 0.24401402}
   m_UseDelaunayMesh: 1
+--- !u!114 &8802425309261549971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8282131552441171991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  teamId: 1
+  damageAmount: 10
+  hitEffect: {fileID: 6229913163069739088, guid: d6029318d740811488fd5dd38a7e1ce1, type: 3}
+  destroyAfterDamage: 1
+  dealDamageOnTriggerEnter: 1
+  dealDamageOnTriggerStay: 1
+  dealDamageOnCollision: 1
 --- !u!1 &8282131553695226669
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,6 +333,8 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings: []
     m_Flags: 0
-  fireRate: 3
+  fireRateBase: 0.15
   projectileSpread: 1
   fireEffect: {fileID: 0}
+  fireSound: {fileID: 0}
+  weaponLevel: 1

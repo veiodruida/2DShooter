@@ -82,8 +82,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 1290740753
-  m_SortingLayer: 1
+  m_SortingLayerID: 1437489245
+  m_SortingLayer: -1
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 2ccba72608070304e92cd97ed9e5bce8, type: 3}
@@ -229,6 +229,11 @@ MonoBehaviour:
   quantidadeFilhos: 2
   multiplicadorEscalaFilho: 0.5
   particulasExplosao: {fileID: 3562651836113712045, guid: aee1688b385340b4bab2b46707955895, type: 3}
+  tamanhoMin: 0.5
+  tamanhoMax: 10
+  tamanhoDefinido: 0
+  velocidadeReal: 0
+  direcaoMovimento: {x: 0, y: 0, z: 0}
 --- !u!114 &8048458082651329784
 MonoBehaviour:
   m_ObjectHideFlags: 0
