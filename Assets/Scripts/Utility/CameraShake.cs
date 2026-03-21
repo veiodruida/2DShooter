@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class CameraShake : MonoBehaviour
@@ -30,7 +30,7 @@ public class CameraShake : MonoBehaviour
             // Aplica o desvio mantendo o Z da camara intacto
             transform.position += new Vector3(x, y, 0);
 
-            tempoPassado += Time.deltaTime;
+            tempoPassado += Time.unscaledDeltaTime;
             yield return null;
         }
 

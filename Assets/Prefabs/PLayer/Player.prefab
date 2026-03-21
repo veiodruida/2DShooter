@@ -141,6 +141,7 @@ MonoBehaviour:
   mobileLookJoystick: {fileID: 0}
   moveSpeed: 10
   rotationSpeed: 60
+  accelerationTime: 0.3
   smoothTime: 0.15
   turbineAnimator: {fileID: 3103540752278705010}
   moveAction:
@@ -627,7 +628,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 3bb0bc83f945ef94cada9b3c795977cd, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 0
   Mute: 0

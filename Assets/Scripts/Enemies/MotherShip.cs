@@ -334,7 +334,7 @@ public class MotherShip : MonoBehaviour
 
     public void FinalizarBoss()
     {
-        if (GameManager.instance != null && GameManager.instance.gameIsOver) return;
+        // Removido o bloqueio para permitir vitória conjunta.
 
         LimparCenaParaVitoria();
 

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -392,7 +392,9 @@ public class GameManager : MonoBehaviour
 
     public void LevelCleared()
     {
-        if (gameIsOver) return;
+        // Se já for vitória, ignora. Se for GameOver, permite sobrescrever.
+        // (Nota: UIManager.GoToPageByName já fecha a página anterior)
+        Time.timeScale = 1f; 
 
         score = CalcularPontuacaoFinalDaFase();
         gameIsOver = true;
