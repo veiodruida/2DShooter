@@ -45,6 +45,8 @@ public class Health : MonoBehaviour
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         ConfigurarDificuldadeInicial();
+
+       
     }
 
     void ConfigurarDificuldadeInicial()

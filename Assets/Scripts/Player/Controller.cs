@@ -22,6 +22,7 @@ public class Controller : MonoBehaviour
     public float accelerationTime = 0.3f;
     private Vector2 currentInputVector;
     private Vector2 smoothInputVelocity;
+    private Vector2 knockbackVelocity; // Acumula forças externas de repulsão
 
     [Header("Animation")]
     public Animator turbineAnimator;
@@ -170,13 +171,42 @@ public class Controller : MonoBehaviour
         }
         else
         {
-            // ORIGINAL: WASD move em espaço mundial (W=cima ecrã, S=baixo, A=esq, D=dir)
-            // A nave aponta para o mouse mas o movimento é independente da rotação
             if (lockXCoordinate) movement.x = 0;
             if (lockYCoordinate) movement.y = 0;
 
-            transform.position += (Vector3)(movement * moveSpeed * Time.deltaTime);
+            if (myRigidbody != null)
+            {
+                // PROTEÇÃO DO PILOTO: Se o escudo estiver ativo, o piloto fica invulnerável (apenas o escudo toma dano)
+                if (shieldObject != null)
+                {
+                    Health pilotHealth = GetComponent<Health>();
+                    if (pilotHealth != null) pilotHealth.isAlwaysInvincible = shieldObject.activeInHierarchy;
+                }
+
+                // CÁLCULO DE CONTROLE: Se o knockback for forte, o jogador perde controle parcial da nave
+                // Isso permite que o impulso de repulsão "ganhe" do WASD, empurrando a nave para longe.
+                float controlFactor = Mathf.Clamp01(1f - (knockbackVelocity.magnitude / (moveSpeed > 0 ? moveSpeed : 1f)));
+                
+                // Somamos a velocidade de input (atenuada pelo impacto) com o knockback
+                myRigidbody.linearVelocity = (movement * moveSpeed * controlFactor) + knockbackVelocity;
+                
+                // Decaimento do knockback (ajustado para ser um pouco mais persistente)
+                knockbackVelocity = Vector2.Lerp(knockbackVelocity, Vector2.zero, Time.deltaTime * 8f);
+            }
+            else
+            {
+                transform.position += (Vector3)(movement * moveSpeed * Time.deltaTime);
+            }
         }
+    }
+
+    /// <summary>
+    /// Aplica uma força de repulsão externa (ex: ao bater numa parede com dano)
+    /// </summary>
+    public void ApplyKnockback(Vector2 force)
+    {
+        // Define a velocidade de repulsão (usado pelo Damage.cs)
+        knockbackVelocity = force;
     }
 
     private void LookAtPoint(Vector2 lookPoint)

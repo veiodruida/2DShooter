@@ -222,15 +222,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Asteroid
   velocidadeMin: 2
   velocidadeMax: 5
-  rotacaoMin: 30
-  rotacaoMax: 100
+  rotacaoMin: 5
+  rotacaoMax: 50
   geracaoAtual: 0
   limiteGeracoes: 2
   quantidadeFilhos: 2
   multiplicadorEscalaFilho: 0.5
   particulasExplosao: {fileID: 3562651836113712045, guid: aee1688b385340b4bab2b46707955895, type: 3}
   tamanhoMin: 0.5
-  tamanhoMax: 100
+  tamanhoMax: 5
   tamanhoDefinido: 0
   velocidadeReal: 0
   direcaoMovimento: {x: 0, y: 0, z: 0}
@@ -253,3 +253,4 @@ MonoBehaviour:
   dealDamageOnTriggerEnter: 1
   dealDamageOnTriggerStay: 1
   dealDamageOnCollision: 1
+  repulsionForce: 0

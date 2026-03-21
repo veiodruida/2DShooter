@@ -58,8 +58,14 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool gameIsOver = false;
 
-    // Flag estática — garante salvamento único por sessão de jogo
+    // Flag estática — garante salvamento único por cena de jogo
     private static bool hasSavedThisMatch = false;
+
+    // NOVO: Garante apenas um registro no Records (historico_partidas) por jornada inteira
+    private static bool hasSavedToHistoryThisRun = false;
+    
+    // NOVO: Track do tempo total em todos os níveis
+    public static float tempoTotalPartida = 0f;
 
     private void Awake()
     {
@@ -119,6 +125,15 @@ public class GameManager : MonoBehaviour
         }
 
         HandleStartUp();
+        
+        // NOVO: Detecta o nível automaticamente pelo nome da cena
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName.StartsWith("Level") && int.TryParse(sceneName.Substring(5), out int levelNum))
+        {
+            nivelAtual = levelNum;
+            Debug.Log($"<color=cyan>GameManager: Nível detectado -> {nivelAtual}</color>");
+        }
+
         // CRÍTICO: Reseta a flag no início de cada cena de jogo
         hasSavedThisMatch = false;
         Time.timeScale = 1f;
@@ -152,6 +167,7 @@ public class GameManager : MonoBehaviour
         if (!gameIsOver)
         {
             tempoDaFase += Time.deltaTime;
+            tempoTotalPartida += Time.deltaTime; // Acumula tempo total da jogada
         }
     }
 
@@ -280,18 +296,21 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("score", 0);
         score = 0;
+        tempoTotalPartida = 0f; // Reseta o tempo total ao iniciar nova jornada
+        hasSavedToHistoryThisRun = false; // Permite um novo registro ao histórico
         UpdateUIElements();
     }
 
     /// <summary>
     /// Salva o resultado da partida atual no histórico.
-    /// Protegida por flag estática para garantir chamada única por sessão.
+    /// Protegida por flag estática para garantir chamada única por cena.
+    /// @param appendToHistory: Adiciona um novo registro na lista formatada (Records).
     /// </summary>
-    public static void SalvarDadosPartida()
+    public static void SalvarDadosPartida(bool appendToHistory = false)
     {
         if (instance == null) return;
 
-        // GUARD: Uma única execução por cena de jogo
+        // GUARD: Uma única execução por cena de jogo para evitar repetições
         if (hasSavedThisMatch)
         {
             Debug.Log("<color=orange>GameManager: SalvarDadosPartida ignorado (já salvo nesta partida).</color>");
@@ -310,38 +329,45 @@ public class GameManager : MonoBehaviour
             instance.highScore = score;
         }
 
+        // Para o recorde de 'melhor tempo', consideramos apenas a fase ou o total? 
+        // Aqui mantemos a lógica original de verificar se este tempo foi o menor registrado.
         if (instance.tempoDaFase < melhorTempo && instance.tempoDaFase > 1f)
         {
             PlayerPrefs.SetFloat("melhor_tempo", instance.tempoDaFase);
             instance.tempoRecordeAnterior = instance.tempoDaFase;
         }
 
-        // --- 2. ADICIONAR AO HISTÓRICO ---
-        // CRÍTICO: InvariantCulture força '.' como decimal (locale PT/BR usa ',' o que quebra o split por ',')
-        string difNome = GetDificuldadeNome();
-        string tempoFormatado = instance.tempoDaFase.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
-        string novaEntrada = $"{score};{tempoFormatado};{difNome}";
+        // --- 2. ADICIONAR AO HISTÓRICO (SOMENTE AO FINALIZAR A JORNADA) ---
+        if (appendToHistory && !hasSavedToHistoryThisRun)
+        {
+            hasSavedToHistoryThisRun = true;
+            // CRÍTICO: InvariantCulture força '.' como decimal
+            string difNome = GetDificuldadeNome();
+            // USAMOS tempoTotalPartida para representar a soma de todos os níveis
+            string tempoFormatado = tempoTotalPartida.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            string novaEntrada = $"{score};{tempoFormatado};{difNome}";
 
-        string historicoAtual = PlayerPrefs.GetString("historico_partidas", "");
+            string historicoAtual = PlayerPrefs.GetString("historico_partidas", "");
 
-        List<string> listaEntradas = string.IsNullOrEmpty(historicoAtual)
-            ? new List<string>()
-            : historicoAtual.Split(',').Where(e => !string.IsNullOrEmpty(e.Trim())).ToList();
+            List<string> listaEntradas = string.IsNullOrEmpty(historicoAtual)
+                ? new List<string>()
+                : historicoAtual.Split(',').Where(e => !string.IsNullOrEmpty(e.Trim())).ToList();
 
-        listaEntradas.Add(novaEntrada);
+            listaEntradas.Add(novaEntrada);
 
-        // Mantém apenas as últimas 50 entradas (display mostra apenas top 10)
-        if (listaEntradas.Count > 50)
-            listaEntradas = listaEntradas.Skip(listaEntradas.Count - 50).ToList();
+            // Mantém apenas as últimas 50 entradas
+            if (listaEntradas.Count > 50)
+                listaEntradas = listaEntradas.Skip(listaEntradas.Count - 50).ToList();
 
-        PlayerPrefs.SetString("historico_partidas", string.Join(",", listaEntradas));
+            PlayerPrefs.SetString("historico_partidas", string.Join(",", listaEntradas));
+            Debug.Log($"<color=cyan>GameManager: Novo registro adicionado ao Records: {novaEntrada}</color>");
+        }
 
         // --- 3. LIMPEZA E PERSISTÊNCIA ---
         PlayerPrefs.SetInt("score", score);
         PlayerPrefs.Save();
 
         instance.LimparObjetosDaCena();
-        Debug.Log($"<color=green>GameManager: Histórico salvo! Entrada: {novaEntrada}</color>");
     }
 
     public static void UpdateUIElements()
@@ -373,7 +399,8 @@ public class GameManager : MonoBehaviour
         score = CalcularPontuacaoFinalDaFase();
         gameIsOver = true;
         
-        SalvarDadosPartida(); // Protegido pela flag — só executa uma vez
+        // Só salva no Records se for o level final (L3)
+        SalvarDadosPartida(nivelAtual >= 3); 
 
         if (nivelAtual == 3 && GameSettings.instance != null &&
             GameSettings.instance.dificuldadeSelecionada == GameSettings.Dificuldade.Dificil)
@@ -416,7 +443,8 @@ public class GameManager : MonoBehaviour
             UIManager.instance.GoToPageByName(nomePaginaGameOver);
         }
         
-        SalvarDadosPartida(); // Protegido pela flag — só executa uma vez
+        // Morte do jogador encerra a jornada — registra no Records
+        SalvarDadosPartida(true); 
         LimparObjetosDaCena();
     }
 
@@ -449,7 +477,8 @@ public class GameManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        SalvarDadosPartida();
+        // Ao fechar o jogo voluntariamente, salvamos o progresso atual
+        SalvarDadosPartida(true);
         ResetScore();
     }
 }

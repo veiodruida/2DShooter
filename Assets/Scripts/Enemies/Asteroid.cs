@@ -114,7 +114,7 @@ public class Asteroid : MonoBehaviour
             filhoGO.transform.localScale = transform.localScale * multiplicadorEscalaFilho;
 
             // FÚRIA: Velocidade massivamente superior (Expelidos agressivamente)
-            filhoScript.velocidadeReal = velocidadeReal * 1.8f;
+            filhoScript.velocidadeReal = velocidadeReal * 0.8f;
 
             // FÚRIA: Ângulos de dispersão oblíquos e hostis para espalhar caoticamente
             float desvioDirX = (i == 0) ? Random.Range(-1.6f, -0.6f) : Random.Range(0.6f, 1.6f);
