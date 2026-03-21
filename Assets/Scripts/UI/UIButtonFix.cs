@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -7,7 +7,7 @@ public class UIButtonFix : MonoBehaviour
     public enum ButtonType { Unpause, GoToMenu, StartGame, GoToPage, QuitGame }
     public ButtonType tipo;
 
-    [Tooltip("Nome EXATO do objeto da página na Hierarquia (ex: Instructions)")]
+    [Tooltip("Nome EXATO do objeto da pagina na Hierarquia (ex: Instructions)")]
     public string nomeAlvo;
 
     void Start()
@@ -26,7 +26,7 @@ public class UIButtonFix : MonoBehaviour
                 btn.onClick.AddListener(() => { if (UIManager.instance != null) UIManager.instance.VoltarAoMenu(); });
                 break;
             case ButtonType.StartGame:
-                // Carrega a cena pelo nome definido no nomeAlvo (padrão Level1)
+                // Carrega a cena pelo nome definido no nomeAlvo (padrao Level1)
                 btn.onClick.AddListener(() => { SceneManager.LoadScene(string.IsNullOrEmpty(nomeAlvo) ? "Level1" : nomeAlvo); });
                 break;
             case ButtonType.GoToPage:

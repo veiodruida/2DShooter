@@ -1,13 +1,13 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
 /// Controla a interface visual da barra de vida e escudo do Boss.
-/// Gerencia efeitos de alerta (piscar) e ativa as fases de fúria da MotherShip.
+/// Gerencia efeitos de alerta (piscar) e ativa as fases de furia da MotherShip.
 /// </summary>
 public class UIBossHealthBar : UIelement
 {
-    [Header("Referências do Boss")]
+    [Header("Referencias do Boss")]
     public string bossName = "MotherShip";
     private MotherShip motherShipScript;
     private Health bossHealth;
@@ -26,12 +26,12 @@ public class UIBossHealthBar : UIelement
     public Color corShieldNormal = Color.cyan;
     public Color corShieldAlerta = Color.blue;
 
-    [Header("Configuração Global")]
+    [Header("Configuracao Global")]
     public float velocidadePiscar = 12f;
 
     /// <summary>
     /// Update executa a cada frame para garantir que o efeito de piscar 
-    /// seja suave, mesmo que o Boss não esteja recebendo dano no momento.
+    /// seja suave, mesmo que o Boss nao esteja recebendo dano no momento.
     /// </summary>
     void Update()
     {
@@ -55,11 +55,11 @@ public class UIBossHealthBar : UIelement
     }
 
     /// <summary>
-    /// Atualiza os valores das barras, cores e verifica gatilhos de fúria.
+    /// Atualiza os valores das barras, cores e verifica gatilhos de furia.
     /// </summary>
     public override void UpdateUI()
     {
-        // Busca as referências do Boss caso ainda não existam (Lazy Loading)
+        // Busca as referencias do Boss caso ainda nao existam (Lazy Loading)
         if (motherShipScript == null)
         {
             GameObject bossObj = GameObject.Find(bossName);
@@ -68,14 +68,14 @@ public class UIBossHealthBar : UIelement
                 motherShipScript = bossObj.GetComponent<MotherShip>();
                 bossHealth = bossObj.GetComponent<Health>();
             }
-            else return; // Se não encontrou o boss, interrompe a execução
+            else return; // Se nao encontrou o boss, interrompe a execucao
         }
 
         if (bossHealth == null) return;
 
-        // 1. CÁLCULO DAS PERCENTAGENS ATUAIS
+        // 1. CaLCULO DAS PERCENTAGENS ATUAIS
         float healthPct = (float)bossHealth.currentHealth / bossHealth.maximumHealth;
-        float shieldPct = 1f; // Inicia em 100% caso o escudo não exista ou já tenha morrido
+        float shieldPct = 1f; // Inicia em 100% caso o escudo nao exista ou ja tenha morrido
 
         bool temEscudoAtivo = motherShipScript.escudoHealth != null && motherShipScript.escudoHealth.gameObject.activeSelf;
 
@@ -86,16 +86,16 @@ public class UIBossHealthBar : UIelement
         }
         else
         {
-            shieldPct = 0; // Se o objeto do escudo sumiu, a porcentagem é 0
+            shieldPct = 0; // Se o objeto do escudo sumiu, a porcentagem e 0
         }
 
-        // 2. LÓGICA DE ATIVAÇÃO DAS FASES DE FÚRIA (PROGRESSIVA)
-        // Prioridade para Fase 2 (Vida Crítica)
+        // 2. LoGICA DE ATIVAcaO DAS FASES DE FuRIA (PROGRESSIVA)
+        // Prioridade para Fase 2 (Vida Critica)
         if (healthPct <= 0.25f && healthPct > 0)
         {
             motherShipScript.AtivarModoFuria(2);
         }
-        // Gatilho para Fase 1 (Escudo Crítico ou Destruído)
+        // Gatilho para Fase 1 (Escudo Critico ou Destruido)
         else if (shieldPct <= 0.25f || !temEscudoAtivo)
         {
             motherShipScript.AtivarModoFuria(1);
@@ -104,7 +104,7 @@ public class UIBossHealthBar : UIelement
         // Valor oscilante entre 0 e 1 para o efeito de piscar as cores
         float pingPong = Mathf.PingPong(Time.time * velocidadePiscar, 1);
 
-        // 3. ATUALIZAÇÃO VISUAL DA BARRA DE VIDA
+        // 3. ATUALIZAcaO VISUAL DA BARRA DE VIDA
         if (healthFillImage != null)
         {
             healthFillImage.fillAmount = Mathf.Clamp01(healthPct);
@@ -116,7 +116,7 @@ public class UIBossHealthBar : UIelement
                 healthFillImage.color = corHealthNormal;
         }
 
-        // 4. ATUALIZAÇÃO VISUAL DA BARRA DE ESCUDO
+        // 4. ATUALIZAcaO VISUAL DA BARRA DE ESCUDO
         if (shieldFillImage != null)
         {
             shieldFillImage.fillAmount = Mathf.Clamp01(shieldPct);
