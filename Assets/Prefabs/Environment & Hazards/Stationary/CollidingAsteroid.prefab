@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 380642245660516853}
   - component: {fileID: 6798826526941186338}
   - component: {fileID: 8048458082651329784}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: CollidingAsteroid
   m_TagString: Asteroid
   m_Icon: {fileID: 0}
@@ -230,7 +230,7 @@ MonoBehaviour:
   multiplicadorEscalaFilho: 0.5
   particulasExplosao: {fileID: 3562651836113712045, guid: aee1688b385340b4bab2b46707955895, type: 3}
   tamanhoMin: 0.5
-  tamanhoMax: 10
+  tamanhoMax: 100
   tamanhoDefinido: 0
   velocidadeReal: 0
   direcaoMovimento: {x: 0, y: 0, z: 0}

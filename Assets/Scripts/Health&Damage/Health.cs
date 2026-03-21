@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -112,10 +112,33 @@ public class Health : MonoBehaviour
         }
 
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
-        if (hitEffect != null) Instantiate(hitEffect, transform.position, transform.rotation);
+        if (hitEffect != null)
+        {
+            if (hitEffect.GetComponent<Projectile>() != null)
+            {
+                Debug.LogWarning("FÚRIA: Vetado o hitEffect porque é um Projétil! Corrija no Inspector da Unity.");
+            }
+            else
+            {
+                Instantiate(hitEffect, transform.position, transform.rotation);
+            }
+        }
         if (hitSound != null) hitSound.Play();
 
         CheckDeath();
+    }
+
+    // Força a animação de morte a tocar mesmo para o escudo
+    public void ForceDeathAnimation()
+    {
+        if (deathEffect != null)
+        {
+            Instantiate(deathEffect, transform.position, transform.rotation);
+        }
+        if (deathSound != null)
+        {
+            AudioSource.PlayClipAtPoint(deathSound.clip, transform.position, deathSound.volume);
+        }
     }
 
     bool CheckDeath()
@@ -178,12 +201,21 @@ public class Health : MonoBehaviour
 
         if (currentLives > 0)
         {
+            // Shield não deve tocar a deathAnimation do player, apenas pisca ou toca hitEffect
+            if (gameObject.CompareTag("Shield"))
+            {
+                if (hitEffect != null) Instantiate(hitEffect, transform.position, transform.rotation);
+                if (hitSound != null) hitSound.Play();
+            }
             Respawn();
         }
         else
         {
             if (gameObject.CompareTag("Shield"))
             {
+                // Shield desativado, não toca ForceDeathAnimation (evita explosão do player)
+                if (hitSound != null) AudioSource.PlayClipAtPoint(hitSound.clip, transform.position, hitSound.volume);
+
                 gameObject.SetActive(false);
                 currentLives = maximumLives;
                 currentHealth = defaultHealth;

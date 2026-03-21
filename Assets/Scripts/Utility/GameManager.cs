@@ -153,6 +153,7 @@ public class GameManager : MonoBehaviour
     void HandleStartUp()
     {
         ResetPlayerWeapon();
+        AtivarShieldDoPlayer();
 
         if (PlayerPrefs.HasKey("highscore")) highScore = PlayerPrefs.GetInt("highscore");
         if (PlayerPrefs.HasKey("score")) score = PlayerPrefs.GetInt("score");
@@ -169,6 +170,21 @@ public class GameManager : MonoBehaviour
         {
             ShootingController shooter = player.GetComponent<ShootingController>();
             if (shooter != null) shooter.weaponLevel = 1;
+        }
+    }
+
+    private void AtivarShieldDoPlayer()
+    {
+        if (player != null)
+        {
+            Controller playerController = player.GetComponent<Controller>();
+            if (playerController != null)
+            {
+                // Ativa o shield com o máximo de vidas
+                playerController.GanharEscudo(playerController.shieldObject != null
+                    ? playerController.shieldObject.GetComponent<Health>().maximumLives
+                    : 3);
+            }
         }
     }
 

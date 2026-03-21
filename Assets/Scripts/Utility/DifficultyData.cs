@@ -10,6 +10,8 @@ public class DifficultyData : ScriptableObject
 
     [Header("Spawner de Itens")]
     public float tempoSpawnItens = 4f;
+    [Range(0f, 1f)]
+    public float chanceSpawnItens = 0.5f; // Chance de spawn por tick (0-100%)
 
     [Header("Player")]
     public int vidasIniciais = 3;
@@ -23,12 +25,12 @@ public class DifficultyData : ScriptableObject
     public float intervaloBombaBoss = 3f;
     public float velocidadeBombaBoss = 10f;
 
-    [Header("Boss - Modos de Fúria")]
-    [Tooltip("Modo Fúria 1 é ativado em certa porcentagem de vida")]
+    [Header("Boss - Modos de Fï¿½ria")]
+    [Tooltip("Modo Fï¿½ria 1 ï¿½ ativado em certa porcentagem de vida")]
     public float intervaloFuria1 = 10f;
     public float velocidadeFuria1 = 5f;
 
-    [Tooltip("Modo Fúria 2 é o estágio final, mais agressivo")]
+    [Tooltip("Modo Fï¿½ria 2 ï¿½ o estï¿½gio final, mais agressivo")]
     public float intervaloFuria2 = 7f;
     public float velocidadeFuria2 = 16f;
 

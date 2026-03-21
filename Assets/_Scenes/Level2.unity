@@ -696,6 +696,8 @@ MonoBehaviour:
   intervaloMax: 4
   limiteX: {x: -31, y: 21}
   limiteY: {x: -31, y: 21}
+  tamanhoMin: 1.5
+  tamanhoMax: 2.5
   aumentarFrequenciaNoModoFuria: 1
 --- !u!1001 &446796212
 PrefabInstance:
@@ -1747,7 +1749,7 @@ Transform:
   m_GameObject: {fileID: 982152443}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.8, y: 8.8, z: 0}
+  m_LocalPosition: {x: -3.68, y: 8.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3936,6 +3938,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 2023851674}
+    - target: {fileID: 6311551969062295425, guid: d51a81cd3b8f4ad4e9b124f38adc4e80, type: 3}
+      propertyPath: usarLimites
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4019,7 +4025,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5388958102619714466, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
       propertyPath: inimigosPrefabs.Array.size
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5388958102619714466, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
       propertyPath: 'inimigosPrefabs.Array.data[4]'
@@ -4032,6 +4038,10 @@ PrefabInstance:
     - target: {fileID: 7811214727569079488, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
       propertyPath: m_Name
       value: MotherShip
+      objectReference: {fileID: 0}
+    - target: {fileID: 7811214727569079488, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 9219839869720329765, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
       propertyPath: m_LocalScale.x

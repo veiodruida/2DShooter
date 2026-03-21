@@ -72,6 +72,9 @@ public class Controller : MonoBehaviour
         {
             moveSpeed = GameSettings.instance.configAtual.velocidadePlayer;
         }
+
+        // FÚRIA: O jogador inicia com o Shield no máximo
+        GanharEscudo(3);
     }
 
     private void ConfigurarVisibilidadeJoysticks(bool mostrar)
