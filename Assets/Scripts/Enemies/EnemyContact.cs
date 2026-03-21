@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class EnemyContact : MonoBehaviour
 {
-    /*[Header("Configurações de Dano")]
+    [Header("Configurações de Dano")]
     public int danoNoPlayer = 1;
-        public int danoNoInimigoAoBater = 1;
+    public int danoNoInimigoAoBater = 1;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -35,5 +35,5 @@ public class EnemyContact : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-    }*/
+    }
 }
