@@ -55,6 +55,16 @@ public class ItemSpawner : MonoBehaviour
             return;
         }
 
+        // 1. Verifica a chance de spawn baseada na dificuldade
+        float chance = (GameSettings.instance != null && GameSettings.instance.configAtual != null)
+            ? GameSettings.instance.configAtual.chanceSpawnItens
+            : 0.5f;
+
+        if (Random.value > chance)
+        {
+            return; // Não spawna neste tick
+        }
+
         float posX = Random.Range(limiteX.x, limiteX.y);
         float posY = Random.Range(limiteY.x, limiteY.y);
         Vector3 posicaoAleatoria = new Vector3(posX, posY, 0);

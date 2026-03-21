@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -95,7 +95,9 @@ public class Damage : MonoBehaviour
             {
                 collidedHealth.TakeDamage(damageAmount);
 
-                if (hitEffect != null)
+                // PREVENÇÃO DE TIRO FANTASMA: Abolir HitEffect partindo diretamente do Asteroide no script Damage
+                // O Asteroide já trata os seus visuais em Health.cs. Isto barra o glitch fatal do projétil sem sentido.
+                if (hitEffect != null && !this.gameObject.CompareTag("Asteroid"))
                 {
                     Instantiate(hitEffect, transform.position, transform.rotation, null);
                 }
@@ -111,21 +113,21 @@ public class Damage : MonoBehaviour
                     }
                 }
 
-                // AJUSTE AQUI: O projétil deve sumir ao atingir Inimigos OU Asteroides
-                if (destroyAfterDamage && !gameObject.CompareTag("Enemy") && !gameObject.CompareTag("Asteroid"))
+                // Inimigos colidindo com o Escudo devem explodir (Die) em vez de só sumir (Destroy)
+                if (destroyAfterDamage && !gameObject.CompareTag("Player"))
                 {
-                    // Se for um inimigo (nave) colidindo, chama o DoBeforeDestroy
-                    Enemy enemyScript = GetComponent<Enemy>();
-                    if (enemyScript != null)
+                    // Se for Asteroide ignoramos auto-destruição genérica (ele tem seu próprio split)
+                    if (gameObject.CompareTag("Asteroid")) return;
+
+                    Health myHealth = GetComponent<Health>();
+                    if (myHealth != null)
                     {
-                        enemyScript.DoBeforeDestroy();
+                        myHealth.Die();
                     }
-                    Destroy(this.gameObject);
-                }
-                // Caso seja um tiro/laser (que normalmente não tem tag Enemy nem Asteroid)
-                else if (destroyAfterDamage && !gameObject.CompareTag("Player"))
-                {
-                    Destroy(this.gameObject);
+                    else
+                    {
+                        Destroy(this.gameObject);
+                    }
                 }
             }
         }

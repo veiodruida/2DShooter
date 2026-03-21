@@ -1,51 +1,56 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
-public class UIShieldSpriteDisplay : UIelement
+public class UiShieldDisplay : UIelement
 {
-    [Header("Configurações")]
     public Image displayImage;
-    public List<Sprite> shieldSprites; // 0 (Vazio), 1, 2, 3 (Cheio)
-
+    public Sprite[] shieldSprites; // 0 = empty, 1 = 1 life, 2 = 2 lives
     private Health shieldHealth;
+
+    private void Start()
+    {
+        UpdateUI();
+    }
 
     public override void UpdateUI()
     {
-        // Debug para saber se o UIManager pelo menos chamou a função
-       // Debug.Log("<color=orange>UpdateUI do Escudo foi CHAMADO!</color>");
-
         if (shieldHealth == null)
         {
-            // Busca o ShieldController mesmo que esteja desativado
-            ShieldController sc = FindFirstObjectByType<ShieldController>(FindObjectsInactive.Include);
-            if (sc != null)
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
             {
-                shieldHealth = sc.GetComponent<Health>();
+                Controller controller = player.GetComponent<Controller>();
+                if (controller != null && controller.shieldObject != null)
+                {
+                    shieldHealth = controller.shieldObject.GetComponent<Health>();
+                }
             }
         }
 
-        if (shieldHealth == null)
+        if (shieldHealth == null || !shieldHealth.gameObject.activeSelf)
         {
-        //    Debug.LogWarning("UI Escudo: Health do escudo não encontrado.");
+            if (displayImage != null && shieldSprites.Length > 0)
+            {
+                displayImage.sprite = shieldSprites[0];
+                displayImage.enabled = true;
+                displayImage.gameObject.SetActive(true);
+            }
             return;
         }
 
-        if (displayImage == null) return;
-
         int vidasAtuais = shieldHealth.currentLives;
-
-        // Regra visual: só mostra se o objeto do escudo estiver ATIVO na cena
-        if (!shieldHealth.gameObject.activeInHierarchy || vidasAtuais <= 0)
+        
+        if (displayImage != null && shieldSprites != null && vidasAtuais < shieldSprites.Length)
         {
-            displayImage.enabled = false;
-        }
-        else
-        {
+            displayImage.sprite = shieldSprites[vidasAtuais];
             displayImage.enabled = true;
-            int index = Mathf.Clamp(vidasAtuais, 0, shieldSprites.Count - 1);
-            displayImage.sprite = shieldSprites[index];
-         //   Debug.Log("<color=cyan>UI Escudo atualizada para vida: </color>" + vidasAtuais);
+            displayImage.gameObject.SetActive(true);
+        }
+        else if (displayImage != null && shieldSprites != null && shieldSprites.Length > 0)
+        {
+            displayImage.sprite = shieldSprites[shieldSprites.Length - 1];
+            displayImage.enabled = true;
+            displayImage.gameObject.SetActive(true);
         }
     }
 }

@@ -205,5 +205,15 @@ public class Enemy : MonoBehaviour
             Health myHealth = GetComponent<Health>();
             if (myHealth != null) myHealth.TakeDamage(1);
         }
+
+        // Colisão com Astoneroide - ambos explodem
+        if (other.CompareTag("Asteroid"))
+        {
+            Health myHealth = GetComponent<Health>();
+            if (myHealth != null) myHealth.TakeDamage(1); // Dano instantâneo
+
+            Health asteroidHealth = other.GetComponent<Health>();
+            if (asteroidHealth != null) asteroidHealth.TakeDamage(1);
+        }
     }
 }

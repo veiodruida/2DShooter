@@ -276,6 +276,20 @@ public class MotherShip : MonoBehaviour
                 rbPlayer.AddForce(direcao * forcaRicochete, ForceMode2D.Impulse);
             }
         }
+
+        // Colisão com Asteroide - asteroide explode, MotherShip só toma dano se o escudo estiver aberto
+        if (collision.CompareTag("Asteroid"))
+        {
+            Health asteroidHealth = collision.GetComponent<Health>();
+            if (asteroidHealth != null) asteroidHealth.TakeDamage(999);
+
+            // Se o escudo já foi destruído, a MotherShip toma dano
+            if (!estagio2Ativo || (escudoHealth != null && !escudoHealth.gameObject.activeSelf))
+            {
+                Health myHealth = GetComponent<Health>();
+                if (myHealth != null) myHealth.TakeDamage(1);
+            }
+        }
     }
 
     public void FinalizarBoss()

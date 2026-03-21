@@ -120,11 +120,36 @@ public class Asteroid : MonoBehaviour
     {
         if (other.CompareTag("Shield"))
         {
+            Damage otherDamage = other.GetComponent<Damage>() ?? other.GetComponentInParent<Damage>();
+            int baseDamage = otherDamage != null ? otherDamage.damageAmount : 1;
+
+            Damage myDamage = GetComponent<Damage>();
+            int dealtDamage = myDamage != null ? myDamage.damageAmount : 1;
+
             Health shieldHealth = other.GetComponent<Health>();
-            if (shieldHealth != null) shieldHealth.TakeDamage(1);
+            if (shieldHealth != null) shieldHealth.TakeDamage(dealtDamage);
 
             Health myHealth = GetComponent<Health>();
-            if (myHealth != null) myHealth.TakeDamage(1);
+            if (myHealth != null) myHealth.TakeDamage(baseDamage);
+        }
+        else if (other.CompareTag("Boss") || other.CompareTag("Enemy") || other.CompareTag("EnemyProjectile") || other.CompareTag("Bomb"))
+        {
+            Damage otherDamage = other.GetComponent<Damage>() ?? other.GetComponentInParent<Damage>();
+            int baseDamage = otherDamage != null ? otherDamage.damageAmount : 1;
+
+            Damage myDamage = GetComponent<Damage>();
+            int dealtDamage = myDamage != null ? myDamage.damageAmount : 1;
+
+            // Asteroide leva dano real do alvo
+            Health myHealth = GetComponent<Health>();
+            if (myHealth != null) myHealth.TakeDamage(baseDamage);
+
+            // O alvo leva o dano exato do asteroide
+            Health targetHealth = other.GetComponent<Health>();
+            if (targetHealth != null) 
+            {
+                targetHealth.TakeDamage(dealtDamage);
+            }
         }
     }
 }

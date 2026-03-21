@@ -85,4 +85,28 @@ public class Bomb : MonoBehaviour
     {
         Destroy(gameObject);
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Colisão com Asteroide - Bomb garante sua morte c/ explosão
+        if (other.CompareTag("Asteroid"))
+        {
+            // O Asteroide já se auto-danifica no script Asteroid.cs. Evitamos duplicar o trigger.
+            
+            Health myHealth = GetComponent<Health>();
+            if (myHealth != null) 
+            {
+                myHealth.Die();
+            }
+            else 
+            {
+                Damage myDamage = GetComponent<Damage>();
+                if (myDamage != null && myDamage.hitEffect != null)
+                {
+                    Instantiate(myDamage.hitEffect, transform.position, transform.rotation);
+                }
+                Destroy(gameObject);
+            }
+        }
+    }
 }
