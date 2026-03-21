@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
@@ -17,7 +17,7 @@ public class BombButtonController : MonoBehaviour
             scriptBomba = player.GetComponent<ScreenClearBomb>();
         }
 
-        // Configura o clique do botão
+        // Configura o clique do botao
         if (botaoBomba != null)
         {
             botaoBomba.onClick.AddListener(TentarDispararBomba);
@@ -30,7 +30,7 @@ public class BombButtonController : MonoBehaviour
     {
         if (scriptBomba == null) return;
 
-        // Gerir visual do botão: fica cinzento (desativado) se não houver bombas
+        // Gerir visual do botao: fica cinzento (desativado) se nao houver bombas
         botaoBomba.interactable = (scriptBomba.bombasAtuais > 0);
 
         // Atualiza o contador de texto (ex: "3")
@@ -45,9 +45,9 @@ public class BombButtonController : MonoBehaviour
     {
         if (scriptBomba != null && scriptBomba.bombasAtuais > 0)
         {
-            // Chamamos o método público que já criaste no teu script!
-            // Como o LancarNucleoBomba é privado no teu código original, 
-            // vamos precisar de uma pequena alteração lá ou criar um método público.
+            // Chamamos o metodo publico que ja criaste no teu script!
+            // Como o LancarNucleoBomba e privado no teu codigo original, 
+            // vamos precisar de uma pequena alteracao la ou criar um metodo publico.
             scriptBomba.DispararBombaPeloBotao();
         }
     }

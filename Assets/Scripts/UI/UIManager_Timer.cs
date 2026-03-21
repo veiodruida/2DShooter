@@ -1,9 +1,9 @@
-using UnityEngine;
-using TMPro; // Remova se usar o Text padrão da Unity
+ï»¿using UnityEngine;
+using TMPro; // Remova se usar o Text padrao da Unity
 
 public class UIManager_Timer : MonoBehaviour
 {
-    [Header("Referências de Texto")]
+    [Header("Referencias de Texto")]
     public TextMeshProUGUI textoCronometro; // Arraste o TimerText aqui
     public TextMeshProUGUI textoScore;      // Arraste o seu texto de Score aqui (opcional)
 

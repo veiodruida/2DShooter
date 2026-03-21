@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 
 public class CameraShake : MonoBehaviour
@@ -22,18 +22,18 @@ public class CameraShake : MonoBehaviour
 
         while (tempoPassado < duracao)
         {
-            // Calcula um desvio aleatório
+            // Calcula um desvio aleatorio
             float x = Random.Range(-1f, 1f) * magnitude;
             float y = Random.Range(-1f, 1f) * magnitude;
 
-            // Aplica o desvio mantendo o Z da câmara intacto
-            // Somamos à posição que a câmara já tem (onde o jogador está)
+            // Aplica o desvio mantendo o Z da camara intacto
+            // Somamos a posicao que a camara ja tem (onde o jogador esta)
             transform.position += new Vector3(x, y, 0);
 
             tempoPassado += Time.deltaTime;
             yield return null;
 
-            // Removemos o desvio no frame seguinte para não "acumular" erro de posição
+            // Removemos o desvio no frame seguinte para nao "acumular" erro de posicao
             transform.position -= new Vector3(x, y, 0);
         }
     }

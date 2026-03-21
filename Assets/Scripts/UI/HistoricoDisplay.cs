@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 using System.Linq;
 
@@ -31,7 +31,7 @@ public class HistoricoDisplay : MonoBehaviour
 
             string[] dados = entradas[i].Split('|');
 
-            // Se a entrada estiver mal formatada, ignora para não dar erro
+            // Se a entrada estiver mal formatada, ignora para nao dar erro
             if (dados.Length < 2) continue;
 
             string pontos = dados[0];

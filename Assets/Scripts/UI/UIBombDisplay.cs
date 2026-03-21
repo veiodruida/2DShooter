@@ -1,16 +1,16 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 /// <summary>
-/// Elemento de UI que gerencia a exibição visual das bombas
+/// Elemento de UI que gerencia a exibicao visual das bombas
 /// </summary>
 public class UIBombDisplay : UIelement
 {
-    [Header("Configurações das Bombas")]
+    [Header("Configuracoes das Bombas")]
     public GameObject bombIconPrefab; // O prefab com o Image da bomba
     public Transform container;      // O objeto com o Horizontal Layout Group
 
     /// <summary>
-    /// Sobrescreve o método UpdateUI que o seu UIManager chama
+    /// Sobrescreve o metodo UpdateUI que o seu UIManager chama
     /// </summary>
     public override void UpdateUI()
     {
@@ -21,11 +21,11 @@ public class UIBombDisplay : UIelement
         ScreenClearBomb bombScript = GameManager.instance.player.GetComponent<ScreenClearBomb>();
         if (bombScript == null) return;
 
-        // 2. Sincroniza a quantidade de ícones com a quantidade de bombas
+        // 2. Sincroniza a quantidade de icones com a quantidade de bombas
         int iconesAtuais = container.childCount;
         int bombasParaExibir = bombScript.bombasAtuais;
 
-        // Adiciona ícones se faltarem
+        // Adiciona icones se faltarem
         if (iconesAtuais < bombasParaExibir)
         {
             for (int i = 0; i < bombasParaExibir - iconesAtuais; i++)
@@ -33,7 +33,7 @@ public class UIBombDisplay : UIelement
                 Instantiate(bombIconPrefab, container);
             }
         }
-        // Remove ícones se sobrarem
+        // Remove icones se sobrarem
         else if (iconesAtuais > bombasParaExibir)
         {
             for (int i = 0; i < iconesAtuais - bombasParaExibir; i++)
