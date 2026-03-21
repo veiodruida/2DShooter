@@ -15,6 +15,12 @@ public class AsteroidSpawner : MonoBehaviour
     public Vector2 limiteX = new Vector2(-21, 11);
     public Vector2 limiteY = new Vector2(-21, 11);
 
+    [Header("Tamanho dos Asteroides")]
+    [Tooltip("Escala mínima dos asteroides (Geração 0)")]
+    public float tamanhoMin = 1.5f;
+    [Tooltip("Escala máxima dos asteroides (Geração 0)")]
+    public float tamanhoMax = 2.5f;
+
     [Header("Dificuldade (Opcional)")]
     public bool aumentarFrequenciaNoModoFuria = true;
 
@@ -72,12 +78,17 @@ public class AsteroidSpawner : MonoBehaviour
 
         // Cria o asteroide
         GameObject novoAsteroid = Instantiate(asteroidPrefab, posicaoSpawn, Quaternion.identity);
-        
-        // Define a direção antes do Start do asteroide rodar
+
+        // Define a direção e tamanho antes do Start do asteroide rodar
         Asteroid astScript = novoAsteroid.GetComponent<Asteroid>();
         if (astScript != null)
         {
             astScript.direcaoMovimento = direcao;
+
+            // Define tamanho aleatório
+            float tam = Random.Range(tamanhoMin, tamanhoMax);
+            novoAsteroid.transform.localScale = new Vector3(tam, tam, 1);
+            astScript.tamanhoDefinido = true;
         }
 
         novoAsteroid.transform.parent = this.transform;

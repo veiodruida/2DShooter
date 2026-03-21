@@ -17,6 +17,11 @@ public class Asteroid : MonoBehaviour
     [Header("Efeitos")]
     public GameObject particulasExplosao;
 
+    [Header("Tamanho (Geração 0)")]
+    public float tamanhoMin = 1.5f;
+    public float tamanhoMax = 2.5f;
+
+    [HideInInspector] public bool tamanhoDefinido = false;
     [HideInInspector] public float velocidadeReal;
     public Vector3 direcaoMovimento = Vector3.zero;
 
@@ -32,10 +37,10 @@ public class Asteroid : MonoBehaviour
         rotacaoReal = Random.Range(rotacaoMin, rotacaoMax);
         direcaoRotacao = (Random.value > 0.5f) ? 1f : -1f;
 
-        // Se for o asteroide original (Geração 0), dá um tamanho aleatório inicial
-        if (geracaoAtual == 0)
+        // Se for o asteroide original (Geração 0) e tamanho não foi definido externamente
+        if (geracaoAtual == 0 && !tamanhoDefinido)
         {
-            float tam = Random.Range(1.5f, 2.5f);
+            float tam = Random.Range(tamanhoMin, tamanhoMax);
             transform.localScale = new Vector3(tam, tam, 1);
         }
 
