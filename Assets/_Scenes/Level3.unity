@@ -539,9 +539,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2105045780}
-    - targetCorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2105045779}
   m_SourcePrefab: {fileID: 100100000, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
 --- !u!1001 &203471102
 PrefabInstance:
@@ -602,9 +599,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2067244934}
-    - targetCorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2067244933}
   m_SourcePrefab: {fileID: 100100000, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
 --- !u!1001 &208702495
 PrefabInstance:
@@ -955,9 +949,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1992707685}
-    - targetCorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1992707684}
   m_SourcePrefab: {fileID: 100100000, guid: 700c51241ee865046976a824c12132ed, type: 3}
 --- !u!1 &519500907 stripped
 GameObject:
@@ -1272,9 +1263,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2145035089}
-    - targetCorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2145035088}
   m_SourcePrefab: {fileID: 100100000, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
 --- !u!114 &603976489 stripped
 MonoBehaviour:
@@ -1346,9 +1334,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1643321117}
-    - targetCorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1643321116}
   m_SourcePrefab: {fileID: 100100000, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
 --- !u!4 &637181782 stripped
 Transform:
@@ -1360,26 +1345,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4342142521596889719, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
   m_PrefabInstance: {fileID: 1759997111}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &691514704
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 133824384}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &691514705
 Rigidbody2D:
   serializedVersion: 5
@@ -1601,26 +1566,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3799202771222474680, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
   m_PrefabInstance: {fileID: 892533511}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &879343086
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 208869203}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &879343087
 Rigidbody2D:
   serializedVersion: 5
@@ -1707,9 +1652,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 879343087}
-    - targetCorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 879343086}
   m_SourcePrefab: {fileID: 100100000, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
 --- !u!4 &930745955 stripped
 Transform:
@@ -1866,9 +1808,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1566542208}
-    - targetCorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1566542207}
   m_SourcePrefab: {fileID: 100100000, guid: 700c51241ee865046976a824c12132ed, type: 3}
 --- !u!1 &1040415391
 GameObject:
@@ -2009,26 +1948,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4342142521596889719, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
   m_PrefabInstance: {fileID: 1935158154}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1056348030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519500907}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &1056348031
 Rigidbody2D:
   serializedVersion: 5
@@ -2187,9 +2106,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1590195531}
-    - targetCorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1590195530}
   m_SourcePrefab: {fileID: 100100000, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
 --- !u!4 &1341237489 stripped
 Transform:
@@ -2312,9 +2228,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1624835811}
-    - targetCorrespondingSourceObject: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1624835810}
   m_SourcePrefab: {fileID: 100100000, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
 --- !u!1001 &1361977868
 PrefabInstance:
@@ -2497,26 +2410,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
   m_PrefabInstance: {fileID: 1610929628}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1457587675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1457587673}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &1457587676
 Rigidbody2D:
   serializedVersion: 5
@@ -2603,35 +2496,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1879978976}
-    - targetCorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1879978975}
   m_SourcePrefab: {fileID: 100100000, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
 --- !u!1 &1566542205 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
   m_PrefabInstance: {fileID: 985655981}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1566542207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1566542205}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &1566542208
 Rigidbody2D:
   serializedVersion: 5
@@ -2664,26 +2534,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
   m_PrefabInstance: {fileID: 1299092484}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1590195530
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1590195528}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &1590195531
 Rigidbody2D:
   serializedVersion: 5
@@ -2775,35 +2625,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1457587676}
-    - targetCorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1457587675}
   m_SourcePrefab: {fileID: 100100000, guid: 700c51241ee865046976a824c12132ed, type: 3}
 --- !u!1 &1624835808 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
   m_PrefabInstance: {fileID: 1360010277}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1624835810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1624835808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &1624835811
 Rigidbody2D:
   serializedVersion: 5
@@ -2905,35 +2732,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2100731713}
-    - targetCorrespondingSourceObject: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2100731712}
   m_SourcePrefab: {fileID: 100100000, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
 --- !u!4 &1643321114 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6209924289210799844, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
   m_PrefabInstance: {fileID: 617949385}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1643321116
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1184069040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &1643321117
 Rigidbody2D:
   serializedVersion: 5
@@ -3111,9 +2915,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1891262585}
-    - targetCorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1891262584}
   m_SourcePrefab: {fileID: 100100000, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
 --- !u!1001 &1744763712
 PrefabInstance:
@@ -3235,9 +3036,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 691514705}
-    - targetCorrespondingSourceObject: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 691514704}
   m_SourcePrefab: {fileID: 100100000, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
 --- !u!1001 &1768585031
 PrefabInstance:
@@ -3298,9 +3096,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2102644490}
-    - targetCorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2102644489}
   m_SourcePrefab: {fileID: 100100000, guid: 700c51241ee865046976a824c12132ed, type: 3}
 --- !u!1 &1825695261
 GameObject:
@@ -3398,26 +3193,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
   m_PrefabInstance: {fileID: 1555094067}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1879978975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1879978973}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &1879978976
 Rigidbody2D:
   serializedVersion: 5
@@ -3541,26 +3316,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
   m_PrefabInstance: {fileID: 1713870344}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1891262584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1891262582}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &1891262585
 Rigidbody2D:
   serializedVersion: 5
@@ -3679,9 +3434,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1056348031}
-    - targetCorrespondingSourceObject: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1056348030}
   m_SourcePrefab: {fileID: 100100000, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
 --- !u!1 &1935849712
 GameObject:
@@ -3779,26 +3531,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1635090154198902280, guid: 700c51241ee865046976a824c12132ed, type: 3}
   m_PrefabInstance: {fileID: 446796212}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1992707684
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 50614756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &1992707685
 Rigidbody2D:
   serializedVersion: 5
@@ -3928,26 +3660,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
   m_PrefabInstance: {fileID: 203471102}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2067244933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2067244931}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &2067244934
 Rigidbody2D:
   serializedVersion: 5
@@ -3980,26 +3692,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4342142521596889719, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
   m_PrefabInstance: {fileID: 1638843832}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2100731712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 434979560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &2100731713
 Rigidbody2D:
   serializedVersion: 5
@@ -4032,26 +3724,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
   m_PrefabInstance: {fileID: 1768585031}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2102644489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2102644487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &2102644490
 Rigidbody2D:
   serializedVersion: 5
@@ -4084,26 +3756,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8591404522630001800, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
   m_PrefabInstance: {fileID: 170281805}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2105045779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2105045777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &2105045780
 Rigidbody2D:
   serializedVersion: 5
@@ -4136,26 +3788,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3799202771222474680, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
   m_PrefabInstance: {fileID: 587784931}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2145035088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2058021524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d271c85fb6a1e546b37f1f81e5a648d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Damage
-  teamId: 0
-  damageAmount: 1
-  hitEffect: {fileID: 6229913163069739088, guid: 0ce4b1c4489029047aa937ec8b48cf53, type: 3}
-  destroyAfterDamage: 0
-  dealDamageOnTriggerEnter: 0
-  dealDamageOnTriggerStay: 0
-  dealDamageOnCollision: 1
-  repulsionForce: 0
 --- !u!50 &2145035089
 Rigidbody2D:
   serializedVersion: 5
@@ -4702,6 +4334,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 771380429}
     - target: {fileID: 5860219841772749433, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
+      propertyPath: moveSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5860219841772749433, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
       propertyPath: mobileLookJoystick
       value: 
       objectReference: {fileID: 603976489}
@@ -4709,6 +4345,10 @@ PrefabInstance:
       propertyPath: mobileMoveJoystick
       value: 
       objectReference: {fileID: 65182030}
+    - target: {fileID: 6950207213102343922, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
+      propertyPath: invincibilityTime
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7757960526826039249, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
       propertyPath: hitSound
       value: 

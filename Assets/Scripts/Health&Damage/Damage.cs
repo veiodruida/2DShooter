@@ -79,9 +79,8 @@ public class Damage : MonoBehaviour
         {
             if (collidedHealth.teamId != this.teamId)
             {
-                collidedHealth.TakeDamage(damageAmount);
-
-                // Protocolo de Repulsão (Ricochete/Resistência)
+                // REPU LSAÕ CONSTANTE: Independente de tomar dano agora ou estar invencível, 
+                // a força física deve ser aplicada para afastar o objeto da ameaça.
                 if (repulsionForce > 0)
                 {
                     Rigidbody2D rb = collisionGameObject.GetComponentInParent<Rigidbody2D>();
@@ -89,22 +88,31 @@ public class Damage : MonoBehaviour
 
                     if (rb != null)
                     {
-                        // Direção oposta ao ponto de impacto para criar o efeito de ricochete
                         Vector2 forceDirection = (collisionGameObject.transform.position - transform.position).normalized;
-                        
-                        // Zera a velocidade atual para garantir que o ricochete seja limpo e imediato
-                        rb.linearVelocity = Vector2.zero;
-                        rb.AddForce(forceDirection * repulsionForce, ForceMode2D.Impulse);
-                        
-                        Debug.Log($"<color=orange>FÚRIA:</color> Repulsão aplicada em {collisionGameObject.name} com força {repulsionForce}");
+                        Controller playerCtrl = collisionGameObject.GetComponentInParent<Controller>();
+                        if (playerCtrl != null)
+                        {
+                            playerCtrl.ApplyKnockback(forceDirection * repulsionForce);
+                        }
+                        else
+                        {
+                            rb.linearVelocity = Vector2.zero;
+                            rb.AddForce(forceDirection * repulsionForce, ForceMode2D.Impulse);
+                        }
                     }
                 }
 
-                // PREVENÇÃO DE TIRO FANTASMA...
-                if (hitEffect != null && !this.gameObject.CompareTag("Asteroid"))
+                // DANO E EFEITOS: Somente se não estiver em tempo de recuperação (I-Frames)
+                if (!collidedHealth.isInvincible)
                 {
-                    Instantiate(hitEffect, transform.position, transform.rotation, null);
+                    collidedHealth.TakeDamage(damageAmount);
+
+                    if (hitEffect != null && !this.gameObject.CompareTag("Asteroid"))
+                    {
+                        Instantiate(hitEffect, transform.position, transform.rotation, null);
+                    }
                 }
+            }
 
                 // Lógica de dano mútuo...
                 if ((collisionGameObject.CompareTag("Player") || collisionGameObject.CompareTag("Asteroid")) && this.teamId != 0)
@@ -128,6 +136,6 @@ public class Damage : MonoBehaviour
                 }
             }
         }
-    }
 }
+
 
