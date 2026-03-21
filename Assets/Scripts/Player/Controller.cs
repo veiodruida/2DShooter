@@ -17,20 +17,14 @@ public class Controller : MonoBehaviour
     public float moveSpeed = 10.0f;
     public float rotationSpeed = 60f;
 
-    [Header("Smooth Movement")]
+    [Header("Motor Physics (Integrated)")]
+    public float accelerationTime = 0.3f;
+    private Vector2 currentVelocitySmoothing;
+
+    [Header("Smooth Input (Legacy)")]
     public float smoothTime = 0.15f;
     private Vector2 currentInputVector;
     private Vector2 smoothInputVelocity;
-
-    [Header("Acceleration Settings")]
-    public float acceleration = 20f;
-    public float deceleration = 10f;
-    public float maxAccelerationTime = 0.5f;
-    public float maxDecelerationTime = 0.5f;
-    private float currentSpeed = 0f;
-    private float targetSpeed = 0f;
-    private bool isAccelerating = false;
-    private float accelerationProgress = 0f;
 
     [Header("Animation")]
     public Animator turbineAnimator;
@@ -47,7 +41,7 @@ public class Controller : MonoBehaviour
     public MovementModes movementMode = MovementModes.FreeRoam;
 
     [Header("Shield Settings")]
-    public GameObject shieldObject;
+    public GameObject shieldObject; 
 
     [Header("Audio")]
     public AudioSource startEngineSound;
@@ -96,7 +90,6 @@ public class Controller : MonoBehaviour
     void Update()
     {
         HandleInput();
-        HandleAcceleration();
     }
 
     private void HandleInput()
@@ -120,13 +113,13 @@ public class Controller : MonoBehaviour
         if (aimMode == AimModes.DualStickMobile && mobileLookJoystick != null)
         {
             lookInputVector = mobileLookJoystick.GetAxis();
-            
+
             if (lookInputVector.sqrMagnitude > 0.01f)
             {
                 float angle = Mathf.Atan2(lookInputVector.y, lookInputVector.x) * Mathf.Rad2Deg - 90f;
                 Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
                 transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed * 0.2f);
-                
+
                 if (shootingController != null) shootingController.Fire();
             }
         }
@@ -137,7 +130,7 @@ public class Controller : MonoBehaviour
             LookAtPoint(mousePos);
         }
 
-        // 3. Suavização do Movimento
+        // 3. Suavização do Input (Mantendo o "Feeling" original)
         currentInputVector = Vector2.SmoothDamp(
             currentInputVector,
             moveInput,
@@ -145,10 +138,8 @@ public class Controller : MonoBehaviour
             smoothTime
         );
 
-        Vector3 movementVector = new Vector3(currentInputVector.x, currentInputVector.y, 0);
-
-        // 4. Executa Movimento
-        MovePlayer(movementVector);
+        // 4. Executa Movimento (Integrado com Física)
+        MovePlayer(currentInputVector);
 
         // 5. Animação e Som
         if (turbineAnimator != null)
@@ -171,71 +162,33 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private void HandleAcceleration()
-    {
-        // Determinar se o jogador está a mover-se
-        bool isMoving = currentInputVector.sqrMagnitude > 0.01f;
-
-        // Se estiver a mover, acelerar
-        if (isMoving)
-        {
-            if (!isAccelerating)
-            {
-                isAccelerating = true;
-                accelerationProgress = 0f;
-            }
-
-            // Aumentar velocidade gradualmente
-            float speedIncrease = acceleration * Time.deltaTime;
-            currentSpeed = Mathf.Min(currentSpeed + speedIncrease, moveSpeed);
-            accelerationProgress += Time.deltaTime;
-
-            // Chegar à velocidade máxima
-            if (accelerationProgress >= maxAccelerationTime)
-            {
-                isAccelerating = false;
-                accelerationProgress = 0f;
-            }
-        }
-        // Se parar de mover, desacelerar
-        else
-        {
-            if (isAccelerating)
-            {
-                // Desacelerar gradualmente
-                float speedDecrease = deceleration * Time.deltaTime;
-                currentSpeed = Mathf.Max(currentSpeed - speedDecrease, 0f);
-                accelerationProgress += Time.deltaTime;
-
-                // Chegar à velocidade zero
-                if (accelerationProgress >= maxDecelerationTime)
-                {
-                    isAccelerating = false;
-                    accelerationProgress = 0f;
-                    currentSpeed = 0f;
-                }
-            }
-        }
-
-        // Aplicar a velocidade atual ao movimento
-        Vector3 movementVector = new Vector3(currentInputVector.x, currentInputVector.y, 0) * currentSpeed;
-        MovePlayer(movementVector);
-    }
-
-    private void MovePlayer(Vector3 movement)
+    private void MovePlayer(Vector2 movement)
     {
         if (movementMode == MovementModes.Astroids)
         {
-            Vector2 force = transform.up * movement.y * Time.deltaTime * moveSpeed;
+            Vector2 force = transform.up * movement.y * moveSpeed * (1.0f / accelerationTime);
             myRigidbody.AddForce(force);
+            
             float rotationChange = movement.x * rotationSpeed * Time.deltaTime;
             transform.Rotate(0, 0, -rotationChange);
         }
         else
         {
+            // Movimento Relativo ao Mouse (W vai para frente) + Rampa de Aceleração
             if (lockXCoordinate) movement.x = 0;
             if (lockYCoordinate) movement.y = 0;
-            transform.position += movement * Time.deltaTime * moveSpeed;
+
+            // Calcula direção de mundo baseada na nave
+            Vector2 worldDirection = (transform.up * movement.y) + (transform.right * movement.x);
+            Vector2 targetVelocity = worldDirection * moveSpeed;
+
+            // SmoothDamp na velocidade física para o efeito de motor (0.3s)
+            myRigidbody.linearVelocity = Vector2.SmoothDamp(
+                myRigidbody.linearVelocity, 
+                targetVelocity, 
+                ref currentVelocitySmoothing, 
+                accelerationTime
+            );
         }
     }
 
