@@ -115,9 +115,15 @@ public class Bomb : MonoBehaviour
         // Colisão com Asteroide - Bomb garante sua morte c/ explosão e ferindo a pedra.
         if (other.CompareTag("Asteroid"))
         {
+            Damage myDamage = GetComponent<Damage>();
+
             // O Spawner e o Unity podem atrasar/excluir eventos simultâneos, forçamos dano daqui.
             Health asteroidHealth = other.GetComponent<Health>();
-            if (asteroidHealth != null) asteroidHealth.TakeDamage(999);
+            if (asteroidHealth != null) 
+            {
+                int bombDmg = myDamage != null ? myDamage.damageAmount : 1;
+                asteroidHealth.TakeDamage(bombDmg);
+            }
             
             Health myHealth = GetComponent<Health>();
             if (myHealth != null) 
@@ -126,7 +132,6 @@ public class Bomb : MonoBehaviour
             }
             else 
             {
-                Damage myDamage = GetComponent<Damage>();
                 if (myDamage != null && myDamage.hitEffect != null)
                 {
                     Instantiate(myDamage.hitEffect, transform.position, transform.rotation);
