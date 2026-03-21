@@ -115,4 +115,16 @@ public class Asteroid : MonoBehaviour
             Destroy(fx, 2f); // Garante limpeza da memória
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Shield"))
+        {
+            Health shieldHealth = other.GetComponent<Health>();
+            if (shieldHealth != null) shieldHealth.TakeDamage(1);
+
+            Health myHealth = GetComponent<Health>();
+            if (myHealth != null) myHealth.TakeDamage(1);
+        }
+    }
 }
