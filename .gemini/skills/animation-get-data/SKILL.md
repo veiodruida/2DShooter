@@ -1,4 +1,4 @@
-﻿---
+---
 name: animation-get-data
 description: Get data about a Unity AnimationClip asset file. Returns information such as name, length, frame rate, wrap mode, animation curves, and events.
 ---
@@ -7,15 +7,29 @@ description: Get data about a Unity AnimationClip asset file. Returns informatio
 
 ## How to Call
 
-### CLI (Direct Tool Execution)
-
-Execute this tool directly via command line:
-
 ```bash
-npx unity-mcp-cli run-tool animation-get-data --input '{
+unity-mcp-cli run-tool animation-get-data --input '{
   "animRef": "string_value"
 }'
 ```
+
+> For complex input (multi-line strings, code), save the JSON to a file and use:
+> ```bash
+> unity-mcp-cli run-tool animation-get-data --input-file args.json
+> ```
+>
+> Or pipe via stdin (recommended):
+> ```bash
+> unity-mcp-cli run-tool animation-get-data --input-file - <<'EOF'
+> {"param": "value"}
+> EOF
+> ```
+
+
+### Troubleshooting
+
+If `unity-mcp-cli` is not found, either install it globally (`npm install -g unity-mcp-cli`) or use `npx unity-mcp-cli` instead.
+Read the /unity-initial-setup skill for detailed installation instructions.
 
 ## Input
 

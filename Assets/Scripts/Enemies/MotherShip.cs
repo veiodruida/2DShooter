@@ -123,8 +123,29 @@ public class MotherShip : MonoBehaviour
         VerificarLimpezaDeNaves();
         VerificarEstadoIncendio();
         MonitorarEscudo();
+        ExecutarRadarColisao(); // Protocolo Fúria 3.1
+    }
 
-        // A substituição do visual do Escudo agora é feita na função AtivarEstagio2() para evitar checagem contínua
+    void ExecutarRadarColisao()
+    {
+        // Apenas varre se o escudo estiver ativo e puder receber dano
+        if (escudoHealth != null && escudoHealth.gameObject.activeSelf && !escudoHealth.isInvincible)
+        {
+            Collider2D[] radar = Physics2D.OverlapCircleAll(escudoHealth.transform.position, 1.5f); // Ajustado para o tamanho do boss
+            foreach (var col in radar)
+            {
+                // Se o que bateu for um projétil do jogador, força o dano no ESCUDO
+                if (col.CompareTag("Projectile") || col.CompareTag("PlayerProjectile"))
+                {
+                    Projectile p = col.GetComponent<Projectile>();
+                    if (p != null)
+                    {
+                        escudoHealth.TakeDamage(p.damage);
+                        Destroy(col.gameObject); // Consome o tiro para evitar múltiplos hits
+                    }
+                }
+            }
+        }
     }
 
     void MonitorarEscudo()
@@ -229,10 +250,16 @@ public class MotherShip : MonoBehaviour
             if (sr != null && spriteEscudoEstagio2 != null)
             {
                 sr.sprite = spriteEscudoEstagio2;
-                sr.color = Color.white; // Limpar qualquer tint residual nativa do Unity
+                sr.color = Color.white; 
+                
+                // Micro-animação de impacto na transição
+                escudoHealth.transform.localScale *= 1.1f;
+                // O Reset da escala pode ser feito via animação ou corotina, mas aqui garantimos o feedback visual imediato
             }
 
             if (UIManager.instance != null) UIManager.instance.UpdateUI();
+            
+            Debug.Log("<color=orange>FÚRIA:</color> Escudo de Fase 2 Ativado!");
         }
     }
 
