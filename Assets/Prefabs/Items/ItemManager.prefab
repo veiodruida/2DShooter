@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7860117143545360838}
   - component: {fileID: 1043102960277887521}
+  - component: {fileID: 4822543924647282524}
   m_Layer: 0
   m_Name: ItemManager
   m_TagString: Untagged
@@ -51,3 +52,23 @@ MonoBehaviour:
   nivelDificuldade: 1
   limiteX: {x: -21, y: 11}
   limiteY: {x: -21, y: 11}
+--- !u!114 &4822543924647282524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2226249563226905185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a03a5adc3e2974aa3022aa96218f31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AsteroidSpawner
+  asteroidPrefab: {fileID: 4762709477250367634, guid: b289e07895452244383cb41b59b6d359, type: 3}
+  intervaloMin: 1.5
+  intervaloMax: 4
+  limiteX: {x: -31, y: 21}
+  limiteY: {x: -31, y: 21}
+  tamanhoMin: 1.5
+  tamanhoMax: 2.5
+  aumentarFrequenciaNoModoFuria: 1

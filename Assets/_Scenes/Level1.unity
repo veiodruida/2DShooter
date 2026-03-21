@@ -3707,11 +3707,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7757960526826039249, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
       propertyPath: isInvincible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7757960526826039249, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
       propertyPath: isAlwaysInvincible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

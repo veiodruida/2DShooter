@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 4327850106528714602}
   - component: {fileID: 584683058982610388}
   - component: {fileID: 8802425309261549971}
+  - component: {fileID: -1553942784338267149}
   m_Layer: 8
   m_Name: StraightShooter
   m_TagString: Enemy
@@ -277,6 +278,18 @@ MonoBehaviour:
   dealDamageOnTriggerEnter: 1
   dealDamageOnTriggerStay: 1
   dealDamageOnCollision: 1
+--- !u!114 &-1553942784338267149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8282131552441171991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 501d54417ec41d5479072bc4092fbc47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyContact
 --- !u!1 &8282131553695226669
 GameObject:
   m_ObjectHideFlags: 0

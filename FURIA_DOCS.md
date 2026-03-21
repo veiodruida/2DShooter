@@ -68,4 +68,15 @@ Whenever generating or modifying logic in this ecosystem, YOU MUST strictly obey
   if (fx.GetComponent<Projectile>() != null) { return; } // Bloqueio cirúrgico do Bug Fantasma
   ```
 
+## 4. DIFFICULTY SCALING EXPERTISE (GAME SETTINGS)
+
+O ritmo de jogo e agressividade matemática dos inimigos são brutalmente geridos através dos singletons `GameSettings.cs` e `GameManager.cs`. 
+- **O Enum de Dificuldade (`GameSettings.Dificuldade`)**: Contém os tiers standard (Easy, Medium, Hard) e o tier supremo `Furia` (Cuba Mode).
+- **Protocolo de Implementação (Como a IA local deve injetar Dificuldade):**
+  - **Standard Mode Scaling:** Multiplicar as speeds e forcas base dos objectos combinando `GameSettings.instance.nivelAtual` e um cast da própria dificuldade base `(int)dificuldadeSelecionada`. 
+    *Exemplo (`Bomb.cs`)*: `velocidade *= (1f + (nivelAtual * 0.1f))` ou `forcaCurva *= (1f + ((int)dificuldade * 0.2f))`
+  - **Fúria Mode Scaling:** Hard-override para estatísticas sádicas que ignoram matemática normal se `dificuldadeSelecionada == Furia`. 
+    *Exemplo (`AsteroidSpawner.cs`)*: Se `Furia`, o `tempoParaProximoSpawn *= 0.4f` (criando 2.5x mais spawns) ou no caso das `Bomb`, a forca de Steering (Curva de Perseguição) vira `* 2.5f`, impossibilitando fuga padrão do jogador sem uso de items.
+- Nunca usar randomizadores flat isolados para dificuldade. O código deve interpelar sempre os singletons no `Awake()`/`Start()` de cada Prefab Spawnado.
+
 **[END OF SYSTEM PROMPT]** Read and internalize this taxonomy map and constraint blueprint before suggesting fixes or writing new scripts for the 2DShooter.

@@ -10,6 +10,7 @@ public class MotherShip : MonoBehaviour
     public int totalNavesParaEnviar = 10;
     public int navesEnviadas = 0; 
     public int vidaEscudoEstagio2 = 15;
+    public Sprite spriteEscudoEstagio2; // Sprite da variante (Ex: bolha vermelha)
 
     private List<GameObject> navesVivas = new List<GameObject>();
     private bool aguardandoLimpezaDeNaves = false;
@@ -123,12 +124,7 @@ public class MotherShip : MonoBehaviour
         VerificarEstadoIncendio();
         MonitorarEscudo();
 
-        // Feedback Visual do Escudo Vulnerável
-        if (estagio2Ativo && escudoHealth != null && escudoHealth.gameObject.activeSelf)
-        {
-            SpriteRenderer sr = escudoHealth.GetComponent<SpriteRenderer>();
-            if (sr != null && sr.color != Color.red) sr.color = Color.red;
-        }
+        // A substituição do visual do Escudo agora é feita na função AtivarEstagio2() para evitar checagem contínua
     }
 
     void MonitorarEscudo()
@@ -229,6 +225,13 @@ public class MotherShip : MonoBehaviour
             escudoHealth.maximumHealth = vidaEscudoEstagio2;
             escudoHealth.currentHealth = vidaEscudoEstagio2;
 
+            SpriteRenderer sr = escudoHealth.GetComponent<SpriteRenderer>();
+            if (sr != null && spriteEscudoEstagio2 != null)
+            {
+                sr.sprite = spriteEscudoEstagio2;
+                sr.color = Color.white; // Limpar qualquer tint residual nativa do Unity
+            }
+
             if (UIManager.instance != null) UIManager.instance.UpdateUI();
         }
     }
@@ -281,13 +284,23 @@ public class MotherShip : MonoBehaviour
         if (collision.CompareTag("Asteroid"))
         {
             Health asteroidHealth = collision.GetComponent<Health>();
-            if (asteroidHealth != null) asteroidHealth.TakeDamage(999);
+            if (asteroidHealth != null) 
+            {
+                Damage mgDamage = GetComponent<Damage>();
+                int finalDmg = mgDamage != null ? mgDamage.damageAmount : 999;
+                asteroidHealth.TakeDamage(finalDmg);
+            }
 
             // Se o escudo já foi destruído, a MotherShip toma dano
             if (!estagio2Ativo || (escudoHealth != null && !escudoHealth.gameObject.activeSelf))
             {
+                Damage astDamage = collision.GetComponent<Damage>();
                 Health myHealth = GetComponent<Health>();
-                if (myHealth != null) myHealth.TakeDamage(1);
+                if (myHealth != null) 
+                {
+                    int dmgToTake = astDamage != null ? astDamage.damageAmount : 1;
+                    myHealth.TakeDamage(dmgToTake);
+                }
             }
         }
     }
