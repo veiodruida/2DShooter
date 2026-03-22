@@ -175,6 +175,10 @@ PrefabInstance:
       propertyPath: dealDamageOnTriggerStay
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7281274093137533013, guid: 8f4ad4d0119073f49af85b8f37a2c580, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -289,6 +293,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2065383650}
     m_Modifications:
+    - target: {fileID: 4087274734860074134, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6209924289210799844, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.8176975
@@ -346,6 +354,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2065383650}
     m_Modifications:
+    - target: {fileID: 4087274734860074134, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6209924289210799844, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.4323037
@@ -555,6 +567,10 @@ PrefabInstance:
       propertyPath: dealDamageOnTriggerStay
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5265154983588076131, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -607,6 +623,10 @@ PrefabInstance:
     - target: {fileID: 1635090154198902280, guid: 700c51241ee865046976a824c12132ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4376648860045575168, guid: 700c51241ee865046976a824c12132ed, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
       propertyPath: m_Name
@@ -759,6 +779,10 @@ PrefabInstance:
     - target: {fileID: 4376648860045575168, guid: 700c51241ee865046976a824c12132ed, type: 3}
       propertyPath: dealDamageOnTriggerStay
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4376648860045575168, guid: 700c51241ee865046976a824c12132ed, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
       propertyPath: m_Name
@@ -922,6 +946,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LeftAsteroidWall (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 5265154983588076131, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -935,6 +963,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2065383650}
     m_Modifications:
+    - target: {fileID: 4087274734860074134, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6209924289210799844, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.0676985
@@ -1240,6 +1272,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LeftAsteroidWall (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5265154983588076131, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1297,6 +1333,10 @@ PrefabInstance:
     - target: {fileID: 1635090154198902280, guid: 700c51241ee865046976a824c12132ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4376648860045575168, guid: 700c51241ee865046976a824c12132ed, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
       propertyPath: m_Name
@@ -1554,6 +1594,10 @@ PrefabInstance:
       propertyPath: dealDamageOnTriggerStay
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1732521982663072737, guid: 1e0e438853c9b584abfe4e77997aa331, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5510500780715556110, guid: 1e0e438853c9b584abfe4e77997aa331, type: 3}
       propertyPath: m_Name
       value: LowerRightCornerAsteroidWall
@@ -1660,6 +1704,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LeftAsteroidWall (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5265154983588076131, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1726,6 +1774,10 @@ PrefabInstance:
       propertyPath: dealDamageOnTriggerStay
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3583232092323257703, guid: 2f10b7655e9fcd34eafb6c6a1c91d98c, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1783,6 +1835,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TopAsteroidWall (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 8399312060178461105, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1799,6 +1855,10 @@ PrefabInstance:
     - target: {fileID: 4087274734860074134, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       propertyPath: dealDamageOnTriggerStay
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4087274734860074134, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6209924289210799844, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1905,6 +1965,10 @@ PrefabInstance:
       propertyPath: dealDamageOnTriggerStay
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7977602149774146507, guid: 73cd4dc9ae1e0194f86d55e030261177, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1966,6 +2030,10 @@ PrefabInstance:
       propertyPath: dealDamageOnTriggerStay
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8399312060178461105, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1984,6 +2052,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2065383650}
     m_Modifications:
+    - target: {fileID: 4087274734860074134, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6209924289210799844, guid: 1cd7bd822111a214e91aeccf7b2e7488, type: 3}
       propertyPath: m_LocalPosition.x
       value: -9.682304
@@ -2086,6 +2158,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4376648860045575168, guid: 700c51241ee865046976a824c12132ed, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
       propertyPath: m_Name
       value: RightAsteroidWall (3)
@@ -2157,6 +2233,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TopAsteroidWall (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8399312060178461105, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2218,6 +2298,10 @@ PrefabInstance:
     - target: {fileID: 4559063370905112562, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
       propertyPath: m_Name
       value: LeftAsteroidWall (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5265154983588076131, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2528,6 +2612,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TopAsteroidWall (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 8399312060178461105, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2580,6 +2668,10 @@ PrefabInstance:
     - target: {fileID: 1635090154198902280, guid: 700c51241ee865046976a824c12132ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4376648860045575168, guid: 700c51241ee865046976a824c12132ed, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8138724904640422404, guid: 700c51241ee865046976a824c12132ed, type: 3}
       propertyPath: m_Name
@@ -2855,6 +2947,10 @@ PrefabInstance:
     - target: {fileID: 5289029116382905875, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
       propertyPath: m_Name
       value: TopAsteroidWall (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8399312060178461105, guid: 729dfa9a6fc64e74594b43b211c6c3e8, type: 3}
+      propertyPath: dealDamageOnTriggerEnter
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -114,6 +114,7 @@ public class Health : MonoBehaviour
         }
 
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
+        // Garante que o som só é executado uma vez durante o tempo de invincibilidade
         if (hitEffect != null)
         {
             if (hitEffect.GetComponent<Projectile>() != null)
@@ -125,7 +126,11 @@ public class Health : MonoBehaviour
                 Instantiate(hitEffect, transform.position, transform.rotation);
             }
         }
-        if (hitSound != null) hitSound.Play();
+        // Som somente se não estiver invencível
+        if (hitSound != null && !isInvincible)
+        {
+            hitSound.Play();
+        }
 
         CheckDeath();
     }

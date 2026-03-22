@@ -23,7 +23,7 @@ public class Controller : MonoBehaviour
     private Vector2 currentInputVector;
     private Vector2 smoothInputVelocity;
     private Vector2 knockbackVelocity; // Acumula forças externas de repulsão
-
+   
     [Header("Animation")]
     public Animator turbineAnimator;
 
@@ -136,7 +136,7 @@ public class Controller : MonoBehaviour
             accelerationTime
         );
 
-        // 4. Executa Movimento (idêntico ao original)
+        // 4. Executa Movimento
         MovePlayer(currentInputVector);
 
         // 5. Animação e Som
@@ -162,40 +162,80 @@ public class Controller : MonoBehaviour
 
     private void MovePlayer(Vector2 movement)
     {
+        // Movimento ABSOLUTO: WASD/joystick movem sempre para frente/atrás/esq/dir no espaço mundial
+        // Não é relativo à rotação da nave
         if (movementMode == MovementModes.Astroids)
         {
-            Vector2 force = transform.up * movement.y * moveSpeed * Time.deltaTime;
+            // Modo Asteroides: movimento relativo à rotação da nave
+            Vector2 force = transform.up * movement.y * Time.deltaTime * moveSpeed;
             myRigidbody.AddForce(force);
             float rotationChange = movement.x * rotationSpeed * Time.deltaTime;
             transform.Rotate(0, 0, -rotationChange);
         }
         else
         {
+            // Modo padrão: movimento absoluto no espaço mundial
+            // W=cima, S=baixo, A=esquerda, D=direita (independente da rotação da nave)
             if (lockXCoordinate) movement.x = 0;
             if (lockYCoordinate) movement.y = 0;
-
-            if (myRigidbody != null)
+            
+            // Verifica colisão com paredes/boundary antes de aplicar movimento
+            Vector2 targetPosition = transform.position * movement * Time.deltaTime * moveSpeed;
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(targetPosition, 0.5f);
+            
+            // Verifica se há colisão com boundary ou outros objetos
+            bool temColisao = false;
+            foreach (var collider in colliders)
             {
-                // PROTEÇÃO DO PILOTO: Se o escudo estiver ativo, o piloto fica invulnerável (apenas o escudo toma dano)
-                if (shieldObject != null)
+                if (collider.CompareTag("Boundary") || collider.CompareTag("Wall"))
                 {
-                    Health pilotHealth = GetComponent<Health>();
-                    if (pilotHealth != null) pilotHealth.isAlwaysInvincible = shieldObject.activeInHierarchy;
+                    temColisao = true;
+                    break;
                 }
+            }
+            
+            // Aplica o movimento apenas se não houver colisão
+            if (!temColisao)
+            {
+                if (myRigidbody != null)
+                {
+                    // PROTEÇÃO DO PILOTO: Se o escudo estiver ativo, o piloto fica invulnerável (apenas o escudo toma dano)
+                    if (shieldObject != null)
+                    {
+                        Health pilotHealth = GetComponent<Health>();
+                        if (pilotHealth != null) pilotHealth.isAlwaysInvincible = shieldObject.activeInHierarchy;
+                    }
 
-                // CÁLCULO DE CONTROLE: Se o knockback for forte, o jogador perde controle parcial da nave
-                // Isso permite que o impulso de repulsão "ganhe" do WASD, empurrando a nave para longe.
-                float controlFactor = Mathf.Clamp01(1f - (knockbackVelocity.magnitude / (moveSpeed > 0 ? moveSpeed : 1f)));
-                
-                // Somamos a velocidade de input (atenuada pelo impacto) com o knockback
-                myRigidbody.linearVelocity = (movement * moveSpeed * controlFactor) + knockbackVelocity;
-                
-                // Decaimento do knockback (ajustado para ser um pouco mais persistente)
-                knockbackVelocity = Vector2.Lerp(knockbackVelocity, Vector2.zero, Time.deltaTime * 8f);
+                    // CÁLCULO DE CONTROLE: Se o knockback for forte, o jogador perde controle parcial da nave
+                    float controlFactor = Mathf.Clamp01(1f - (knockbackVelocity.magnitude / (moveSpeed > 0 ? moveSpeed : 1f)));
+                    
+                    // Converter Vector2 para Vector3 antes da multiplicação
+                    Vector3 movementVector = new Vector3(movement.x, movement.y, 0);
+                    // Converter knockbackVelocity para Vector3 antes da adição
+                    Vector3 knockbackVector = new Vector3(knockbackVelocity.x, knockbackVelocity.y, 0);
+                    // Somamos a velocidade de input (atenuada pelo impacto) com o knockback
+                    myRigidbody.linearVelocity = (movementVector * moveSpeed * controlFactor) + knockbackVector;
+                    
+                    // Decaimento do knockback
+                    knockbackVelocity = Vector2.Lerp(knockbackVelocity, Vector2.zero, Time.deltaTime * 8f);
+                }
+                else
+                {
+                    // Converter Vector2 para Vector3 antes da multiplicação
+                    Vector3 movementVector = new Vector3(movement.x, movement.y, 0);
+                    transform.position += movementVector * Time.deltaTime * moveSpeed;
+                }
             }
             else
             {
-                transform.position += (Vector3)(movement * moveSpeed * Time.deltaTime);
+                // Debug para depuração
+                Debug.Log($"<color=yellow>FÚRIA:</color> Movimento bloqueado por colisão com boundary");
+                
+                // Garante que o som só é executado uma vez durante o tempo de invincibilidade
+                if (GetComponent<Health>().hitSound != null && !GetComponent<Health>().isInvincible)
+                {
+                    GetComponent<Health>().hitSound.Play();
+                }
             }
         }
     }

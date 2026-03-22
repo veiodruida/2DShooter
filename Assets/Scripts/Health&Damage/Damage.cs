@@ -79,7 +79,7 @@ public class Damage : MonoBehaviour
         {
             if (collidedHealth.teamId != this.teamId)
             {
-                // REPU LSAÕ CONSTANTE: Independente de tomar dano agora ou estar invencível, 
+                //  Independente de tomar dano agora ou estar invencível, 
                 // a força física deve ser aplicada para afastar o objeto da ameaça.
                 if (repulsionForce > 0)
                 {
