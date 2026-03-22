@@ -95,11 +95,23 @@ public class ShootingController : MonoBehaviour
 
     public void SpawnProjectile()
     {
-        if (projectilePrefab == null) return;
+        if (projectilePrefab == null)
+        {
+            Debug.LogError($"<color=red>ShootingController: projectilePrefab é NULL! Configure no Inspector.</color>");
+            return;
+        }
 
         for (int i = 0; i < weaponLevel; i++)
         {
             GameObject proj = Instantiate(projectilePrefab, transform.position, transform.rotation);
+            
+            // Debug: Verifica se o projétil foi instanciado
+            if (proj == null)
+            {
+                Debug.LogError($"<color=red>ShootingController: Instanciação de projétil falhou!</color>");
+                continue;
+            }
+
             Vector3 rotationEuler = proj.transform.rotation.eulerAngles;
 
             if (weaponLevel == 2)
@@ -117,6 +129,17 @@ public class ShootingController : MonoBehaviour
             proj.transform.rotation = Quaternion.Euler(rotationEuler);
 
             if (projectileHolder != null) proj.transform.SetParent(projectileHolder);
+
+            // Debug: Verifica se o projétil tem componentes necessários
+            if (proj.GetComponent<Rigidbody2D>() == null)
+            {
+                Debug.LogWarning($"<color=yellow>ShootingController: Projétil não tem Rigidbody2D! Adicione no prefab.</color>");
+            }
+
+            if (proj.GetComponent<Projectile>() == null)
+            {
+                Debug.LogWarning($"<color=yellow>ShootingController: Projétil não tem script Projectile! Adicione no prefab.</color>");
+            }
         }
     }
 

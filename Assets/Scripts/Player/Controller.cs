@@ -187,7 +187,7 @@ public class Controller : MonoBehaviour
             bool temColisao = false;
             foreach (var collider in colliders)
             {
-                if (collider.CompareTag("Boundary") || collider.CompareTag("Wall"))
+                if (collider.CompareTag("Boundary"))
                 {
                     temColisao = true;
                     break;
