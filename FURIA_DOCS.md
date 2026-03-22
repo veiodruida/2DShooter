@@ -1,378 +1,481 @@
-# 2D SHOOTER - MASTER ENCYCLOPEDIA & SYSTEM PROMPT (FOR LLM/CLAUDE CONTEXT)
+# FURIA 2DShooter - Handoff Técnico para Claude/LLM
 
-**ROLE & PURPOSE:** This document is the absolute source of truth for the 2DShooter Unity Project. As an AI Agent modifying this codebase, you must ingest this document. It outlines EVERY core module, dependency, mechanic, and the exact constraints required to avoid regressions.
+Este documento é a referência operacional do projeto `D:\Unity_Projects\2DShooter`.
+Use-o como contexto base antes de alterar gameplay, prefabs, cenas ou física.
 
----
-
-## 1. GAMEPLAY & MACRO ARCHITECTURE
-- **Core Loop:** The Player controls a ship (`Controller.cs`), shooting dynamically (`ShootingController.cs`) against a continuous wave of enemies (`EnemySpawner.cs`) and mathematically-guided asteroids (`AsteroidSpawner.cs`).
-- **Logic Decoupling:** Health is completely isolated from Damage. An object never directly depletes its own health through collision code; it always defers to interacting with the target's `Health.cs` script while propagating data from its own `Damage.cs` script.
-
----
-
-## 2. THE C# SCRIPT TAXONOMY (MODULE INDEX)
-
-### 2.1 Health & Damage (The Foundational Tier)
-- **`Health.cs`**: The Universal Receiver. Exists on Player, MotherShip(Boss), Asteroids, and regular Enemies. Manages `currentLives`, I-Frames cooldown (`invencibilidadeTimer`), and executes the `Die()` routine (summoning `deathEffect`).
-- **`Damage.cs`**: The Universal Dealer. Exists on Projectiles, Kamikaze Enemies, Asteroids. Deals integer damage on impact and spawns `hitEffect`. **ABSOLUTE RULE:** Never, under any circumstance, hardcode damage explicitly (like `TakeDamage(999)`). Always query the component: `other.GetComponent<Damage>()?.damageAmount`.
-
-### 2.2 Player & Movement
-- **`Controller.cs`**: The physical avatar. Drives Rigidbody/Transform velocity based on input axes and delegates shielding visually to `ShieldController.cs`.
-- **`ScreenClearBomb.cs` & `PlayerBomb.cs`**: AoE tactical countermeasures protecting the player.
-- **`ShieldController.cs`**: Defensive orbital layer. While linked to the Player, it absorbs raw physical triggers natively before they hit the ship.
-
-#### Sistema de Movimento do Jogador
-- **Movimento Absoluto**: WASD/joystick movem sempre para frente/atrás/esquerda/direita no espaço mundial, **independente da rotação da nave**.
-- **Física de Motor**: Usa `Vector2.SmoothDamp` para fornecer aceleração/desaceleração suave.
-- **Implementação**:
-  - `HandleInput()`: Coleta input, aplica `SmoothDamp` para suavização com `accelerationTime = 0.3f`.
-  - `MovePlayer()`: Aplica movimento direto em `transform.position` (modo padrão) ou `AddForce` (modo Asteroides).
-  - `movementMode`: Enum que controla o tipo de movimento (`FreeRoam`, `MoveHorizontally`, `MoveVertically`, `Astroids`).
-  - `lockXCoordinate`/`lockYCoordinate`: Bloqueiam eixos quando necessário (ex: movimento apenas vertical/horizontal).
-- **Colisão com Paredes**: Verifica `Physics2D.OverlapCircleAll` antes de aplicar movimento para evitar atravessar boundaries.
-- **Knockback**: Força de repulsão aplicada via `ApplyKnockback()` que atenua o controle do jogador.
-- **Som de Dano**: `hitSound` só executado uma vez durante o tempo de invincibilidade (`isInvincible`).
-- **Nota Importante**: O movimento do jogador foi corrigido para garantir que WASD/joystick movem sempre para frente/atrás/esquerda/direita no espaço mundial, não relativo à rotação da nave. O sistema de física de motor foi adaptado para este movimento absoluto.
-
-#### Sistema de Saúde e Dano
-- **`Health.cs`**: Gerencia `currentLives`, I-Frames cooldown (`invencibilidadeTimer`), e executa a rotina `Die()`.
-  - **Métodos Principais**:
-    - `TakeDamage(int damageAmount)`: Aplica dano, verifica invencibilidade, executa efeitos visuais e sonoros.
-    - `Die()`: Executa lógica de morte (divisão de asteroides, finalização de boss, respawn).
-    - `HandleDeathWithLives()`: Gerencia respawn quando `useLives = true`.
-    - `HandleDeathWithoutLives()`: Executa `GameOver()` quando `useLives = false`.
-    - `ForceDeathAnimation()`: Força animação de morte mesmo para escudo.
-    - `ReceiveHealing(int healingAmount)`: Aplica cura ao objeto.
-    - `SetRespawnPoint(Vector3 newPos)`: Define ponto de respawn.
-  - **Variáveis Principais**:
-    - `currentHealth`: Health atual do objeto.
-    - `currentLives`: Vidas restantes (se `useLives = true`).
-    - `isInvincible`: Estado de invencibilidade (I-Frames).
-    - `timeToBecomeDamagableAgain`: Tempo até o objeto voltar a ser vulnerável.
-    - `deathEffect`: Efeito visual de morte.
-    - `hitEffect`: Efeito visual de dano.
-    - `hitSound`: Som de dano (executado uma vez).
-    - `deathSound`: Som de morte.
-    - `characterSprite`: SpriteRenderer para efeitos de piscar.
-    - `useLives`: Se o objeto usa sistema de vidas.
-    - `invincibilityTime`: Tempo de invencibilidade (I-Frames).
-    - `teamId`: ID da equipa (0 = Player, 1 = Enemy).
-
-- **`Damage.cs`**: Lida com a aplicação de dano em objetos com `Health`.
-  - **Métodos Principais**:
-    - `OnTriggerEnter2D(Collider2D collision)`: Aplica dano ao entrar num trigger.
-    - `OnTriggerStay2D(Collider2D collision)`: Aplica dano enquanto estiver num trigger (DoT).
-    - `OnCollisionEnter2D(Collision2D collision)`: Aplica dano ao colidir.
-    - `DealDamage(GameObject collisionGameObject)`: Função interna que aplica dano.
-  - **Variáveis Principais**:
-    - `damageAmount`: Quantidade de dano a aplicar.
-    - `repulsionForce`: Força de repulsão (knockback) aplicada ao alvo.
-    - `hitEffect`: Efeito visual de dano.
-    - `destroyAfterDamage`: Se destruir o objeto após aplicar dano.
-    - `dealDamageOnTriggerEnter`: Se aplicar dano em triggers.
-    - `dealDamageOnTriggerStay`: Se aplicar dano em triggers (DoT).
-    - `dealDamageOnCollision`: Se aplicar dano em colisões.
-    - `teamId`: ID da equipa (0 = Player, 1 = Enemy).
-  - **Regras Absolutas**:
-    - Nunca hardcode dano explicitamente. Sempre use `other.GetComponent<Damage>()?.damageAmount`.
-    - Força de repulsão é aplicada independentemente de estar invencível ou não.
-    - Som de dano só executado uma vez durante o tempo de invincibilidade.
-
-- **`ShieldController.cs`**: Camada defensiva orbital que absorve gatilhos físicos nativamente antes de atingir a nave.
-  - **Métodos Principais**:
-    - `ActivarEscudo()`: Ativa o escudo.
-    - `DesativarEscudo()`: Desativa o escudo.
-    - `TomarDano(int damageAmount)`: Aplica dano ao escudo.
-  - **Variáveis Principais**:
-    - `shieldHealth`: Health do escudo.
-    - `shieldDuration`: Duração do escudo.
-    - `shieldCooldown`: Cooldown entre ativações.
-    - `shieldVisual`: SpriteRenderer do escudo.
-    - `shieldColor`: Cor do escudo.
-
-#### Sistema de Movimento do Jogador
-- **`Controller.cs`**: O avatar físico. Impulsiona a velocidade do Rigidbody/Transform com base nos eixos de input e delega o escudo visualmente ao `ShieldController.cs`.
-  - **Métodos Principais**:
-    - `HandleInput()`: Coleta input, aplica `SmoothDamp` para suavização, executa movimento.
-    - `MovePlayer(Vector2 movement)`: Aplica movimento absoluto no espaço mundial.
-    - `ApplyKnockback(Vector2 force)`: Aplica força de repulsão externa.
-    - `LookAtPoint(Vector2 lookPoint)`: Faz a nave olhar para um ponto.
-    - `GanharEscudo(int vidas)`: Adiciona vidas ao escudo.
-    - `GanharBomba(int quantidade)`: Adiciona bombas ao jogador.
-  - **Variáveis Principais**:
-    - `myRigidbody`: Rigidbody2D do jogador.
-    - `moveSpeed`: Velocidade de movimento.
-    - `rotationSpeed`: Velocidade de rotação.
-    - `accelerationTime`: Tempo de aceleração do motor (0.3f).
-    - `currentInputVector`: Input atual.
-    - `smoothInputVelocity`: Input suavizado.
-    - `knockbackVelocity`: Velocidade de repulsão acumulada.
-    - `aimMode`: Modo de mira (Mouse, Forwards, DualStickMobile).
-    - `movementMode`: Modo de movimento (FreeRoam, MoveHorizontally, MoveVertically, Astroids).
-    - `shieldObject`: Objeto do escudo.
-    - `startEngineSound`: Som de partida do motor.
-    - `engineSound`: Som do motor.
-    - `turbineAnimator`: Animator do turbina.
-    - `moveAction`: InputAction de movimento.
-    - `lookAction`: InputAction de mira.
-    - `mobileMoveJoystick`: Joystick de movimento mobile.
-    - `mobileLookJoystick`: Joystick de mira mobile.
-  - **Sistema de Movimento**:
-    - **Movimento Absoluto**: WASD/joystick movem sempre para frente/atrás/esquerda/direita no espaço mundial, **independente da rotação da nave**.
-    - **Física de Motor**: Usa `Vector2.SmoothDamp` para fornecer aceleração/desaceleração suave.
-    - **Colisão com Paredes**: Verifica `Physics2D.OverlapCircleAll` antes de aplicar movimento para evitar atravessar boundaries.
-    - **Knockback**: Força de repulsão aplicada via `ApplyKnockback()` que atenua o controle do jogador.
-    - **Som de Dano**: `hitSound` só executado uma vez durante o tempo de invincibilidade (`isInvincible`).
-
-#### Sistema de Armas e Projéteis
-- **`ShootingController.cs`**: O canhão. Gera instâncias de balas com base em cooldowns personalizáveis e pontos de tiro.
-  - **Métodos Principais**:
-    - `Fire()`: Dispara projéteis.
-    - `AdicionarProjétil(int quantidade)`: Adiciona projéteis extras.
-    - `ResetarArma()`: Reseta a arma.
-  - **Variáveis Principais**:
-    - `weaponLevel`: Nível da arma (1, 2, 3).
-    - `cooldown`: Cooldown entre tiros.
-    - `firePoint`: Ponto de tiro.
-    - `projectilePrefab`: Prefab do projétil.
-    - `isPlayerControlled`: Se é controlado pelo jogador.
-    - `teamId`: ID da equipa.
-
-#### Sistema de Inimigos e Perigos
-- **`Enemy.cs`**: Os combatentes de IA que orquestram padrões variados de tiro e manobras evasivas.
-  - **Métodos Principais**:
-    - `DoBeforeDestroy()`: Executa antes da destruição.
-    - `MoverInimigo()`: Move o inimigo.
-    - `Atirar()`: Atira projéteis.
-  - **Variáveis Principais**:
-    - `health`: Health do inimigo.
-    - `speed`: Velocidade do inimigo.
-    - `rotationSpeed`: Velocidade de rotação.
-    - `fireRate`: Taxa de tiro.
-    - `projectilePrefab`: Prefab do projétil.
-    - `teamId`: ID da equipa.
-
-- **`Asteroid.cs`**: Característica com mecânica de clonagem fractal. Ao atingir `Die()`, invoca `DividirOuExplodir()`.
-  - **Métodos Principais**:
-    - `DividirOuExplodir()`: Divide o asteroide em clones.
-    - `MoverAsteroide()`: Move o asteroide.
-  - **Variáveis Principais**:
-    - `health`: Health do asteroide.
-    - `speed`: Velocidade do asteroide.
-    - `cloneCount`: Número de clones.
-    - `clonePrefab`: Prefab do clone.
-    - `estaDestruindo`: Se está a ser destruído.
-
-- **`MotherShip.cs`**: O chefe que orquestra padrões de combate complexos.
-  - **Métodos Principais**:
-    - `FinalizarBoss()`: Finaliza o boss.
-    - `AtivarEstagio2()`: Ativa o estágio 2.
-    - `MoverBoss()`: Move o boss.
-    - `AtirarBoss()`: Atira projéteis.
-  - **Variáveis Principais**:
-    - `health`: Health do boss.
-    - `shieldHealth`: Health do escudo.
-    - `stage`: Estágio atual.
-    - `fireRate`: Taxa de tiro.
-    - `projectilePrefab`: Prefab do projétil.
-    - `spriteEscudoEstagio2`: Sprite do escudo do estágio 2.
-
-- **`Bomb.cs`**: Bomba do boss que rastreia o jogador usando `Slerp`.
-  - **Métodos Principais**:
-    - `MoverBomba()`: Move a bomba.
-    - `Explodir()`: Explode a bomba.
-  - **Variáveis Principais**:
-    - `health`: Health da bomba.
-    - `speed`: Velocidade da bomba.
-    - `target`: Alvo da bomba.
-    - `explosionRadius`: Raio da explosão.
-
-#### Sistema de Câmera
-- **`CameraController.cs`**: Limita a visão do jogador matematicamente.
-  - **Métodos Principais**:
-    - `AtualizarCamera()`: Atualiza a câmera.
-    - `ClampCamera()`: Clamping da câmera.
-  - **Variáveis Principais**:
-    - `camera`: Câmera principal.
-    - `orthoSize`: Tamanho ortográfico.
-    - `limiteX`: Limite X da câmera.
-    - `limiteY`: Limite Y da câmera.
-
-#### Sistema de Interface do Usuário
-- **`UIManager.cs`**: Sincronização de UI.
-  - **Métodos Principais**:
-    - `UpdateUI()`: Atualiza a UI.
-    - `MostrarMenu()`: Mostra o menu.
-    - `MostrarGameOver()`: Mostra o game over.
-  - **Variáveis Principais**:
-    - `playerHealth`: Health do jogador.
-    - `scoreText`: Texto de pontuação.
-    - `healthText`: Texto de health.
-    - `livesText`: Texto de vidas.
-    - `timerText`: Texto de tempo.
-    - `difficultyText`: Texto de dificuldade.
-
-- **`UiShieldDisplay.cs`**: Display do escudo.
-  - **Métodos Principais**:
-    - `AtualizarEscudo()`: Atualiza o escudo.
-  - **Variáveis Principais**:
-    - `shieldHealth`: Health do escudo.
-    - `shieldMaxHealth`: Health máximo do escudo.
-    - `shieldBar`: Barra do escudo.
-
-- **`UIHealthDisplay.cs`**: Display de health.
-  - **Métodos Principais**:
-    - `AtualizarHealth()`: Atualiza o health.
-  - **Variáveis Principais**:
-    - `currentHealth`: Health atual.
-    - `maxHealth`: Health máximo.
-    - `healthBar`: Barra de health.
-
-#### Sistema de Items e Power-ups
-- **`PowerUpItem.cs`**: Item de power-up.
-  - **Métodos Principais**:
-    - `AtivarPowerUp()`: Ativa o power-up.
-    - `Explodir()`: Explode o power-up.
-  - **Variáveis Principais**:
-    - `powerUpType`: Tipo de power-up.
-    - `duration`: Duração do power-up.
-    - `effect`: Efeito do power-up.
-
-#### Sistema de Spawners
-- **`EnemySpawner.cs`**: Spawner de inimigos.
-  - **Métodos Principais**:
-    - `SpawnInimigo()`: Spawna inimigos.
-    - `PararSpawning()`: Para de spawna.
-  - **Variáveis Principais**:
-    - `spawnRate`: Taxa de spawn.
-    - `enemyPrefab`: Prefab do inimigo.
-    - `spawnCount`: Número de inimigos.
-
-- **`AsteroidSpawner.cs`**: Spawner de asteroides.
-  - **Métodos Principais**:
-    - `SpawnAsteroide()`: Spawna asteroides.
-    - `PararSpawning()`: Para de spawna.
-  - **Variáveis Principais**:
-    - `spawnRate`: Taxa de spawn.
-    - `asteroidPrefab`: Prefab do asteroide.
-    - `spawnCount`: Número de asteroides.
-    - `limiteX`: Limite X de spawn.
-    - `limiteY`: Limite Y de spawn.
-
-#### Sistema de Utilitários
-- **`GameManager.cs`**: Gerenciador do jogo.
-  - **Métodos Principais**:
-    - `GameOver()`: Game over.
-    - `NivelConcluido()`: Nivel concluído.
-    - `CalcularVidaInimigo()`: Calcula vida do inimigo.
-    - `GetDificuldadeMultiplier()`: Obtém multiplicador de dificuldade.
-  - **Variáveis Principais**:
-    - `score`: Pontuação.
-    - `timer`: Tempo.
-    - `enemyCount`: Número de inimigos.
-    - `nivelAtual`: Nivel atual.
-    - `dificuldadeSelecionada`: Dificuldade selecionada.
-    - `highscore`: Melhor pontuação.
-    - `melhor_tempo`: Melhor tempo.
-    - `historico_partidas`: Histórico de partidas.
-
-- **`GameSettings.cs`**: Configurações do jogo.
-  - **Métodos Principais**:
-    - `CarregarConfiguracoes()`: Carrega configurações.
-    - `SalvarConfiguracoes()`: Salva configurações.
-  - **Variáveis Principais**:
-    - `configAtual`: Configuração atual.
-    - `dificuldadeSelecionada`: Dificuldade selecionada.
-    - `velocidadePlayer`: Velocidade do jogador.
-    - `vidasIniciais`: Vidas iniciais.
-    - `multiplicadorDanoRecebido`: Multiplicador de dano recebido.
-
-#### Sistema de Input
-- **`VirtualJoystick.cs`**: Joystick virtual.
-  - **Métodos Principais**:
-    - `AtualizarJoystick()`: Atualiza o joystick.
-  - **Variáveis Principais**:
-    - `ID`: ID único.
-    - `controlStick`: Control stick.
-    - `deadZone`: Zona morta.
-    - `sensitivity`: Sensibilidade.
-
-- **`InputAction.cs`**: Ação de input.
-  - **Métodos Principais**:
-    - `Enable()`: Habilita a ação.
-    - `Disable()`: Desabilita a ação.
-  - **Variáveis Principais**:
-    - `name`: Nome da ação.
-    - `type`: Tipo de ação.
-    - `binding`: Binding.
-
-### 2.3 Weapon Systems (Projectiles)
-- **`ShootingController.cs`**: The gun barrel. Generates instances of bullets relying on customizable cooldowns and fire points.
-- **`Projectile.cs`**: The physical Payload. Translates strictly forward. Automatically flags self-destruction upon hitting a target with an opposing `teamId` (0 = Caster is Player, 1 = Caster is Enemy).
-
-### 2.4 Enemies & Hazards
-- **`Asteroid.cs`**: Feature a fractal cloning mechanic. Upon reaching `Die()`, it invokes `DividirOuExplodir()`. **RULE:** Clones initiated via `Instantiate(gameObject)` inherit the dead parent's internal states. Private variables like `estaDestruindo=true` MUST be manually scrubbed to `false` in the child immediately. Clones are given temporary 0.35s I-Frames (`Collider.enabled=false`), spawned horizontally offset, and launched at 1.8x velocity to guarantee evasion from the player's core explosion AoE.
-- **`AsteroidSpawner.cs`**: Balistic Spawning Tracker. Spawns Asteroids in an invisible outer-bounds margin native to its variables (`limiteX/Y`), but dynamically measures the inner dimensions of `CameraController.cs` to generate an intercept vector that crosses right through the observable player window.
-- **`Enemy.cs` & `MotherShip.cs`**: The AI Combatants orchestrating varying patterns of shooting and evasive maneuvering.
-- **`Bomb.cs` (Boss Bomb)**: Tracks the player using spherical interpolation (`Slerp`). Because it moves entirely via `Transform` without Rigidbody mass, it employs the Fúria Override (see 3.1) to avoid passing harmlessly through asteroids.
-
-### 2.5 Camera Extents
-- **`CameraController.cs`**: Limits player vision mathematically. Do not use raw Center-clamping on the X/Y axes. Clamp utilizing the lens geometry to block the screen edge perfectly against the abyss:
-  `camHalfWidth = aspect * orthoSize`
-
-### 2.6 User Interface (Sync Layer)
-- **`UIManager.cs` & Modules (`UiShieldDisplay.cs`, `UIHealthDisplay.cs`)**: For bulletproof synchronization, all UI components must inherit from `UIelement.cs` and implement auto-location in `UpdateUI()`:
-  ```csharp
-  if (playerHealth == null) {
-      GameObject player = GameObject.FindGameObjectWithTag("Player");
-      if (player != null) playerHealth = player.GetComponent<Health>();
-  }
-  ```
-  **RULE:** Never trust Inspector references for UI components in dynamic levels (1, 2, 3). Always use Tag-based recovery as a fallback.
-
-### 2.7 Boss Phases & Asset Swapping
-- **`MotherShip.cs` Event:** When transitioning to Stage 2 (`AtivarEstagio2()`), do NOT just change `SpriteRenderer.color`. 
-- **RULE:** Use physical Asset swapping. Assign the High-Res variant (e.g. `retro_buble_boss_red`) to the `spriteEscudoEstagio2` field and swap the `sr.sprite` dynamically. This preserves pixel density and the intended "Boss Mode" visual identity.
+Objetivo deste handoff:
+- reduzir reexploração desnecessária
+- registrar o estado real do código em 2026-03-22
+- listar regras de segurança para evitar regressões
+- apontar problemas já corrigidos e pendências reais
 
 ---
 
-## 3. "FÚRIA MODE" HACKS & BUG PREVENTION
+## 1. Resumo do projeto
 
-Whenever generating or modifying logic in this ecosystem, YOU MUST strictly obey these native overrides:
+- Engine: Unity 2D
+- Linguagem principal: C#
+- Plataforma principal atual: desktop, com suporte parcial a mobile/joystick virtual
+- Cenas jogáveis no build:
+  - `Assets/_Scenes/Level1.unity`
+  - `Assets/_Scenes/Level2.unity`
+  - `Assets/_Scenes/Level3.unity`
 
-### 3.1 The "OverlapCircle" Force Trigger
-- Unity's native `OnTriggerEnter2D` drops collisions on scaled GameObjects translating without Rigidbodies, or when Layer matrices desync natively.
-- **Protocol:** If a Projectile or Bomb fails to detect a hit, inject a manual radar sweep in the `Update()`:
-  ```csharp
-  Collider2D[] radar = Physics2D.OverlapCircleAll(transform.position, 0.7f);
-  foreach (var obj in radar) { OnTriggerEnter2D(obj); } // Força a execução nativa
-  ```
+Loop principal:
+- jogador controla uma nave
+- mira com mouse no desktop
+- move com WASD
+- atira projéteis com mouse esquerdo
+- usa bomba/tela limpa com outro sistema
+- enfrenta inimigos, asteroides e boss
 
-### 3.2 Race Condition Immunity
-- When two highly-volatile entities (Bomb vs Asteroid) touch, processing destruction asynchronously across scripts drops colliders before the second object registers the hit (making Asteroids immune).
-- **Protocol:** The dominant script (e.g. `Bomb.cs`) must process both deaths in local scope before terminating:
-  ```csharp
-  int targetDmg = GetComponent<Damage>() != null ? GetComponent<Damage>().damageAmount : 1;
-  other.GetComponent<Health>()?.TakeDamage(targetDmg); // Fere o Asteroide ativamente
-  GetComponent<Health>()?.Die(); // Auto-destrói a Bomba na mesma Frame
-  ```
+---
 
-### 3.3 The "Ghost Bullet" Audit Rule
-- Missing/invalid setups in the Unity Inspector often mistakenly assign `Projectile` prefabs into `deathEffect` or `particulasExplosao` fields, making enemies shoot backwards upon taking damage.
-- **Protocol:** ALWAYS audit visual effects right before instantiation in scripts like `Health.cs` or `Asteroid.cs`:
-  ```csharp
-  if (fx.GetComponent<Projectile>() != null) { return; } // Bloqueio cirúrgico do Bug Fantasma
-  ```
+## 2. Estado atual importante
 
-## 4. DIFFICULTY SCALING EXPERTISE (GAME SETTINGS)
+O repositório está com alterações locais não relacionadas. Não reverta nada por padrão.
 
-O ritmo de jogo e agressividade matemática dos inimigos são brutalmente geridos através dos singletons `GameSettings.cs` e `GameManager.cs`. 
-- **O Enum de Dificuldade (`GameSettings.Dificuldade`)**: Contém os tiers standard (Easy, Medium, Hard) e o tier supremo `Furia` (Cuba Mode).
-- **Protocolo de Implementação (Como a IA local deve injetar Dificuldade):**
-  - **Standard Mode Scaling:** Multiplicar as speeds e forcas base dos objectos combinando `GameSettings.instance.nivelAtual` e um cast da própria dificuldade base `(int)dificuldadeSelecionada`. 
-    *Exemplo (`Bomb.cs`)*: `velocidade *= (1f + (nivelAtual * 0.1f))` ou `forcaCurva *= (1f + ((int)dificuldade * 0.2f))`
-  - **Fúria Mode Scaling:** Hard-override para estatísticas sádicas que ignoram matemática normal se `dificuldadeSelecionada == Furia`. 
-    *Exemplo (`AsteroidSpawner.cs`)*: Se `Furia`, o `tempoParaProximoSpawn *= 0.4f` (criando 2.5x mais spawns) ou no caso das `Bomb`, a forca de Steering (Curva de Perseguição) vira `* 2.5f`, impossibilitando fuga padrão do jogador sem uso de items.
-- Nunca usar randomizadores flat isolados para dificuldade. O código deve interpelar sempre os singletons no `Awake()`/`Start()` de cada Prefab Spawnado.
+Arquivos com mudanças locais visíveis quando este handoff foi atualizado:
+- `Assets/Scripts/Health&Damage/Damage.cs`
+- `Assets/Scripts/Player/Controller.cs`
+- `Assets/Scripts/Player/ShieldController.cs`
+- `Assets/Scripts/ShootingProjectiles/Projectile.cs`
+- `Assets/Scripts/ShootingProjectiles/ShootingController.cs`
+- `Assets/Prefabs/Enemies/...` vários prefabs
+- `Assets/_Scenes/Level1.unity`
+- `ProjectSettings/Physics2DSettings.asset`
+- `ProjectSettings/TagManager.asset`
+- outros assets de fonte/UI
 
-**[END OF SYSTEM PROMPT]** Read and internalize this taxonomy map and constraint blueprint before suggesting fixes or writing new scripts for the 2DShooter.
+Regra:
+- trate a worktree como suja
+- antes de editar um arquivo, leia o estado atual dele
+- não faça rollback de mudanças do usuário
+
+Limitação do ambiente atual:
+- `dotnet build` não funciona aqui porque não há .NET SDK instalado
+- validação local foi feita por inspeção de código/diff, não por compilação CLI
+
+---
+
+## 3. Mapa dos scripts centrais
+
+### Player
+
+#### `Assets/Scripts/Player/Controller.cs`
+Responsável por:
+- movimento do jogador
+- leitura de input de movimento e mira
+- rotação para mouse no desktop
+- rotação e tiro por joystick de mira no mobile
+- som do motor
+- integração com escudo e bomba
+- aplicação de knockback
+
+Pontos relevantes:
+- `aimMode` muda em `Start()` com `#if UNITY_IOS || UNITY_ANDROID || UNITY_TVOS`
+- no desktop, usa `AimTowardsMouse`
+- `HandleInput()` chama `shootingController.Fire()` no mobile quando o joystick direito está ativo
+- movimento padrão é absoluto no mundo, não relativo à rotação da nave
+
+Risco atual:
+- a lógica de bloqueio por boundary usa `targetPosition = transform.position * movement * Time.deltaTime * moveSpeed;`
+- isso parece incorreto matematicamente; o esperado provavelmente seria soma, não multiplicação
+- não corrigi isso nesta rodada porque o foco foi o sistema de tiro
+
+#### `Assets/Scripts/Player/ShieldController.cs`
+Responsável por:
+- ativar e resetar o escudo
+- detectar contato com `Boundary`
+- aplicar repulsão imediata no player com base no `Damage.repulsionForce`
+
+Observação:
+- o escudo usa collider trigger grande
+- isso influencia diretamente bugs de spawn de projétil
+
+#### `Assets/Scripts/Player/ScreenClearBomb.cs`
+Responsável por:
+- bomba especial do jogador
+- lançamento do projétil de bomba
+- explosão e limpeza de ameaças
+
+### Tiro e projéteis
+
+#### `Assets/Scripts/ShootingProjectiles/ShootingController.cs`
+Responsável por:
+- cooldown de tiro
+- leitura do `fireAction`
+- suporte a tiro mobile via `SetMobileFiring(bool)`
+- spawn do projétil
+- upgrade de arma (`weaponLevel`)
+
+Estado atual importante:
+- tem `projectilePrefab`
+- tem `projectileHolder`
+- tem `projectileSpawnPoint`
+- em `Start()`, tenta localizar `ProjectileHolder` e `PontoDisparo`
+- usa `weaponLevel` 1..3
+
+Mudanças recentes já aplicadas:
+- spawn agora usa `projectileSpawnPoint` quando existir
+- se não existir, cai para `transform`
+- projétil nasce com offset à frente via `projectileSpawnForwardOffset = 0.3f`
+- após instanciar, o script ignora colisão entre o projétil e todos os colliders do dono (`Physics2D.IgnoreCollision`)
+
+Motivo da mudança:
+- havia bug intermitente onde o som do tiro tocava mas o projétil às vezes “não saía”
+- causa provável: projétil nascia dentro/encostando no player ou escudo e morria imediatamente
+
+#### `Assets/Scripts/ShootingProjectiles/Projectile.cs`
+Responsável por:
+- mover o projétil para frente com `transform.up * projectileSpeed`
+- destruir ao bater em `Boundary`
+- aplicar dano baseado em tag do projétil e `teamId` do alvo
+
+Estado atual:
+- ainda existe lógica de dano aqui
+- ao mesmo tempo, o prefab do projétil do player também possui `Damage.cs`
+
+Conclusão:
+- há duplicidade de responsabilidade entre `Projectile.cs` e `Damage.cs`
+- isso é dívida técnica real
+- se o próximo agente tocar no sistema de dano de projéteis, o ideal é consolidar a responsabilidade em um único lugar
+
+### Vida e dano
+
+#### `Assets/Scripts/Health&Damage/Health.cs`
+Responsável por:
+- vida/vidas
+- i-frames/invencibilidade
+- efeitos de hit/death
+- lógica de morte do player, escudo, inimigos, boss etc.
+
+Observação:
+- há proteções contra “ghost bullet” em efeitos, verificando se o prefab de efeito tem `Projectile`
+
+#### `Assets/Scripts/Health&Damage/Damage.cs`
+Responsável por:
+- aplicar dano em trigger/stay/collision
+- aplicar repulsão/knockback
+- opcionalmente destruir o objeto causador de dano
+
+Mudança recente já aplicada:
+- a destruição do objeto (`destroyAfterDamage`) agora só ocorre quando realmente acertou um alvo de time inimigo
+- antes, podia destruir mesmo em contato com aliado/mesmo time
+
+Motivo:
+- isso contribuía para sumiço do projétil logo após o spawn quando ele encostava no próprio player/escudo
+
+### Inimigos e boss
+
+#### `Assets/Scripts/Enemies/Enemy.cs`
+Responsável por:
+- lista de armas (`List<ShootingController> guns`)
+- tiro dos inimigos
+- score e morte
+
+#### `Assets/Scripts/Enemies/EnemySpawner.cs`
+Responsável por:
+- spawn de inimigos
+- após spawn, injeta `projectileHolder` em cada `ShootingController` encontrado nos filhos
+
+#### `Assets/Scripts/Enemies/Asteroid.cs`
+Responsável por:
+- comportamento dos asteroides
+- divisão/explosão
+- lógica de colisão específica
+
+#### `Assets/Scripts/Enemies/Bomb.cs`
+Responsável por:
+- bomba do boss
+- usa `Physics2D.OverlapCircleAll` para reforçar detecção
+
+#### `Assets/Scripts/Enemies/MotherShip.cs`
+Responsável por:
+- boss
+- escudo do boss
+- estágio 2
+- tiro e fim do nível
+
+Observação importante:
+- este arquivo ainda contém alguns fallbacks de dano hardcoded, por exemplo `999` em um trecho de colisão
+- isso viola a filosofia geral do sistema e merece revisão futura
+
+### Gestão e UI
+
+#### `Assets/Scripts/Utility/GameManager.cs`
+Responsável por:
+- singleton principal do jogo
+- score
+- estado de game over
+- identificação do nível atual
+- ativação inicial do player/escudo/arma
+- limpeza da cena ao finalizar
+
+#### `Assets/Scripts/Utility/GameSettings.cs`
+Responsável por:
+- configuração atual da dificuldade
+- taxa de tiro do player/inimigos
+- velocidade do player
+- multiplicadores de dificuldade
+
+#### `Assets/Scripts/UI/UIManager.cs` e derivados
+Responsáveis por:
+- HUD
+- pause
+- timer
+- highscore
+- UI do escudo e bombas
+
+Regra prática:
+- para níveis dinâmicos, prefira fallback por tag/find quando uma referência de Inspector puder faltar
+
+---
+
+## 4. Prefabs e objetos relevantes
+
+### Player
+
+#### `Assets/Prefabs/PLayer/Player.prefab`
+Pontos importantes observados:
+- tem `Controller`
+- tem `ShootingController`
+- tem `Health`
+- tem `Rigidbody2D`
+- tem `PolygonCollider2D`
+- tem filho `PontoDisparo`
+- referencia o prefab `Player_Projectile`
+- `ShootingController.fireSound` no prefab está `null`
+
+Observação importante:
+- se o usuário relata “som de tiro toca”, esse som pode estar vindo de efeito/prefab auxiliar ou de estado de cena, não necessariamente do `fireSound` do `ShootingController` no prefab base
+
+#### `Assets/Prefabs/PLayer/shield_buble.prefab`
+Pontos importantes:
+- tag `Shield`
+- layer 6
+- `CircleCollider2D` trigger grande
+- `Health.teamId = 0`
+- começa desativado
+
+Implicação:
+- qualquer projétil do player que nasça dentro dessa área pode gerar comportamento inesperado se a exclusão de colisão falhar
+
+### Projétil do player
+
+#### `Assets/Prefabs/Projectiles/Player_Projectiles/Player_Projectile.prefab`
+Pontos importantes observados:
+- tag `PlayerProjectile`
+- layer 7
+- possui `Projectile.cs`
+- possui `Damage.cs`
+- possui `Rigidbody2D` kinematic
+- possui `PolygonCollider2D` trigger
+- `projectileSpeed = 30`
+- `Damage.teamId = 0`
+- `Damage.destroyAfterDamage = 1`
+- `Damage.dealDamageOnTriggerEnter = 1`
+
+Conclusão:
+- o prefab está funcional, mas com lógica de dano duplicada
+
+### Holder de projéteis
+
+Cada cena principal tem um objeto `ProjectileHolder`:
+- `Assets/_Scenes/Level1.unity`
+- `Assets/_Scenes/Level2.unity`
+- `Assets/_Scenes/Level3.unity`
+
+`ShootingController.Start()` tenta achar esse objeto por nome quando `projectileHolder` está `null`.
+
+---
+
+## 5. Tags, layers e convenções
+
+Ver também:
+- `ProjectSettings/TagManager.asset`
+- `ProjectSettings/Physics2DSettings.asset`
+
+Tags confirmadas importantes:
+- `Player`
+- `Shield`
+- `EnemyProjectile`
+- `PlayerProjectile`
+- `Boundary`
+- `Enemy`
+- `Boss`
+- `Bomb`
+- `Items`
+
+Conveção de times:
+- `teamId = 0` => player/aliados do player
+- `teamId != 0` => inimigos/ameaças
+
+Conveção de spawn:
+- tiros do player devem sair de `PontoDisparo` quando presente
+- se adicionar nova arma, mantenha esse padrão
+
+---
+
+## 6. Bug recente de tiro intermitente
+
+### Sintoma relatado
+- quando o jogador atira, o som do tiro acontece
+- o projétil às vezes sai, às vezes não
+
+### Causa provável
+Combinação de dois fatores:
+- projétil podia nascer muito próximo ou dentro dos colliders do player/escudo
+- `Damage.cs` podia destruir o projétil mesmo sem atingir um alvo inimigo
+
+### Correções já feitas
+
+#### Em `ShootingController.cs`
+- spawn passou a usar `projectileSpawnPoint`
+- projétil nasce um pouco à frente do ponto de disparo
+- colisões entre projétil e colliders do próprio dono são ignoradas no spawn
+
+#### Em `Damage.cs`
+- destruição após dano agora só acontece quando o alvo atingido é de outro time
+
+### Resultado esperado
+- o tiro não deve mais sumir aleatoriamente ao nascer
+- o escudo ativo não deve sabotar o projétil do player no frame de spawn
+
+### Se o bug persistir
+Investigar nesta ordem:
+1. confirmar no Inspector/runtime se há múltiplos colliders/layers interferindo
+2. confirmar matriz de colisão 2D em `ProjectSettings/Physics2DSettings.asset`
+3. verificar se algum script de efeito está destruindo projéteis por tag
+4. revisar a duplicidade `Projectile.cs` + `Damage.cs`
+5. inspecionar se a cena override do prefab do player mudou `PontoDisparo` ou layers
+
+---
+
+## 7. Dívidas técnicas reais
+
+Estas são as pendências mais importantes para continuidade:
+
+### 7.1 Consolidar dano de projéteis
+Hoje o projétil do player usa:
+- `Projectile.cs`
+- `Damage.cs`
+
+Isso gera:
+- duplicidade de regras
+- risco de double hit
+- comportamento difícil de prever
+
+Direção recomendada:
+- escolher um único responsável pelo dano do projétil
+- idealmente manter `Projectile.cs` só para movimento/vida útil
+- deixar `Damage.cs` cuidar do dano
+- depois ajustar boss/inimigos que ainda leem `Projectile.damage`
+
+### 7.2 Revisar `Controller.MovePlayer()`
+Trecho suspeito:
+- cálculo de `targetPosition` para boundary parece incorreto
+
+Impacto possível:
+- colisão de parede inconsistente
+- falsa detecção ou bloqueio estranho de movimento
+
+### 7.3 Revisar hardcodes de dano em `MotherShip.cs`
+Há trechos com fallback agressivo como `999`.
+Ideal:
+- padronizar tudo para consumir `Damage.damageAmount`
+
+### 7.4 Documentação antiga estava divergente
+O arquivo anterior descrevia métodos/campos que não existem mais exatamente assim.
+Ao continuar o desenvolvimento:
+- sempre privilegie o código real sobre documentação antiga
+
+---
+
+## 8. Regras para qualquer agente que continuar
+
+### Regras de edição
+- leia o arquivo real antes de editar
+- não assuma que o prefab/cena está limpo
+- preserve mudanças locais não relacionadas
+- prefira correções pequenas e verificáveis
+
+### Regras de gameplay
+- não introduza dano hardcoded se já existe `Damage`
+- respeite `teamId`
+- respeite `PontoDisparo`
+- projéteis do player não devem colidir com o próprio player/escudo no spawn
+- ao alterar tiro, testar com escudo ativo e escudo inativo
+
+### Regras de cenas/prefabs
+- verificar overrides em `Level1`, `Level2`, `Level3`
+- se mudar prefab do player, checar impacto nas três cenas
+- se mudar layers/tags, validar `TagManager` e `Physics2DSettings`
+
+### Regras de investigação
+- primeiro localizar o fluxo real no código
+- depois confirmar prefab relevante
+- por fim confirmar override em cena
+
+---
+
+## 9. Fluxos de referência
+
+### Fluxo de tiro do player
+1. `Controller.cs` e/ou `ShootingController.ProcessInput()` detecta input
+2. `ShootingController.Fire()` valida cooldown
+3. `ShootingController.SpawnProjectile()` instancia
+4. projétil nasce em `PontoDisparo` com offset à frente
+5. colisões com o dono são ignoradas
+6. `Projectile.cs` move o projétil
+7. `Damage.cs` e/ou `Projectile.cs` processam hit
+
+### Fluxo de escudo
+1. player ativa/recebe escudo
+2. `ShieldController.ActivarEscudo()` liga o objeto e reseta vida
+3. escudo absorve hits por `Health`
+4. boundary pode aplicar repulsão via `ShieldController`
+
+### Fluxo de inimigo armado
+1. `EnemySpawner` instancia inimigo
+2. coleta `ShootingController` nos filhos
+3. injeta `projectileHolder`
+4. `Enemy.cs` chama `gun.Fire()`
+
+---
+
+## 10. Arquivos prioritários para abrir primeiro em qualquer task de combate
+
+Ordem recomendada:
+- `Assets/Scripts/ShootingProjectiles/ShootingController.cs`
+- `Assets/Scripts/ShootingProjectiles/Projectile.cs`
+- `Assets/Scripts/Health&Damage/Damage.cs`
+- `Assets/Scripts/Health&Damage/Health.cs`
+- `Assets/Scripts/Player/Controller.cs`
+- `Assets/Scripts/Player/ShieldController.cs`
+- `Assets/Prefabs/PLayer/Player.prefab`
+- `Assets/Prefabs/Projectiles/Player_Projectiles/Player_Projectile.prefab`
+- `Assets/_Scenes/Level1.unity`
+
+---
+
+## 11. Próxima tarefa recomendada
+
+Se houver continuidade imediata no sistema de combate, a melhor próxima tarefa é:
+
+1. unificar a lógica de dano do projétil entre `Projectile.cs` e `Damage.cs`
+2. validar colisões do player/escudo/projétil nas três cenas
+3. revisar `Controller.MovePlayer()` para o cálculo de boundary
+
+---
+
+## 12. Resumo executivo para Claude
+
+Se você é outro agente entrando agora:
+- o bug principal recente era projétil do player sumindo no spawn
+- já houve correção em `ShootingController.cs` e `Damage.cs`
+- o projeto ainda tem dívida técnica por duplicidade entre `Projectile.cs` e `Damage.cs`
+- o escudo grande do player influencia diretamente colisões de tiro
+- a worktree está suja; não reverta mudanças alheias
+- use o código real como fonte da verdade, não a documentação antiga
+
