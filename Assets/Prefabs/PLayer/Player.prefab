@@ -139,10 +139,9 @@ MonoBehaviour:
   myRigidbody: {fileID: 3071271792905132556}
   mobileMoveJoystick: {fileID: 0}
   mobileLookJoystick: {fileID: 0}
-  moveSpeed: 10
-  rotationSpeed: 60
+  moveSpeed: 1
+  rotationSpeed: 10
   accelerationTime: 0.3
-  smoothTime: 0.15
   turbineAnimator: {fileID: 3103540752278705010}
   moveAction:
     m_Name: Move
@@ -241,7 +240,7 @@ MonoBehaviour:
   maximumLives: 3
   deathEffect: {fileID: 6218169049356006189, guid: 68794701c80057447857bb433e54c579, type: 3}
   hitEffect: {fileID: 5156419567158778961, guid: d35295653acdbe24081a5caee3d9c353, type: 3}
-  hitSound: {fileID: 4625570402135317304, guid: d35295653acdbe24081a5caee3d9c353, type: 3}
+  hitSound: {fileID: 0}
   deathSound: {fileID: 3451089215068300000, guid: 68794701c80057447857bb433e54c579, type: 3}
 --- !u!50 &3071271792905132556
 Rigidbody2D:
@@ -339,6 +338,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootingController
   projectilePrefab: {fileID: 3562651836113712045, guid: aee1688b385340b4bab2b46707955895, type: 3}
   projectileHolder: {fileID: 0}
+  projectileSpawnPoint: {fileID: 5959279895714222436}
   isPlayerControlled: 1
   fireAction:
     m_Name: Fire
@@ -359,6 +359,7 @@ MonoBehaviour:
     m_Flags: 0
   fireRateBase: 0.15
   projectileSpread: 1
+  projectileSpawnForwardOffset: 0.3
   fireEffect: {fileID: 8000435538804692873, guid: 40a02cfccf2ecb94db6958f6772d74d7, type: 3}
   fireSound: {fileID: 0}
   weaponLevel: 1
@@ -767,6 +768,10 @@ PrefabInstance:
       propertyPath: deathEffect
       value: 
       objectReference: {fileID: 6218169049356006189, guid: 68794701c80057447857bb433e54c579, type: 3}
+    - target: {fileID: 329879916216467214, guid: 4a79c50ede0c2e849aca5c2f1c6a92ca, type: 3}
+      propertyPath: invincibilityTime
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5182291960608970504, guid: 4a79c50ede0c2e849aca5c2f1c6a92ca, type: 3}
       propertyPath: m_Name
       value: shield_buble

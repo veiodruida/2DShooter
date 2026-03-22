@@ -6,6 +6,7 @@ public class ShootingController : MonoBehaviour
     [Header("GameObject/Component References")]
     public GameObject projectilePrefab = null;
     public Transform projectileHolder = null;
+    public Transform projectileSpawnPoint = null;
 
     [Header("Input Settings")]
     public bool isPlayerControlled = false;
@@ -17,6 +18,7 @@ public class ShootingController : MonoBehaviour
     [Header("Firing Settings")]
     public float fireRateBase = 0.15f;
     public float projectileSpread = 1.0f;
+    public float projectileSpawnForwardOffset = 0.3f;
 
     private float lastFired = Mathf.NegativeInfinity;
 
@@ -48,6 +50,12 @@ public class ShootingController : MonoBehaviour
         {
             GameObject holder = GameObject.Find("ProjectileHolder");
             if (holder != null) projectileHolder = holder.transform;
+        }
+
+        if (projectileSpawnPoint == null)
+        {
+            Transform spawnPoint = transform.Find("PontoDisparo");
+            if (spawnPoint != null) projectileSpawnPoint = spawnPoint;
         }
     }
 
@@ -101,9 +109,14 @@ public class ShootingController : MonoBehaviour
             return;
         }
 
+        Transform spawnTransform = projectileSpawnPoint != null ? projectileSpawnPoint : transform;
+        Vector3 spawnPosition = spawnTransform.position + (spawnTransform.up * projectileSpawnForwardOffset);
+        Quaternion spawnRotation = spawnTransform.rotation;
+        Collider2D[] ownerColliders = GetComponentsInChildren<Collider2D>(true);
+
         for (int i = 0; i < weaponLevel; i++)
         {
-            GameObject proj = Instantiate(projectilePrefab, transform.position, transform.rotation);
+            GameObject proj = Instantiate(projectilePrefab, spawnPosition, spawnRotation);
             
             // Debug: Verifica se o projétil foi instanciado
             if (proj == null)
@@ -117,7 +130,7 @@ public class ShootingController : MonoBehaviour
             if (weaponLevel == 2)
             {
                 float offset = (i == 0) ? -0.25f : 0.25f;
-                proj.transform.position += transform.right * offset;
+                proj.transform.position += spawnTransform.right * offset;
             }
             else if (weaponLevel == 3)
             {
@@ -129,6 +142,7 @@ public class ShootingController : MonoBehaviour
             proj.transform.rotation = Quaternion.Euler(rotationEuler);
 
             if (projectileHolder != null) proj.transform.SetParent(projectileHolder);
+            IgnoreOwnerCollisions(proj, ownerColliders);
 
             // Debug: Verifica se o projétil tem componentes necessários
             if (proj.GetComponent<Rigidbody2D>() == null)
@@ -149,4 +163,23 @@ public class ShootingController : MonoBehaviour
     }
 
     public void ResetWeapon() => weaponLevel = 1;
+
+    private void IgnoreOwnerCollisions(GameObject projectile, Collider2D[] ownerColliders)
+    {
+        if (projectile == null || ownerColliders == null || ownerColliders.Length == 0) return;
+
+        Collider2D[] projectileColliders = projectile.GetComponentsInChildren<Collider2D>(true);
+        if (projectileColliders == null || projectileColliders.Length == 0) return;
+
+        foreach (Collider2D projectileCollider in projectileColliders)
+        {
+            if (projectileCollider == null) continue;
+
+            foreach (Collider2D ownerCollider in ownerColliders)
+            {
+                if (ownerCollider == null) continue;
+                Physics2D.IgnoreCollision(projectileCollider, ownerCollider, true);
+            }
+        }
+    }
 }

@@ -70,11 +70,4 @@ public class Projectile : MonoBehaviour
        // Debug.Log("Bati em: " + other.gameObject.name);
     }
 
-    private void OnBecameInvisible()
-    {
-        // Quando o tiro sair totalmente da visão da câmera, ele é destruído
-        Destroy(gameObject);
-       // Debug.Log("<color=red>desaparece e destruiu</color>");
-
-    }
 }

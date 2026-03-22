@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 8022954021460962557}
   - component: {fileID: 4327850106528714602}
   - component: {fileID: 584683058982610388}
-  - component: {fileID: 1967889900296038607}
   - component: {fileID: 8710375423321474922}
   m_Layer: 8
   m_Name: StraightChasing
@@ -259,20 +258,6 @@ PolygonCollider2D:
       - {x: 0.43682837, y: 0.14506364}
       - {x: 0.4403417, y: 0.24401402}
   m_UseDelaunayMesh: 1
---- !u!114 &1967889900296038607
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8282131552441171991}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 501d54417ec41d5479072bc4092fbc47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyContact
-  danoNoPlayer: 1
-  danoNoInimigoAoBater: 1
 --- !u!114 &8710375423321474922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,6 +324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 4641165794769155162, guid: 5089b9cd653abda4ba6013a20e42c774, type: 3}
   projectileHolder: {fileID: 0}
+  projectileSpawnPoint: {fileID: 0}
   isPlayerControlled: 0
   fireAction:
     m_Name: 

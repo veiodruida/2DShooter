@@ -249,6 +249,21 @@ public class Controller : MonoBehaviour
         knockbackVelocity = force;
     }
 
+    public void ApplyImmediateRepulsion(Vector2 displacement, Vector2 force)
+    {
+        if (myRigidbody != null)
+        {
+            myRigidbody.position += displacement;
+            myRigidbody.linearVelocity = Vector2.zero;
+        }
+        else
+        {
+            transform.position += (Vector3)displacement;
+        }
+
+        knockbackVelocity = force;
+    }
+
     private void LookAtPoint(Vector2 lookPoint)
     {
         if (Time.timeScale > 0 && Camera.main != null)

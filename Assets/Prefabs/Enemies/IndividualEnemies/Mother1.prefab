@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 666739247766231972}
   m_Layer: 9
   m_Name: BossShield
-  m_TagString: Shield
+  m_TagString: BossShield
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -358,6 +358,7 @@ MonoBehaviour:
   dealDamageOnTriggerEnter: 0
   dealDamageOnTriggerStay: 0
   dealDamageOnCollision: 1
+  repulsionForce: 0
 --- !u!1 &4240280553050144563
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ TagManager:
   - Asteroid
   - Boss
   - Bomb
+  - BossShield
   layers:
   - Default
   - TransparentFX
@@ -29,7 +30,7 @@ TagManager:
   - Background
   - Items
   - Asteroid
-  - 
+  - BossShield
   - 
   - 
   - 

@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 4641165794769155162, guid: 5089b9cd653abda4ba6013a20e42c774, type: 3}
   projectileHolder: {fileID: 0}
+  projectileSpawnPoint: {fileID: 0}
   isPlayerControlled: 0
   fireAction:
     m_Name: Fire
@@ -76,7 +77,6 @@ GameObject:
   - component: {fileID: 8022954021460962557}
   - component: {fileID: 4327850106528714602}
   - component: {fileID: 584683058982610388}
-  - component: {fileID: -2877417918952658325}
   - component: {fileID: -7935876670082075478}
   m_Layer: 8
   m_Name: DiagonalChasing
@@ -327,20 +327,6 @@ PolygonCollider2D:
       - {x: 0.44377327, y: -0.06328368}
       - {x: 0.43339705, y: 0.021777749}
   m_UseDelaunayMesh: 1
---- !u!114 &-2877417918952658325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8282131552441171991}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 501d54417ec41d5479072bc4092fbc47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyContact
-  danoNoPlayer: 1
-  danoNoInimigoAoBater: 1
 --- !u!114 &-7935876670082075478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,6 +393,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 4641165794769155162, guid: 5089b9cd653abda4ba6013a20e42c774, type: 3}
   projectileHolder: {fileID: 0}
+  projectileSpawnPoint: {fileID: 0}
   isPlayerControlled: 0
   fireAction:
     m_Name: Fire

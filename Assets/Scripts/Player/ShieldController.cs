@@ -3,6 +3,19 @@
 public class ShieldController : MonoBehaviour
 {
     private Health health;
+    private Controller ownerController;
+    private Collider2D shieldCollider;
+
+    [Header("Boundary Repulsion")]
+    [SerializeField] private float boundarySeparationPadding = 0.05f;
+    [SerializeField] private float boundaryImpulseToDistanceFactor = 0.02f;
+
+    private void Awake()
+    {
+        health = GetComponent<Health>();
+        shieldCollider = GetComponent<Collider2D>();
+        ownerController = GetComponentInParent<Controller>();
+    }
 
     // Mudamos para OnEnable para garantir que ele reseta sempre que o item e pego
     public void ActivarEscudo()
@@ -23,5 +36,50 @@ public class ShieldController : MonoBehaviour
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
 
         Debug.Log("<color=cyan>ESCUDO REATIVADO!</color> vida: "+ health.currentLives);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        HandleBoundaryRepulsion(other);
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        HandleBoundaryRepulsion(other);
+    }
+
+    private void HandleBoundaryRepulsion(Collider2D other)
+    {
+        if (!isActiveAndEnabled || !gameObject.activeInHierarchy) return;
+        if (!other.CompareTag("Boundary")) return;
+        if (ownerController == null || shieldCollider == null) return;
+
+        Damage boundaryDamage = other.GetComponent<Damage>();
+        if (boundaryDamage == null) boundaryDamage = other.GetComponentInParent<Damage>();
+
+        float repulsionForce = boundaryDamage != null ? boundaryDamage.repulsionForce : 0f;
+        if (repulsionForce <= 0f) return;
+
+        Vector2 shieldCenter = shieldCollider.bounds.center;
+        Vector2 closestPoint = other.ClosestPoint(shieldCenter);
+        Vector2 pushDirection = shieldCenter - closestPoint;
+
+        if (pushDirection.sqrMagnitude < 0.0001f)
+        {
+            pushDirection = shieldCenter - (Vector2)other.bounds.center;
+        }
+
+        if (pushDirection.sqrMagnitude < 0.0001f)
+        {
+            pushDirection = Vector2.up;
+        }
+
+        pushDirection.Normalize();
+
+        ColliderDistance2D distance = shieldCollider.Distance(other);
+        float penetrationDepth = distance.isOverlapped ? Mathf.Abs(distance.distance) : 0f;
+        float immediatePush = penetrationDepth + boundarySeparationPadding + (repulsionForce * boundaryImpulseToDistanceFactor);
+
+        ownerController.ApplyImmediateRepulsion(pushDirection * immediatePush, pushDirection * repulsionForce);
     }
 }
