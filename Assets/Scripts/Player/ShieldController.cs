@@ -6,7 +6,7 @@ public class ShieldController : MonoBehaviour
     private Controller ownerController;
     private Collider2D shieldCollider;
 
-    [Header("Boundary Repulsion")]
+    [Header("Collision Repulsion")]
     [SerializeField] private float boundarySeparationPadding = 0.05f;
     [SerializeField] private float boundaryImpulseToDistanceFactor = 0.02f;
 
@@ -40,24 +40,24 @@ public class ShieldController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        HandleBoundaryRepulsion(other);
+        HandleCollisionRepulsion(other);
     }
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        HandleBoundaryRepulsion(other);
+        HandleCollisionRepulsion(other);
     }
 
-    private void HandleBoundaryRepulsion(Collider2D other)
+    private void HandleCollisionRepulsion(Collider2D other)
     {
         if (!isActiveAndEnabled || !gameObject.activeInHierarchy) return;
-        if (!other.CompareTag("Boundary")) return;
+        if (!ShouldApplyRepulsion(other)) return;
         if (ownerController == null || shieldCollider == null) return;
 
-        Damage boundaryDamage = other.GetComponent<Damage>();
-        if (boundaryDamage == null) boundaryDamage = other.GetComponentInParent<Damage>();
+        Damage collisionDamage = other.GetComponent<Damage>();
+        if (collisionDamage == null) collisionDamage = other.GetComponentInParent<Damage>();
 
-        float repulsionForce = boundaryDamage != null ? boundaryDamage.repulsionForce : 0f;
+        float repulsionForce = collisionDamage != null ? collisionDamage.repulsionForce : 0f;
         if (repulsionForce <= 0f) return;
 
         Vector2 shieldCenter = shieldCollider.bounds.center;
@@ -81,5 +81,12 @@ public class ShieldController : MonoBehaviour
         float immediatePush = penetrationDepth + boundarySeparationPadding + (repulsionForce * boundaryImpulseToDistanceFactor);
 
         ownerController.ApplyImmediateRepulsion(pushDirection * immediatePush, pushDirection * repulsionForce);
+    }
+
+    private bool ShouldApplyRepulsion(Collider2D other)
+    {
+        return other.CompareTag("Boundary")
+            || other.CompareTag("Boss")
+            || other.CompareTag("BossShield");
     }
 }

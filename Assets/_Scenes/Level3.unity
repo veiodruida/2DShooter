@@ -3884,6 +3884,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 666739247766231972, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
+      propertyPath: repulsionForce
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1940442665237305757, guid: 2655b4e71fa4c6a479eec3a57f9de63a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.4
@@ -4345,10 +4349,6 @@ PrefabInstance:
       propertyPath: mobileMoveJoystick
       value: 
       objectReference: {fileID: 65182030}
-    - target: {fileID: 6950207213102343922, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
-      propertyPath: invincibilityTime
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7757960526826039249, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
       propertyPath: hitSound
       value: 
