@@ -1,0 +1,1 @@
+﻿mergeInto(LibraryManager.library, { IsMobileBrowser: function() { var userAgent = navigator.userAgent || navigator.vendor || window.opera; if (/(android|ipad|iphone|ipod|blackberry|iemobile|opera mini|mobile|tablet)/i.test(userAgent)) { return 1; } if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) { return 1; } return 0; } });

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -428,13 +428,7 @@ namespace Terresquall {
         }
 
         bool ShouldUseMobileMode() {
-            if (Application.isMobilePlatform) return true;
-            if (SystemInfo.deviceType == DeviceType.Handheld) return true;
-            if (Input.touchSupported) return true;
-#if ENABLE_INPUT_SYSTEM
-            if (Touchscreen.current != null) return true;
-#endif
-            return false;
+            return RuntimeDeviceProfile.ShouldShowMobileControls();
         }
 
         void OnDisable() {
@@ -772,3 +766,4 @@ namespace Terresquall {
         }
     }
 }
+

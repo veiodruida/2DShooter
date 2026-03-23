@@ -3451,11 +3451,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1304955669154038258, guid: b66fd64baee7c044a8b8d52f92fd88ff, type: 3}
       propertyPath: edgeSnap
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1304955669154038258, guid: b66fd64baee7c044a8b8d52f92fd88ff, type: 3}
       propertyPath: directions
-      value: 20
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1304955669154038258, guid: b66fd64baee7c044a8b8d52f92fd88ff, type: 3}
       propertyPath: boundaries.x

@@ -1,8 +1,9 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Terresquall;
+using System.Runtime.InteropServices;
 
 public class Controller : MonoBehaviour
 {
@@ -18,11 +19,11 @@ public class Controller : MonoBehaviour
     public float rotationSpeed = 60f;
 
     [Header("Motor Physics")]
-    [Tooltip("Rampa do motor em segundos (ex: 0.3 = breve aceleração)")]
+    [Tooltip("Rampa do motor em segundos (ex: 0.3 = breve aceleraÃ§Ã£o)")]
     public float accelerationTime = 0.3f;
     private Vector2 currentInputVector;
     private Vector2 smoothInputVelocity;
-    private Vector2 knockbackVelocity; // Acumula forças externas de repulsão
+    private Vector2 knockbackVelocity; // Acumula forÃ§as externas de repulsÃ£o
    
     [Header("Animation")]
     public Animator turbineAnimator;
@@ -32,7 +33,7 @@ public class Controller : MonoBehaviour
     public InputAction lookAction;
 
     public enum AimModes { AimTowardsMouse, AimForwards, DualStickMobile };
-    [Header("Modo de Mira (Automático no Start)")]
+    [Header("Modo de Mira (AutomÃ¡tico no Start)")]
     public AimModes aimMode = AimModes.AimTowardsMouse;
 
     public enum MovementModes { MoveHorizontally, MoveVertically, FreeRoam, Astroids };
@@ -77,13 +78,17 @@ public class Controller : MonoBehaviour
             moveSpeed = GameSettings.instance.configAtual.velocidadePlayer;
         }
 
-        // FÚRIA: O jogador inicia com o Shield no máximo
+        // FÃšRIA: O jogador inicia com o Shield no mÃ¡ximo
         GanharEscudo(3);
     }
 
     private bool ShouldUseMobileControls()
     {
-        return RuntimeDeviceProfile.ShouldShowMobileControls();
+        if (Application.isMobilePlatform) return true;
+        if (SystemInfo.deviceType == DeviceType.Handheld) return true;
+        if (Input.touchSupported) return true;
+        if (Touchscreen.current != null) return true;
+        return false;
     }
 
     private void ConfigurarVisibilidadeJoysticks(bool mostrar)
@@ -110,7 +115,7 @@ public class Controller : MonoBehaviour
         }
         else
         {
-            // No PC ou se o joystick mobile não estiver sendo tocado, usa o WASD/Teclado
+            // No PC ou se o joystick mobile nÃ£o estiver sendo tocado, usa o WASD/Teclado
             moveInput = moveAction.ReadValue<Vector2>();
         }
 
@@ -122,7 +127,8 @@ public class Controller : MonoBehaviour
             if (lookInputVector.sqrMagnitude > 0.01f)
             {
                 float angle = Mathf.Atan2(lookInputVector.y, lookInputVector.x) * Mathf.Rad2Deg - 90f;
-                transform.rotation = Quaternion.Euler(0f, 0f, angle);
+                Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed * 0.2f);
 
                 if (shootingController != null) shootingController.Fire();
             }
@@ -134,7 +140,7 @@ public class Controller : MonoBehaviour
             LookAtPoint(mousePos);
         }
 
-        // 3. Suavização do Input com AccelerationTime (Efeito de Motor: rampa breve)
+        // 3. SuavizaÃ§Ã£o do Input com AccelerationTime (Efeito de Motor: rampa breve)
         currentInputVector = Vector2.SmoothDamp(
             currentInputVector,
             moveInput,
@@ -145,7 +151,7 @@ public class Controller : MonoBehaviour
         // 4. Executa Movimento
         MovePlayer(currentInputVector);
 
-        // 5. Animação e Som
+        // 5. AnimaÃ§Ã£o e Som
         if (turbineAnimator != null)
         {
             bool isMoving = moveInput.sqrMagnitude > 0.01f;
@@ -168,11 +174,11 @@ public class Controller : MonoBehaviour
 
     private void MovePlayer(Vector2 movement)
     {
-        // Movimento ABSOLUTO: WASD/joystick movem sempre para frente/atrás/esq/dir no espaço mundial
-        // Não é relativo à rotação da nave
+        // Movimento ABSOLUTO: WASD/joystick movem sempre para frente/atrÃ¡s/esq/dir no espaÃ§o mundial
+        // NÃ£o Ã© relativo Ã  rotaÃ§Ã£o da nave
         if (movementMode == MovementModes.Astroids)
         {
-            // Modo Asteroides: movimento relativo à rotação da nave
+            // Modo Asteroides: movimento relativo Ã  rotaÃ§Ã£o da nave
             Vector2 force = transform.up * movement.y * Time.deltaTime * moveSpeed;
             myRigidbody.AddForce(force);
             float rotationChange = movement.x * rotationSpeed * Time.deltaTime;
@@ -180,16 +186,16 @@ public class Controller : MonoBehaviour
         }
         else
         {
-            // Modo padrão: movimento absoluto no espaço mundial
-            // W=cima, S=baixo, A=esquerda, D=direita (independente da rotação da nave)
+            // Modo padrÃ£o: movimento absoluto no espaÃ§o mundial
+            // W=cima, S=baixo, A=esquerda, D=direita (independente da rotaÃ§Ã£o da nave)
             if (lockXCoordinate) movement.x = 0;
             if (lockYCoordinate) movement.y = 0;
             
-            // Verifica colisão com paredes/boundary antes de aplicar movimento
+            // Verifica colisÃ£o com paredes/boundary antes de aplicar movimento
             Vector2 targetPosition = transform.position * movement * Time.deltaTime * moveSpeed;
             Collider2D[] colliders = Physics2D.OverlapCircleAll(targetPosition, 0.5f);
             
-            // Verifica se há colisão com boundary ou outros objetos
+            // Verifica se hÃ¡ colisÃ£o com boundary ou outros objetos
             bool temColisao = false;
             foreach (var collider in colliders)
             {
@@ -200,24 +206,24 @@ public class Controller : MonoBehaviour
                 }
             }
             
-            // Aplica o movimento apenas se não houver colisão
+            // Aplica o movimento apenas se nÃ£o houver colisÃ£o
             if (!temColisao)
             {
                 if (myRigidbody != null)
                 {
-                    // PROTEÇÃO DO PILOTO: Se o escudo estiver ativo, o piloto fica invulnerável (apenas o escudo toma dano)
+                    // PROTEÃ‡ÃƒO DO PILOTO: Se o escudo estiver ativo, o piloto fica invulnerÃ¡vel (apenas o escudo toma dano)
                     if (shieldObject != null)
                     {
                         Health pilotHealth = GetComponent<Health>();
                         if (pilotHealth != null) pilotHealth.isAlwaysInvincible = shieldObject.activeInHierarchy;
                     }
 
-                    // CÁLCULO DE CONTROLE: Se o knockback for forte, o jogador perde controle parcial da nave
+                    // CÃLCULO DE CONTROLE: Se o knockback for forte, o jogador perde controle parcial da nave
                     float controlFactor = Mathf.Clamp01(1f - (knockbackVelocity.magnitude / (moveSpeed > 0 ? moveSpeed : 1f)));
                     
-                    // Converter Vector2 para Vector3 antes da multiplicação
+                    // Converter Vector2 para Vector3 antes da multiplicaÃ§Ã£o
                     Vector3 movementVector = new Vector3(movement.x, movement.y, 0);
-                    // Converter knockbackVelocity para Vector3 antes da adição
+                    // Converter knockbackVelocity para Vector3 antes da adiÃ§Ã£o
                     Vector3 knockbackVector = new Vector3(knockbackVelocity.x, knockbackVelocity.y, 0);
                     // Somamos a velocidade de input (atenuada pelo impacto) com o knockback
                     myRigidbody.linearVelocity = (movementVector * moveSpeed * controlFactor) + knockbackVector;
@@ -227,17 +233,17 @@ public class Controller : MonoBehaviour
                 }
                 else
                 {
-                    // Converter Vector2 para Vector3 antes da multiplicação
+                    // Converter Vector2 para Vector3 antes da multiplicaÃ§Ã£o
                     Vector3 movementVector = new Vector3(movement.x, movement.y, 0);
                     transform.position += movementVector * Time.deltaTime * moveSpeed;
                 }
             }
             else
             {
-                // Debug para depuração
-                Debug.Log($"<color=yellow>FÚRIA:</color> Movimento bloqueado por colisão com boundary");
+                // Debug para depuraÃ§Ã£o
+                Debug.Log($"<color=yellow>FÃšRIA:</color> Movimento bloqueado por colisÃ£o com boundary");
                 
-                // Garante que o som só é executado uma vez durante o tempo de invincibilidade
+                // Garante que o som sÃ³ Ã© executado uma vez durante o tempo de invincibilidade
                 if (GetComponent<Health>().hitSound != null && !GetComponent<Health>().isInvincible)
                 {
                     GetComponent<Health>().hitSound.Play();
@@ -247,11 +253,11 @@ public class Controller : MonoBehaviour
     }
 
     /// <summary>
-    /// Aplica uma força de repulsão externa (ex: ao bater numa parede com dano)
+    /// Aplica uma forÃ§a de repulsÃ£o externa (ex: ao bater numa parede com dano)
     /// </summary>
     public void ApplyKnockback(Vector2 force)
     {
-        // Define a velocidade de repulsão (usado pelo Damage.cs)
+        // Define a velocidade de repulsÃ£o (usado pelo Damage.cs)
         knockbackVelocity = force;
     }
 
@@ -296,5 +302,3 @@ public class Controller : MonoBehaviour
         if (bombScript != null) bombScript.AdicionarBomba(quantidade);
     }
 }
-
-
