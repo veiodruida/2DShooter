@@ -1,0 +1,19 @@
+Quero que quando o shield do player tocar uma wall ele seja repelido pelo parametro impulsion force do script damage que está em todas as wall (Tag "Boundary"). Tbm quero que visualmente o shield nao "entre" ou sobreponha a wall, ou seja ele deve ser repelido imediatamente. Faça e escreva todas as modificações necessárias. 
+
+Corrija o sistema de tiro do jogo. O projetil parou de funcionar corretamente o jogado atira, eh ouvido o efeito sonoro, mas o tiro nao sai.
+
+
+
+/add "Assets/Prefabs/Environment & Hazards/Stationary/AsteroidBorder/Corners/LowerLeftCornerAsteroidWall.prefab" "Assets/Prefabs/Environment & Hazards/Stationary/AsteroidBorder/Corners/LowerRightCornerAsteroidWall.prefab" "Assets/Prefabs/Environment & Hazards/Stationary/AsteroidBorder/Corners/UpperLefttCornerAsteroidWall.prefab" "Assets/Prefabs/Environment & Hazards/Stationary/AsteroidBorder/Corners/UpperRightCornerAsteroidWall.prefab" "Assets/Prefabs/Environment & Hazards/Stationary/AsteroidBorder/Walls/BottomAsteroidWall.prefab" "Assets/Prefabs/Environment & Hazards/Stationary/AsteroidBorder/Walls/LeftAsteroidWall.prefab" "Assets/Prefabs/Environment & Hazards/Stationary/AsteroidBorder/Walls/RightAsteroidWall.prefab" "Assets/Prefabs/Environment & Hazards/Stationary/AsteroidBorder/Walls/TopAsteroidWall.prefab" Assets\Prefabs\PLayer\shield_buble.prefab 
+
+/add Assets\Scripts\Health&Damage\Damage.cs Assets\Scripts\Player\Controller.cs Assets\Scripts\Health&Damage\Health.cs Assets\Scripts\Player\Controller.cs
+
+
+aider --model ollama_chat/qwen3.5 --map-tokens 1024 --max-chat-history-tokens 10000 --subtree-only --edit-format diff Furia_docs.md claude.md gemini.md
+
+"O escudo do player não está sendo repelido por paredes (Tag: 'Boundary') e está penetrando nelas. Modifique o código para que, no OnCollisionEnter2D (ou OnTriggerEnter2D) de colisão com 'Wall', o escudo receba um Rigidbody2D.AddForce na direção oposta, usando o impulsion_force do script Damage.cs que está na parede. Use CollisionDetectionMode2D.Continuous se necessário para impedir a penetração visual."
+
+
+O  Player No contato com a muralha é executado repetidos sons presentes no PlayerHitEffect do script Health. Ele deve executar só uma vez, pois ele entra em um tempo de invincibilidade. 
+
+aider --model ollama_chat/qwen3.5 --map-tokens 1024 --max-chat-history-tokens 10000 --subtree-only --edit-format diff --no-auto-commits Furia_docs.md
