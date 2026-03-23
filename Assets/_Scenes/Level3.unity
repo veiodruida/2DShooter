@@ -1264,17 +1264,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2145035089}
   m_SourcePrefab: {fileID: 100100000, guid: e0f8a37bddb22b04eaee56b2558985f3, type: 3}
---- !u!114 &603976489 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3246063105743311673, guid: 8e714e3c71728184ca4d2877e5f283db, type: 3}
-  m_PrefabInstance: {fileID: 6415616799240796498}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23f9ac44728580c41ad91debed290eab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &617949385
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4248,6 +4237,10 @@ PrefabInstance:
       propertyPath: motherShip
       value: 
       objectReference: {fileID: 254516489}
+    - target: {fileID: 8657385641936794219, guid: 8e714e3c71728184ca4d2877e5f283db, type: 3}
+      propertyPath: edgeSnap
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8721178581967352247, guid: 8e714e3c71728184ca4d2877e5f283db, type: 3}
       propertyPath: playerHealth
       value: 
@@ -4281,6 +4274,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e714e3c71728184ca4d2877e5f283db, type: 3}
+--- !u!114 &6415616799240796499 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3879887264799344375, guid: 8e714e3c71728184ca4d2877e5f283db, type: 3}
+  m_PrefabInstance: {fileID: 6415616799240796498}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23f9ac44728580c41ad91debed290eab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7809266785580384014
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4348,7 +4352,7 @@ PrefabInstance:
     - target: {fileID: 5860219841772749433, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
       propertyPath: mobileLookJoystick
       value: 
-      objectReference: {fileID: 603976489}
+      objectReference: {fileID: 6415616799240796499}
     - target: {fileID: 5860219841772749433, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
       propertyPath: mobileMoveJoystick
       value: 
