@@ -2991,6 +2991,10 @@ PrefabInstance:
       value: Large Camera
       objectReference: {fileID: 0}
     - target: {fileID: 5097044428065928508, guid: d51a81cd3b8f4ad4e9b124f38adc4e80, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5097044428065928508, guid: d51a81cd3b8f4ad4e9b124f38adc4e80, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -3036,11 +3040,15 @@ PrefabInstance:
       objectReference: {fileID: 2023851674}
     - target: {fileID: 6311551969062295425, guid: d51a81cd3b8f4ad4e9b124f38adc4e80, type: 3}
       propertyPath: maxBounds.x
-      value: 0
+      value: -4.45
       objectReference: {fileID: 0}
     - target: {fileID: 6311551969062295425, guid: d51a81cd3b8f4ad4e9b124f38adc4e80, type: 3}
       propertyPath: minBounds.x
-      value: 5
+      value: -5.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 6311551969062295425, guid: d51a81cd3b8f4ad4e9b124f38adc4e80, type: 3}
+      propertyPath: margemInternaLimite
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

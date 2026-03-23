@@ -1,102 +1,105 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Class which handles camera movement
-/// </summary>
 [RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour
 {
-    // The camera being controlled by this script
     [HideInInspector] private Camera playerCamera = null;
 
     [Header("GameObject References")]
-    [Tooltip("The target to follow with this camera")]
     public Transform target = null;
 
-    /// <summary>
-    /// Enum to determine camera movement styles
-    /// </summary>
     public enum CameraStyles { Locked, Overhead, Free };
-
-    [Header("CameraMovement")]
-    [Tooltip("The way this camera moves:\n" +
-        "\tLocked: Camera cannot follow mouse, it stays locked onto the target.\n" +
-        "\tScroll: Camera stays within the max scroll distance of the target, but follows the mouse\n" +
-        "\tFree: Camera follows the mouse, regardless of the target position")]
     public CameraStyles cameraMovementStyle = CameraStyles.Locked;
-
-    [Tooltip("The distance between the target position and the mouse to move the camera to in \"Free\" mode.")]
     [Range(0, 0.75f)] public float freeCameraMouseTracking = 0.5f;
-
-    [Tooltip("The maximum distance away from the target that the camera can move")]
     public float maxDistanceFromTarget = 5.0f;
-
-    [Tooltip("The z coordinate to use for the camera position")]
     public float cameraZCoordinate = -10.0f;
 
     [Header("Input Actions & Controls")]
-    [Tooltip("The input action(s) that map to where the camera looks")]
     public InputAction lookAction;
 
-    [Header("Limites de Câmera")]
+    [Header("Limites de Camera")]
     public bool usarLimites = true;
-    public Vector2 minBounds = new Vector2(-10f, -16f);
-    public Vector2 maxBounds = new Vector2(0f, 5f);
+    public Vector2 minBounds = new Vector2(-22f, -16f);
+    public Vector2 maxBounds = new Vector2(15f, 5f);
+    public bool detectarLimitesAutomaticamente = false;
 
-    /// <summary>
-    /// Standard Unity function called whenever the attached gameobject is enabled
-    /// </summary>
-    void OnEnable()
-    {
-        lookAction.Enable();
-    }
+    void OnEnable() { lookAction.Enable(); }
+    void OnDisable() { lookAction.Disable(); }
 
-    /// <summary>
-    /// Standard Unity function called whenever the attached gameobject is disabled
-    /// </summary>
-    void OnDisable()
-    {
-        lookAction.Disable();
-    }
-
-    /// <summary>
-    /// Description:
-    /// When the script starts up, get the camera component to use
-    /// Inputs: 
-    /// none
-    /// Returns: 
-    /// void (no return)
-    /// </summary>
     void Start()
     {
         playerCamera = GetComponent<Camera>();
+        if (detectarLimitesAutomaticamente) CalcularLimitesDosBoundaries();
     }
 
-    /// <summary>
-    /// Description:
-    /// Standard Unity function that is called every frame
-    /// Inputs: none
-    /// Returns: 
-    /// void (no return)
-    /// </summary>
-    void Update()
+    void Update() { SetCameraPosition(); }
+
+    private void CalcularLimitesDosBoundaries()
     {
-        SetCameraPosition();
+        GameObject[] boundaries = GameObject.FindGameObjectsWithTag("Boundary");
+        if (boundaries.Length == 0)
+        {
+            Debug.LogWarning("CameraController: nenhuma boundary com tag 'Boundary' foi encontrada.");
+            return;
+        }
+
+        float minX = float.MaxValue;
+        float maxX = float.MinValue;
+        float minY = float.MaxValue;
+        float maxY = float.MinValue;
+        bool encontrouCollider = false;
+
+        foreach (GameObject boundary in boundaries)
+        {
+            Collider2D[] colliders = boundary.GetComponentsInChildren<Collider2D>(true);
+            foreach (Collider2D collider in colliders)
+            {
+                minX = Mathf.Min(minX, collider.bounds.min.x);
+                maxX = Mathf.Max(maxX, collider.bounds.max.x);
+                minY = Mathf.Min(minY, collider.bounds.min.y);
+                maxY = Mathf.Max(maxY, collider.bounds.max.y);
+                encontrouCollider = true;
+            }
+        }
+
+        if (!encontrouCollider)
+        {
+            Debug.LogWarning("CameraController: boundaries encontradas, mas sem Collider2D.");
+            return;
+        }
+
+        float cameraHalfHeight = playerCamera.orthographicSize;
+        float cameraHalfWidth = cameraHalfHeight * playerCamera.aspect;
+
+        minBounds = new Vector2(
+            minX + cameraHalfWidth,
+            minY + cameraHalfHeight
+        );
+        maxBounds = new Vector2(
+            maxX - cameraHalfWidth,
+            maxY - cameraHalfHeight
+        );
+
+        if (minBounds.x > maxBounds.x)
+        {
+            float centerX = (minX + maxX) * 0.5f;
+            minBounds.x = centerX;
+            maxBounds.x = centerX;
+        }
+
+        if (minBounds.y > maxBounds.y)
+        {
+            float centerY = (minY + maxY) * 0.5f;
+            minBounds.y = centerY;
+            maxBounds.y = centerY;
+        }
+
+        Debug.Log("Limites detectados: min=" + minBounds + ", max=" + maxBounds);
     }
 
-   
-
-    /// <summary>
-    /// Description:
-    /// Sets the camera's position according to the settings
-    /// Input:
-    /// none
-    /// Return:
-    /// void (no return)
-    /// </summary>
     private void SetCameraPosition()
     {
         if (target != null)
@@ -107,62 +110,25 @@ public class CameraController : MonoBehaviour
 
             if (usarLimites)
             {
-                // Retornado ao Clamp Simples
                 desiredCameraPosition.x = Mathf.Clamp(desiredCameraPosition.x, minBounds.x, maxBounds.x);
                 desiredCameraPosition.y = Mathf.Clamp(desiredCameraPosition.y, minBounds.y, maxBounds.y);
             }
 
             transform.position = desiredCameraPosition;
-        }      
+        }
     }
 
-    /// <summary>
-    /// Description:
-    /// Gets the follow target's position
-    /// Inputs: 
-    /// none
-    /// Returns: 
-    /// Vector3
-    /// </summary>
-    /// <returns>Vector3: The position of the target assigned to this camera controller.</returns>
     public Vector3 GetTargetPosition()
     {
-        if (target != null)
-        {
-            return target.position;
-        }
-        return transform.position;
+        return target != null ? target.position : transform.position;
     }
 
-    /// <summary>
-    /// Description:
-    /// Finds and returns the mouse position
-    /// Inputs: 
-    /// none
-    /// Returns: 
-    /// Vector3
-    /// </summary>
-    /// <returns>Vector3: The position of the player's mouse in world coordinates</returns>
     public Vector3 GetPlayerMousePosition()
     {
-        if (cameraMovementStyle == CameraStyles.Locked)
-        {
-            return Vector3.zero;
-        }
+        if (cameraMovementStyle == CameraStyles.Locked) return Vector3.zero;
         return playerCamera.ScreenToWorldPoint(lookAction.ReadValue<Vector2>());
     }
 
-    /// <summary>
-    /// Description:
-    /// Takes the target's position and mouse position, and returns the desired position of the camera
-    /// Inputs: 
-    /// Vector3 targetPosition, Vector3 offsetPosition
-    /// Returns: 
-    /// Vector3
-    /// </summary>
-    /// <param name="targetPosition"> The position of the target the camera is following. </param>
-    /// <param name="mousePosition"> The position of the mouse in world space used to determine distance from the target. </param>
-    /// <returns>Vector3: The position the camera should be at</returns>
     public Vector3 ComputeCameraPosition(Vector3 targetPosition, Vector3 mousePosition)
     {
         Vector3 result = Vector3.zero;
@@ -181,6 +147,7 @@ public class CameraController : MonoBehaviour
                 result = targetPosition + difference;
                 break;
         }
+
         result.z = cameraZCoordinate;
         return result;
     }
