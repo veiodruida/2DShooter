@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,16 +24,9 @@ public class Damage : MonoBehaviour
     public bool dealDamageOnTriggerStay = false;
     [Tooltip("Whether or not to apply damage on non-trigger collider collisions")]
     public bool dealDamageOnCollision = false;
+    [Tooltip("Force to apply to the object hit (knockback/repulsion)")]
+    public float repulsionForce = 0f;
 
-    /// <summary>
-    /// Description: 
-    /// Standard Unity function called whenever a Collider2D enters any attached 2D trigger collider
-    /// Inputs:
-    /// Collider2D collision
-    /// Returns:
-    /// void (no return)
-    /// </summary>
-    /// <param name="collision">The Collider2D that set of the function call</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (dealDamageOnTriggerEnter)
@@ -42,15 +35,6 @@ public class Damage : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Description:
-    /// Standard Unity function called every frame a Collider2D stays in any attached 2D trigger collider
-    /// Inputs:
-    /// Collider2D collision
-    /// Returns:
-    /// void (no return)
-    /// </summary>
-    /// <param name="collision">The Collider2D that set of the function call</param>
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (dealDamageOnTriggerStay)
@@ -59,15 +43,6 @@ public class Damage : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Description:
-    /// Standard Unity function called when a Collider2D hits another Collider2D (non-triggers)
-    /// Inputs:
-    /// Collision2D collision
-    /// Returns:
-    /// void (no return)
-    /// </summary>
-    /// <param name="collision">The Collision2D that set of the function call</param>
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (dealDamageOnCollision)
@@ -76,37 +51,66 @@ public class Damage : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Description:
-    /// This function deals damage to a health component if the collided 
-    /// with gameobject has a health component attached AND it is on a different team.
-    /// Inputs:
-    /// GameObject collisionGameObject
-    /// Returns:
-    /// void (no return)
-    /// </summary>
-    /// <param name="collisionGameObject">The game object that has been collided with</param>
     private void DealDamage(GameObject collisionGameObject)
     {
         Health collidedHealth = collisionGameObject.GetComponent<Health>();
-        if (collidedHealth != null)
+        if (collidedHealth == null) return;
+
+        bool hitEnemyTeam = collidedHealth.teamId != teamId;
+
+        if (hitEnemyTeam)
         {
-            if (collidedHealth.teamId != this.teamId)
+            ApplyRepulsion(collisionGameObject);
+
+            if (!collidedHealth.isInvincible)
             {
                 collidedHealth.TakeDamage(damageAmount);
-                if (hitEffect != null)
+
+                if (hitEffect != null && !CompareTag("Asteroid"))
                 {
                     Instantiate(hitEffect, transform.position, transform.rotation, null);
                 }
-                if (destroyAfterDamage)
-                {
-                    if (gameObject.GetComponent<Enemy>() != null)
-                    {
-                        gameObject.GetComponent<Enemy>().DoBeforeDestroy();
-                    }
-                    Destroy(this.gameObject);
-                }
+            }
+
+            if (destroyAfterDamage && !CompareTag("Player"))
+            {
+                if (CompareTag("Asteroid")) return;
+
+                Health myHealth = GetComponent<Health>();
+                if (myHealth != null) myHealth.Die();
+                else Destroy(gameObject);
+            }
+
+            return;
+        }
+
+        if ((collisionGameObject.CompareTag("Player") || collisionGameObject.CompareTag("Asteroid")) && teamId != 0)
+        {
+            Health myHealth = GetComponent<Health>();
+            if (myHealth != null)
+            {
+                myHealth.TakeDamage(damageAmount);
             }
         }
+    }
+
+    private void ApplyRepulsion(GameObject collisionGameObject)
+    {
+        if (repulsionForce <= 0f) return;
+
+        Rigidbody2D rb = collisionGameObject.GetComponentInParent<Rigidbody2D>();
+        if (rb == null) rb = collisionGameObject.GetComponent<Rigidbody2D>();
+        if (rb == null) return;
+
+        Vector2 forceDirection = (collisionGameObject.transform.position - transform.position).normalized;
+        Controller playerCtrl = collisionGameObject.GetComponentInParent<Controller>();
+        if (playerCtrl != null)
+        {
+            playerCtrl.ApplyKnockback(forceDirection * repulsionForce);
+            return;
+        }
+
+        rb.linearVelocity = Vector2.zero;
+        rb.AddForce(forceDirection * repulsionForce, ForceMode2D.Impulse);
     }
 }

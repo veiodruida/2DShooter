@@ -4,143 +4,124 @@ public class PowerUpItem : MonoBehaviour
 {
     public enum TipoPowerUp { Escudo, Vida, Tiro, Bomba }
 
-    [Header("ConfiguraÁıes do Item")]
+    [Header("Configura√ß√µes do Item")]
     public TipoPowerUp tipoStatus = TipoPowerUp.Escudo;
     public int quantidadeBase = 3;
 
     [Header("Efeitos Visuais")]
     public GameObject efeitoColeta;
+    public Color corDasParticulas = Color.white;
 
-    [Header("Efeitos Sonoros")]
-    public AudioClip somColetaEscudo;
-    public AudioClip somColetaVida;
-    public AudioClip somColetaTiro;
-    public AudioClip somColetaBomba;
-    [Range(0f, 2f)]
-    public float volumeColeta = 1.5f; // Aumentado de 1.0 para 1.5
+    [Header("Configura√ß√£o de √Åudio (2D)")]
+    [Tooltip("Coloque aqui o som espec√≠fico deste prefab no Inspector.")]
+    public AudioClip somColeta;
+    [Range(0f, 1f)] public float volumeColeta = 1.0f;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Verifica se quem colidiu foi o jogador
         if (other.CompareTag("Player"))
         {
-            // Tenta obter todos os componentes necess·rios do jogador
+            // Obt√©m os componentes do jogador
             Controller playerController = other.GetComponent<Controller>();
             Health playerHealth = other.GetComponent<Health>();
             ShootingController sc = other.GetComponent<ShootingController>();
 
-            // CALCULA QUANTIDADE BASEADO NA DIFICULDADE (Usando a tua lÛgica original)
             int quantidadeFinal = CalcularQuantidadePelaDificuldade();
+            bool podeColetar = false;
 
+            // Executa a l√≥gica baseada no tipo de item
             switch (tipoStatus)
             {
                 case TipoPowerUp.Escudo:
                     if (playerController != null)
                     {
                         playerController.GanharEscudo(quantidadeFinal);
-                        TocarSomColeta(somColetaEscudo);
-                        FinalizarColeta();
+                        podeColetar = true;
                     }
                     break;
 
                 case TipoPowerUp.Vida:
-                    // SÛ coleta se o jogador n„o estiver com vidas no m·ximo
                     if (playerHealth != null && playerHealth.currentLives < playerHealth.maximumLives)
                     {
                         playerHealth.currentLives += quantidadeFinal;
-
-                        // Garante que n„o ultrapassa o limite m·ximo definido no Health
+                        // Clamp manual para n√£o estourar o limite
                         if (playerHealth.currentLives > playerHealth.maximumLives)
                             playerHealth.currentLives = playerHealth.maximumLives;
 
-                        TocarSomColeta(somColetaVida);
-                        FinalizarColeta();
+                        podeColetar = true;
                     }
                     break;
 
                 case TipoPowerUp.Tiro:
                     if (sc != null)
                     {
-                        // Chama a evoluÁ„o da arma (que bloqueia no nÌvel 3 automaticamente)
                         sc.UpgradeWeapon();
-                        TocarSomColeta(somColetaTiro);
-                        FinalizarColeta();
+                        podeColetar = true;
                     }
                     break;
 
                 case TipoPowerUp.Bomba:
                     if (playerController != null)
                     {
-                        // Toca o som ANTES de adicionar a bomba para garantir execuÁ„o
-                        TocarSomColeta(somColetaBomba);
-                        playerController.GanharBomba(1); // Bomba È sempre 1 conforme o teu padr„o
-                        FinalizarColeta();
+                        playerController.GanharBomba(1);
+                        podeColetar = true;
                     }
                     break;
+            }
+
+            // Se a l√≥gica do item foi aplicada, finaliza a coleta
+            if (podeColetar)
+            {
+                FinalizarColeta();
             }
         }
     }
 
-    /// <summary>
-    /// Retorna a quantidade de recurso ajustada pela dificuldade do jogo.
-    /// LÛgica: F·cil (+1), MÈdio (base), DifÌcil (-1 mÌnimo 1), F˙ria (1).
-    /// </summary>
+    private void FinalizarColeta()
+    {
+        // 1. Som (Usando o seu Audio2DManager)
+        if (somColeta != null)
+        {
+            Audio2DManager.Play2D(somColeta, volumeColeta);
+        }
+
+        // 2. Interface
+        if (UIManager.instance != null) UIManager.instance.UpdateUI();
+
+        // 3. Part√≠culas com cor din√¢mica
+        if (efeitoColeta != null)
+        {
+            GameObject sistemaGo = Instantiate(efeitoColeta, transform.position, Quaternion.identity);
+            ParticleSystem ps = sistemaGo.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                var main = ps.main;
+                main.startColor = new ParticleSystem.MinMaxGradient(corDasParticulas);
+            }
+            Destroy(sistemaGo, 2f);
+        }
+
+        // 4. Remove o item
+        Destroy(gameObject);
+    }
+
     private int CalcularQuantidadePelaDificuldade()
     {
-        // Verifica se as inst‚ncias globais existem para evitar erros
-        if (GameManager.instance == null || GameSettings.instance == null)
-        {
-            return quantidadeBase;
-        }
+        if (GameSettings.instance == null) return quantidadeBase;
 
         switch (GameSettings.instance.dificuldadeSelecionada)
         {
             case GameSettings.Dificuldade.Facil:
                 return quantidadeBase + 1;
 
-            case GameSettings.Dificuldade.Medio:
-                return quantidadeBase; // Quantidade base sem modificaÁıes
+            case GameSettings.Dificuldade.Furia:
+                return 1;
 
             case GameSettings.Dificuldade.Dificil:
                 return Mathf.Max(1, quantidadeBase - 1);
 
-            case GameSettings.Dificuldade.Furia:
-                return 1; // No modo F˙ria, a sobrevivÍncia È mÌnima
-
             default:
                 return quantidadeBase;
         }
-    }
-
-    /// <summary>
-    /// Toca o som do powerup coletado de forma robusta.
-    /// Usa uma posiÁ„o fixa para garantir que o som toque mesmo que a c‚mera esteja em movimento.
-    /// </summary>
-    private void TocarSomColeta(AudioClip clip)
-    {
-        if (clip == null) return;
-
-        // Usa sempre a posiÁ„o da c‚mera para evitar atenuaÁ„o por dist‚ncia
-        Vector3 posicaoAudio = (Camera.main != null) ? Camera.main.transform.position : transform.position;
-        
-        // PlayClipAtPoint cria um AudioSource tempor·rio que toca e se destrÛi automaticamente
-        AudioSource.PlayClipAtPoint(clip, posicaoAudio, volumeColeta);
-
-        Debug.Log($"[POWERUP SOM] Som coletado: {clip.name} | Volume: {volumeColeta}");
-    }
-
-    /// <summary>
-    /// Atualiza UI, cria efeitos visuais e remove o item da cena.
-    /// O som agora È tocado ANTES dessa funÁ„o.
-    /// </summary>
-    private void FinalizarColeta()
-    {
-        // ForÁa a atualizaÁ„o da interface (Vidas, Escudos, Bombas)
-        if (UIManager.instance != null) UIManager.instance.UpdateUI();
-
-        // Efeito de partÌculas
-        if (efeitoColeta != null) Instantiate(efeitoColeta, transform.position, Quaternion.identity);
-
-        Destroy(gameObject);
     }
 }

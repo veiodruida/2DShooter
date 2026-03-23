@@ -45,8 +45,8 @@ Camera:
   m_GameObject: {fileID: 226443367491296685}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.07075471, g: 0.08018867, b: 0.09433961, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -129,6 +129,9 @@ MonoBehaviour:
       m_Action: Look
       m_Flags: 0
     m_Flags: 0
+  usarLimites: 1
+  minBounds: {x: -10, y: -16}
+  maxBounds: {x: 0, y: 5}
 --- !u!114 &630389601480462766
 MonoBehaviour:
   m_ObjectHideFlags: 0

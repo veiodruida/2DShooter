@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -41,6 +41,11 @@ public class CameraController : MonoBehaviour
     [Tooltip("The input action(s) that map to where the camera looks")]
     public InputAction lookAction;
 
+    [Header("Limites de Câmera")]
+    public bool usarLimites = true;
+    public Vector2 minBounds = new Vector2(-10f, -16f);
+    public Vector2 maxBounds = new Vector2(0f, 5f);
+
     /// <summary>
     /// Standard Unity function called whenever the attached gameobject is enabled
     /// </summary>
@@ -82,6 +87,8 @@ public class CameraController : MonoBehaviour
         SetCameraPosition();
     }
 
+   
+
     /// <summary>
     /// Description:
     /// Sets the camera's position according to the settings
@@ -97,6 +104,13 @@ public class CameraController : MonoBehaviour
             Vector3 targetPosition = GetTargetPosition();
             Vector3 mousePosition = GetPlayerMousePosition();
             Vector3 desiredCameraPosition = ComputeCameraPosition(targetPosition, mousePosition);
+
+            if (usarLimites)
+            {
+                // Retornado ao Clamp Simples
+                desiredCameraPosition.x = Mathf.Clamp(desiredCameraPosition.x, minBounds.x, maxBounds.x);
+                desiredCameraPosition.y = Mathf.Clamp(desiredCameraPosition.y, minBounds.y, maxBounds.y);
+            }
 
             transform.position = desiredCameraPosition;
         }      

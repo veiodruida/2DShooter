@@ -19,22 +19,22 @@ public class CameraShake : MonoBehaviour
     IEnumerator ShakeRoutine(float duracao, float magnitude)
     {
         float tempoPassado = 0f;
+        Vector3 posicaoOriginal = transform.position; // Guardar a posi√ß√£o original
 
         while (tempoPassado < duracao)
         {
-            // Calcula um desvio aleatÛrio
+            // Calcula um desvio aleatorio
             float x = Random.Range(-1f, 1f) * magnitude;
             float y = Random.Range(-1f, 1f) * magnitude;
 
-            // Aplica o desvio mantendo o Z da c‚mara intacto
-            // Somamos ‡ posiÁ„o que a c‚mara j· tem (onde o jogador est·)
+            // Aplica o desvio mantendo o Z da camara intacto
             transform.position += new Vector3(x, y, 0);
 
-            tempoPassado += Time.deltaTime;
+            tempoPassado += Time.unscaledDeltaTime;
             yield return null;
-
-            // Removemos o desvio no frame seguinte para n„o "acumular" erro de posiÁ„o
-            transform.position -= new Vector3(x, y, 0);
         }
+
+        // Reset para a posi√ß√£o original ap√≥s a dura√ß√£o
+        transform.position = posicaoOriginal;
     }
 }

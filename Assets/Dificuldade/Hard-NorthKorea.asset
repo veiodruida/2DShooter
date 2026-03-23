@@ -22,11 +22,11 @@ MonoBehaviour:
   velocidadeBossBase: 2
   navesParaAbrirEscudo: 30
   vidaDoEscudoEstagio2: 150
-  intervaloBombaBoss: 2.5
-  velocidadeBombaBoss: 11
+  intervaloBombaBoss: 2
+  velocidadeBombaBoss: 30
   intervaloFuria1: 2
   velocidadeFuria1: 12
-  intervaloFuria2: 1
+  intervaloFuria2: 0.1
   velocidadeFuria2: 18
   multiplicadorDanoRecebido: 1.5
-  multiplicadorVidaInimigo: 4.0
+  multiplicadorVidaInimigo: 4

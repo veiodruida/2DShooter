@@ -1,17 +1,29 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Terresquall;
 
 public class Controller : MonoBehaviour
 {
     [Header("GameObject/Component References")]
     public Rigidbody2D myRigidbody = null;
 
+    [Header("Mobile Controls")]
+    public VirtualJoystick mobileMoveJoystick;
+    public VirtualJoystick mobileLookJoystick;
+
     [Header("Movement Variables")]
     public float moveSpeed = 10.0f;
     public float rotationSpeed = 60f;
 
+    [Header("Motor Physics")]
+    [Tooltip("Rampa do motor em segundos (ex: 0.3 = breve aceleração)")]
+    public float accelerationTime = 0.3f;
+    private Vector2 currentInputVector;
+    private Vector2 smoothInputVelocity;
+    private Vector2 knockbackVelocity; // Acumula forças externas de repulsão
+   
     [Header("Animation")]
     public Animator turbineAnimator;
 
@@ -19,14 +31,15 @@ public class Controller : MonoBehaviour
     public InputAction moveAction;
     public InputAction lookAction;
 
-    public enum AimModes { AimTowardsMouse, AimForwards };
+    public enum AimModes { AimTowardsMouse, AimForwards, DualStickMobile };
+    [Header("Modo de Mira (Automático no Start)")]
     public AimModes aimMode = AimModes.AimTowardsMouse;
 
     public enum MovementModes { MoveHorizontally, MoveVertically, FreeRoam, Astroids };
     public MovementModes movementMode = MovementModes.FreeRoam;
 
     [Header("Shield Settings")]
-    public GameObject shieldObject;
+    public GameObject shieldObject; 
 
     [Header("Audio")]
     public AudioSource startEngineSound;
@@ -36,28 +49,40 @@ public class Controller : MonoBehaviour
     private bool lockXCoordinate => movementMode == MovementModes.MoveVertically;
     private bool lockYCoordinate => movementMode == MovementModes.MoveHorizontally;
 
-    void OnEnable()
-    {
-        moveAction.Enable();
-        lookAction.Enable();
-    }
+    private ShootingController shootingController;
 
-    void OnDisable()
-    {
-        moveAction.Disable();
-        lookAction.Disable();
-    }
+    void OnEnable() { moveAction.Enable(); lookAction.Enable(); }
+    void OnDisable() { moveAction.Disable(); lookAction.Disable(); }
 
     private void Start()
     {
         if (myRigidbody == null) myRigidbody = GetComponent<Rigidbody2D>();
+        shootingController = GetComponent<ShootingController>();
 
-        // APLICAÇÃO DA DIFICULDADE (Velocidade)
+        // --- LÓGICA DE PLATAFORMA REAL ---
+#if UNITY_IOS || UNITY_ANDROID || UNITY_TVOS
+        aimMode = AimModes.DualStickMobile;
+        ConfigurarVisibilidadeJoysticks(true);
+        Debug.Log("Controller: Mobile detectado. Ativando Joysticks.");
+#else
+        aimMode = AimModes.AimTowardsMouse;
+        ConfigurarVisibilidadeJoysticks(false);
+        Debug.Log("Controller: PC/Desktop detectado. Joysticks ocultados.");
+#endif
+
         if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
         {
             moveSpeed = GameSettings.instance.configAtual.velocidadePlayer;
-            Debug.Log($"Controller: Velocidade ajustada para {moveSpeed} pela dificuldade.");
         }
+
+        // FÚRIA: O jogador inicia com o Shield no máximo
+        GanharEscudo(3);
+    }
+
+    private void ConfigurarVisibilidadeJoysticks(bool mostrar)
+    {
+        if (mobileMoveJoystick != null) mobileMoveJoystick.gameObject.SetActive(mostrar);
+        if (mobileLookJoystick != null) mobileLookJoystick.gameObject.SetActive(mostrar);
     }
 
     void Update()
@@ -67,18 +92,54 @@ public class Controller : MonoBehaviour
 
     private void HandleInput()
     {
-        // 1. Coleta Input de Movimento (Novo Sistema)
-        Vector2 moveInput = moveAction.ReadValue<Vector2>();
-        Vector3 movementVector = new Vector3(moveInput.x, moveInput.y, 0);
+        Vector2 moveInput = Vector2.zero;
+        Vector2 lookInputVector = Vector2.zero;
 
-        // 2. Coleta Input de Rotação (Novo Sistema)
-        Vector2 lookInput = GetLookPosition();
+        // 1. Coleta Input de Movimento (Prioriza Joystick se estiver no modo Mobile)
+        if (aimMode == AimModes.DualStickMobile && mobileMoveJoystick != null && mobileMoveJoystick.GetAxis().sqrMagnitude > 0.01f)
+        {
+            moveInput = mobileMoveJoystick.GetAxis();
+            moveInput = Vector2.ClampMagnitude(moveInput, 1f);
+        }
+        else
+        {
+            // No PC ou se o joystick mobile não estiver sendo tocado, usa o WASD/Teclado
+            moveInput = moveAction.ReadValue<Vector2>();
+        }
 
-        // 3. Executa as transformações
-        MovePlayer(movementVector);
-        LookAtPoint(lookInput);
+        // 2. Coleta Input de Mira/Ataque
+        if (aimMode == AimModes.DualStickMobile && mobileLookJoystick != null)
+        {
+            lookInputVector = mobileLookJoystick.GetAxis();
 
-        // 4. Animação e Som da Turbina
+            if (lookInputVector.sqrMagnitude > 0.01f)
+            {
+                float angle = Mathf.Atan2(lookInputVector.y, lookInputVector.x) * Mathf.Rad2Deg - 90f;
+                Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed * 0.2f);
+
+                if (shootingController != null) shootingController.Fire();
+            }
+        }
+        else if (aimMode == AimModes.AimTowardsMouse)
+        {
+            // PC: Vira sempre para o curso do rato
+            Vector2 mousePos = lookAction.ReadValue<Vector2>();
+            LookAtPoint(mousePos);
+        }
+
+        // 3. Suavização do Input com AccelerationTime (Efeito de Motor: rampa breve)
+        currentInputVector = Vector2.SmoothDamp(
+            currentInputVector,
+            moveInput,
+            ref smoothInputVelocity,
+            accelerationTime
+        );
+
+        // 4. Executa Movimento
+        MovePlayer(currentInputVector);
+
+        // 5. Animação e Som
         if (turbineAnimator != null)
         {
             bool isMoving = moveInput.sqrMagnitude > 0.01f;
@@ -99,55 +160,120 @@ public class Controller : MonoBehaviour
         }
     }
 
-    public Vector2 GetLookPosition()
+    private void MovePlayer(Vector2 movement)
     {
-        // No Novo Sistema, se a binding for "Pointer > Position", 
-        // ele retorna a coordenada do ecrã (pixels).
-        if (aimMode != AimModes.AimForwards)
-        {
-            return lookAction.ReadValue<Vector2>();
-        }
-        return transform.up;
-    }
-
-    private void MovePlayer(Vector3 movement)
-    {
+        // Movimento ABSOLUTO: WASD/joystick movem sempre para frente/atrás/esq/dir no espaço mundial
+        // Não é relativo à rotação da nave
         if (movementMode == MovementModes.Astroids)
         {
-            // Aplica força na direção que a nave está a olhar
+            // Modo Asteroides: movimento relativo à rotação da nave
             Vector2 force = transform.up * movement.y * Time.deltaTime * moveSpeed;
             myRigidbody.AddForce(force);
-
-            // Rotação manual via teclado/setas (Astroids Style)
             float rotationChange = movement.x * rotationSpeed * Time.deltaTime;
             transform.Rotate(0, 0, -rotationChange);
         }
         else
         {
+            // Modo padrão: movimento absoluto no espaço mundial
+            // W=cima, S=baixo, A=esquerda, D=direita (independente da rotação da nave)
             if (lockXCoordinate) movement.x = 0;
             if (lockYCoordinate) movement.y = 0;
-
-            // Movimento direto (FreeRoam / Horizontal / Vertical)
-            transform.position += movement * Time.deltaTime * moveSpeed;
-        }
-    }
-
-    private void LookAtPoint(Vector2 lookPoint)
-    {
-        if (Time.timeScale > 0 && canAimWithMouse)
-        {
-            // CONVERSÃO CRUCIAL: Transforma a posição do mouse (ecrã) para o mundo
-            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(lookPoint.x, lookPoint.y, Camera.main.nearClipPlane));
-            Vector2 lookDirection = (Vector2)worldPoint - (Vector2)transform.position;
-
-            if (lookDirection.sqrMagnitude > 0.1f)
+            
+            // Verifica colisão com paredes/boundary antes de aplicar movimento
+            Vector2 targetPosition = transform.position * movement * Time.deltaTime * moveSpeed;
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(targetPosition, 0.5f);
+            
+            // Verifica se há colisão com boundary ou outros objetos
+            bool temColisao = false;
+            foreach (var collider in colliders)
             {
-                transform.up = lookDirection;
+                if (collider.CompareTag("Boundary"))
+                {
+                    temColisao = true;
+                    break;
+                }
+            }
+            
+            // Aplica o movimento apenas se não houver colisão
+            if (!temColisao)
+            {
+                if (myRigidbody != null)
+                {
+                    // PROTEÇÃO DO PILOTO: Se o escudo estiver ativo, o piloto fica invulnerável (apenas o escudo toma dano)
+                    if (shieldObject != null)
+                    {
+                        Health pilotHealth = GetComponent<Health>();
+                        if (pilotHealth != null) pilotHealth.isAlwaysInvincible = shieldObject.activeInHierarchy;
+                    }
+
+                    // CÁLCULO DE CONTROLE: Se o knockback for forte, o jogador perde controle parcial da nave
+                    float controlFactor = Mathf.Clamp01(1f - (knockbackVelocity.magnitude / (moveSpeed > 0 ? moveSpeed : 1f)));
+                    
+                    // Converter Vector2 para Vector3 antes da multiplicação
+                    Vector3 movementVector = new Vector3(movement.x, movement.y, 0);
+                    // Converter knockbackVelocity para Vector3 antes da adição
+                    Vector3 knockbackVector = new Vector3(knockbackVelocity.x, knockbackVelocity.y, 0);
+                    // Somamos a velocidade de input (atenuada pelo impacto) com o knockback
+                    myRigidbody.linearVelocity = (movementVector * moveSpeed * controlFactor) + knockbackVector;
+                    
+                    // Decaimento do knockback
+                    knockbackVelocity = Vector2.Lerp(knockbackVelocity, Vector2.zero, Time.deltaTime * 8f);
+                }
+                else
+                {
+                    // Converter Vector2 para Vector3 antes da multiplicação
+                    Vector3 movementVector = new Vector3(movement.x, movement.y, 0);
+                    transform.position += movementVector * Time.deltaTime * moveSpeed;
+                }
+            }
+            else
+            {
+                // Debug para depuração
+                Debug.Log($"<color=yellow>FÚRIA:</color> Movimento bloqueado por colisão com boundary");
+                
+                // Garante que o som só é executado uma vez durante o tempo de invincibilidade
+                if (GetComponent<Health>().hitSound != null && !GetComponent<Health>().isInvincible)
+                {
+                    GetComponent<Health>().hitSound.Play();
+                }
             }
         }
     }
 
-    // --- Métodos de PowerUp (Bomba e Escudo) mantidos ---
+    /// <summary>
+    /// Aplica uma força de repulsão externa (ex: ao bater numa parede com dano)
+    /// </summary>
+    public void ApplyKnockback(Vector2 force)
+    {
+        // Define a velocidade de repulsão (usado pelo Damage.cs)
+        knockbackVelocity = force;
+    }
+
+    public void ApplyImmediateRepulsion(Vector2 displacement, Vector2 force)
+    {
+        if (myRigidbody != null)
+        {
+            myRigidbody.position += displacement;
+            myRigidbody.linearVelocity = Vector2.zero;
+        }
+        else
+        {
+            transform.position += (Vector3)displacement;
+        }
+
+        knockbackVelocity = force;
+    }
+
+    private void LookAtPoint(Vector2 lookPoint)
+    {
+        if (Time.timeScale > 0 && Camera.main != null)
+        {
+            Vector3 worldPoint = Camera.main.ScreenToWorldPoint(new Vector3(lookPoint.x, lookPoint.y, Camera.main.nearClipPlane));
+            Vector2 lookDirection = (Vector2)worldPoint - (Vector2)transform.position;
+            if (lookDirection.sqrMagnitude > 0.1f) transform.up = lookDirection;
+        }
+    }
+
     public void GanharEscudo(int vidas)
     {
         if (shieldObject != null)

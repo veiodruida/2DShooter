@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 666739247766231972}
   m_Layer: 9
   m_Name: BossShield
-  m_TagString: Shield
+  m_TagString: BossShield
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -125,8 +125,8 @@ Transform:
   m_GameObject: {fileID: 4079858721123208426}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalPosition: {x: -0.015, y: 0.015, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1940442665237305757}
@@ -180,7 +180,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 1384055488315357138, guid: 7942fabf614722e47941c49ee73fb790, type: 3}
+  m_Sprite: {fileID: 2453996377621614287, guid: d48e44e50d4a6424bb357cad946934d7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -224,8 +224,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.011682188, y: 0}
-  m_Radius: 1.9461222
+  m_Offset: {x: -0.011682169, y: -0.013888245}
+  m_Radius: 0.6597412
 --- !u!50 &6938562443889134608
 Rigidbody2D:
   serializedVersion: 5
@@ -273,13 +273,14 @@ MonoBehaviour:
   isAlwaysInvincible: 0
   isInvincible: 0
   characterSprite: {fileID: 6639924917900457146}
-  blinkInterval: 0.1
+  tempoInvisivel: 0
   useLives: 0
   currentLives: 0
   maximumLives: 0
-  tempoInvisivel: 0
-  deathEffect: {fileID: 0}
+  deathEffect: {fileID: 2452382815751308013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
   hitEffect: {fileID: 0}
+  hitSound: {fileID: 0}
+  deathSound: {fileID: 7808391201307655013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
 --- !u!95 &6482774813686806074
 Animator:
   serializedVersion: 7
@@ -336,8 +337,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0000004297766, y: 0}
-  m_Radius: 1.8719895
+  m_Offset: {x: -0.011110995, y: -0.013888245}
+  m_Radius: 0.6393699
 --- !u!114 &666739247766231972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -357,6 +358,7 @@ MonoBehaviour:
   dealDamageOnTriggerEnter: 0
   dealDamageOnTriggerStay: 0
   dealDamageOnCollision: 1
+  repulsionForce: 0
 --- !u!1 &4240280553050144563
 GameObject:
   m_ObjectHideFlags: 0
@@ -453,7 +455,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 13.49, y: 0, z: 0}
-  m_LocalScale: {x: 5.5475, y: 5.5475, z: 5.5475}
+  m_LocalScale: {x: 5.5499997, y: 5.5499997, z: 5.5499997}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5551765495220066181}
@@ -544,8 +546,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MotherShip
   escudoHealth: {fileID: 3950035356128541078}
-  totalNavesParaEnviar: 5
+  totalNavesParaEnviar: 20
+  navesEnviadas: 0
   vidaEscudoEstagio2: 100
+  spriteEscudoEstagio2: {fileID: -3168324640971537483, guid: a7ee7b7ed55ef6647846154677b0f732, type: 3}
   inimigosPrefabs:
   - {fileID: 8282131552441171991, guid: 576cba70e4daccf488dda522850ba325, type: 3}
   - {fileID: 111767558614867189, guid: cfd62ad4c55daa942bae8f75211b08e0, type: 3}
@@ -615,13 +619,14 @@ MonoBehaviour:
   isAlwaysInvincible: 0
   isInvincible: 0
   characterSprite: {fileID: 7807967111692841487}
-  blinkInterval: 0.1
+  tempoInvisivel: 3
   useLives: 0
   currentLives: 3
   maximumLives: 5
-  tempoInvisivel: 3
-  deathEffect: {fileID: 0}
+  deathEffect: {fileID: 2161240276409527235, guid: 0e42d800b1c1e65448a0d64926860622, type: 3}
   hitEffect: {fileID: 0}
+  hitSound: {fileID: 0}
+  deathSound: {fileID: 7808391201307655013, guid: 990f3751046a4d840806774f23579fe2, type: 3}
 --- !u!50 &973155652070059356
 Rigidbody2D:
   serializedVersion: 5
@@ -760,6 +765,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
+      propertyPath: fireRateBase
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
       propertyPath: projectilePrefab
       value: 
       objectReference: {fileID: 4641165794769155162, guid: 19ca1195e585ca348bb386c98ddbab9a, type: 3}
@@ -846,15 +855,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.79999995
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.79999995
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.79999995
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalPosition.x
@@ -937,15 +946,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.79999995
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.79999995
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.79999995
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1024,15 +1033,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1103,6 +1112,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
       propertyPath: weaponLevel
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
+      propertyPath: fireRateBase
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
@@ -1191,6 +1204,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
+      propertyPath: fireRateBase
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
       propertyPath: projectilePrefab
       value: 
       objectReference: {fileID: 4641165794769155162, guid: 19ca1195e585ca348bb386c98ddbab9a, type: 3}
@@ -1273,6 +1290,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
       propertyPath: weaponLevel
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
+      propertyPath: fireRateBase
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137135870915077346, guid: 721a747dce90ff742814fb081e8ec6aa, type: 3}
@@ -1362,15 +1383,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.79999995
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.79999995
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.79999995
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7383949306622556802, guid: cdda2a69d209f80408aa3691d1b995ea, type: 3}
       propertyPath: m_LocalPosition.x

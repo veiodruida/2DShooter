@@ -6,15 +6,15 @@ using System.Collections.Generic;
 [RequireComponent(typeof(AudioSource))]
 public class ScreenClearBomb : MonoBehaviour
 {
-    [Header("ConfiguraÁıes de ¡udio (2D Fixo)")]
-    public AudioClip somCompletoBomba;
-    [Tooltip("Momento do 'BOOM' no ·udio (Ex: 1.0)")]
+    [Header("Configura√ß√µes de √Åudio (2D Fixo)")]
+    public AudioClip somLaunchBomba;
+    public AudioClip somExplosao;
+    [Tooltip("Momento do 'BOOM' no √°udio (Ex: 1.0)")]
     public float tempoParaExplodirNoAudio = 1.0f;
-    [Range(0f, 1f)] public float volumeGeral = 0.8f;
+    [Range(0f, 1f)] public float volumeGeral = 1.0f;
 
-    [Header("Efeitos Visuais")]
+    [Header("Efeito de Part√≠culas")]
     public GameObject prefabParticulasResiduo;
-    public GameObject[] efeitosExplosao;
 
     [Header("Configuracoes de Inventario")]
     public int bombasAtuais = 0;
@@ -27,19 +27,21 @@ public class ScreenClearBomb : MonoBehaviour
     public GameObject bombProjectilePrefab;
     public Transform pontoDeDisparo;
 
+    [Header("Efeitos de Explosao")]
+    public GameObject[] efeitosExplosao;
+
     [Header("Tags de Projeteis")]
     public string[] tagsDeTiro = { "EnemyProjectile" };
 
-    private AudioSource myAudioSource;
-
     private void Awake()
     {
-        myAudioSource = GetComponent<AudioSource>();
-
-        // ForÁa as configuraÁıes 2D para n„o bugar
-        myAudioSource.playOnAwake = false;
-        myAudioSource.spatialBlend = 0f;
-        myAudioSource.loop = false;
+        // Limpamos o AudioSource local se ele n√£o for usado para mais nada
+        AudioSource myAudioSource = GetComponent<AudioSource>();
+        if (myAudioSource != null)
+        {
+            myAudioSource.playOnAwake = false;
+            myAudioSource.spatialBlend = 0f;
+        }
     }
 
     private void OnEnable() => detonateAction.Enable();
@@ -69,48 +71,50 @@ public class ScreenClearBomb : MonoBehaviour
         bombasAtuais--;
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
 
-        // --- TOCA O SOM SEM CORTAR ---
-        if (somCompletoBomba != null)
+        // --- SOM 2D PURO (LAN√áAMENTO) ---
+        if (somLaunchBomba != null)
         {
-            // Se o som travou antes, o PlayOneShot aqui vai rodar de forma independente
-            myAudioSource.PlayOneShot(somCompletoBomba, volumeGeral);
+            Audio2DManager.Play2D(somLaunchBomba, volumeGeral);
         }
 
         GameObject projetil = Instantiate(bombProjectilePrefab, pontoDeDisparo.position, Quaternion.identity);
 
-        PlayerBomb bp = projetil.GetComponent<Health>() != null ? projetil.GetComponent<PlayerBomb>() : projetil.GetComponent<PlayerBomb>();
-
-        // Pegando o componente de forma segura
-        PlayerBomb bombComponent = projetil.GetComponent<PlayerBomb>();
-        if (bombComponent != null)
+        PlayerBomb bp = projetil.GetComponent<PlayerBomb>();
+        if (bp != null)
         {
-            bombComponent.Inicializar(this);
-            bombComponent.tempoDeVida = tempoParaExplodirNoAudio;
+            bp.Inicializar(this);
+            bp.tempoDeVida = tempoParaExplodirNoAudio;
         }
     }
 
-    // Recebe a posiÁ„o da bomba para estourar no lugar certo
-    public void AtivarOndaDeChoque(Vector3 posicaoDaBomba)
+    public void AtivarLimpezaTotal() => AtivarOndaDeChoque(transform.position);
+
+    public void AtivarOndaDeChoque(Vector3 posicaoDaExplosao)
     {
+        // --- SOM 2D PURO (EXPLOS√ÉO) ---
+        if (somExplosao != null)
+        {
+            Audio2DManager.Play2D(somExplosao, volumeGeral);
+        }
+
         if (prefabParticulasResiduo != null)
         {
-            Instantiate(prefabParticulasResiduo, posicaoDaBomba, Quaternion.identity);
+            Instantiate(prefabParticulasResiduo, posicaoDaExplosao, Quaternion.identity);
         }
 
-        SpawnExplosao(posicaoDaBomba);
-
+        SpawnExplosao(posicaoDaExplosao);
         StartCoroutine(OndaDeChoque());
     }
-
-    // Caso algo chame sem posiÁ„o (retrocompatibilidade)
-    public void AtivarLimpezaTotal() => AtivarOndaDeChoque(transform.position);
 
     IEnumerator OndaDeChoque()
     {
         float duracao = 0.5f;
         float timer = 0f;
 
-        if (CameraShake.instance != null) CameraShake.instance.Shake(0.6f, 0.4f);
+        if (CameraShake.instance != null)
+        {
+            CameraShake.instance.Shake(0.6f, 0.4f);
+        }
 
         foreach (string tag in tagsDeTiro)
         {

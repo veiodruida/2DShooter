@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,6 +28,8 @@ public class Health : MonoBehaviour
     [Header("Effects & Polish")]
     public GameObject deathEffect;
     public GameObject hitEffect;
+    public AudioSource hitSound;
+    public AudioSource deathSound;
 
     private SpriteRenderer spriteRenderer;
     private bool estaPiscando = false;
@@ -43,6 +45,8 @@ public class Health : MonoBehaviour
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         ConfigurarDificuldadeInicial();
+
+       
     }
 
     void ConfigurarDificuldadeInicial()
@@ -73,7 +77,15 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(int damageAmount)
     {
-        if (isAlwaysInvincible || isInvincible) return;
+        Debug.Log($"<color=yellow>TakeDamage() chamado em: {gameObject.name}, isInvincible: {isInvincible}, invincibilityTime: {invincibilityTime}</color>");
+        
+        if (isAlwaysInvincible || isInvincible)
+        {
+            Debug.Log($"<color=orange>IGNORADO - Inimigo invencível!</color>");
+            return;
+        }
+        
+        Debug.Log($"<color=cyan>Dano recebido: {damageAmount}</color>");
         
         if (gameObject.CompareTag("Player") && GameSettings.instance != null)
         {
@@ -81,14 +93,11 @@ public class Health : MonoBehaviour
             damageAmount = Mathf.RoundToInt(damageAmount * mult);
         }
 
-
         if (invincibilityTime > 0)
         {
             isInvincible = true;
             timeToBecomeDamagableAgain = Time.time + invincibilityTime;
 
-            // O AVISO RESOLVE-SE AQUI:
-            // Agora estamos a USAR o valor de 'estaPiscando' para decidir se começa o efeito.
             if (characterSprite != null && !estaPiscando)
             {
                 StartCoroutine(EfeitoPiscar());
@@ -105,27 +114,82 @@ public class Health : MonoBehaviour
         }
 
         if (UIManager.instance != null) UIManager.instance.UpdateUI();
-        if (hitEffect != null) Instantiate(hitEffect, transform.position, transform.rotation);
+        // Garante que o som só é executado uma vez durante o tempo de invincibilidade
+        if (hitEffect != null)
+        {
+            if (hitEffect.GetComponent<Projectile>() != null)
+            {
+                Debug.LogWarning("FÚRIA: Vetado o hitEffect porque é um Projétil! Corrija no Inspector da Unity.");
+            }
+            else
+            {
+                Instantiate(hitEffect, transform.position, transform.rotation);
+            }
+        }
+        // Som somente se não estiver invencível
+        if (hitSound != null && !isInvincible)
+        {
+            hitSound.Play();
+        }
 
         CheckDeath();
     }
 
+    // Força a animação de morte a tocar mesmo para o escudo
+    public void ForceDeathAnimation()
+    {
+        if (deathEffect != null)
+        {
+            Instantiate(deathEffect, transform.position, transform.rotation);
+        }
+        if (deathSound != null)
+        {
+            AudioSource.PlayClipAtPoint(deathSound.clip, transform.position, deathSound.volume);
+        }
+    }
+
     bool CheckDeath()
     {
+        Debug.Log($"<color=blue>CheckDeath - currentHealth: {currentHealth}, name: {gameObject.name}</color>");
+        
         if (currentHealth <= 0)
         {
+            Debug.Log($"<color=red>INIMIGO MORTO! Chamando Die()</color>");
             Die();
             return true;
         }
+        
+        Debug.Log($"<color=orange>Inimigo ainda vivo. Health: {currentHealth}</color>");
         return false;
     }
 
     public void Die()
     {
+        Debug.Log($"<color=yellow>Die() chamado em: {gameObject.name}</color>");
+        // --- NOVA LÓGICA PARA ASTEROIDES ---
+        Asteroid ast = GetComponent<Asteroid>();
+        if (ast != null)
+        {
+            ast.DividirOuExplodir(); // <--- CHAMA AQUI
+        }
+
         MotherShip boss = GetComponent<MotherShip>();
         if (boss != null) boss.FinalizarBoss();
 
-        if (deathEffect != null) Instantiate(deathEffect, transform.position, transform.rotation);
+        if (deathEffect != null)
+        {
+            Debug.Log($"<color=green>Instanciando deathEffect em: {transform.position}</color>");
+            Instantiate(deathEffect, transform.position, transform.rotation);
+        }
+        else
+        {
+            Debug.Log($"<color=red>deathEffect é NULL no: {gameObject.name}</color>");
+        }
+
+        if (deathSound != null)
+        {
+            AudioSource.PlayClipAtPoint(deathSound.clip, transform.position, deathSound.volume);
+        }
 
         if (boss != null)
         {
@@ -144,12 +208,21 @@ public class Health : MonoBehaviour
 
         if (currentLives > 0)
         {
+            // Shield não deve tocar a deathAnimation do player, apenas pisca ou toca hitEffect
+            if (gameObject.CompareTag("Shield"))
+            {
+                if (hitEffect != null) Instantiate(hitEffect, transform.position, transform.rotation);
+                if (hitSound != null) hitSound.Play();
+            }
             Respawn();
         }
         else
         {
             if (gameObject.CompareTag("Shield"))
             {
+                // Shield desativado, não toca ForceDeathAnimation (evita explosão do player)
+                if (hitSound != null) AudioSource.PlayClipAtPoint(hitSound.clip, transform.position, hitSound.volume);
+
                 gameObject.SetActive(false);
                 currentLives = maximumLives;
                 currentHealth = defaultHealth;
@@ -170,7 +243,21 @@ public class Health : MonoBehaviour
     void HandleDeathWithoutLives()
     {
         if (gameObject.CompareTag("Player") && GameManager.instance != null) GameManager.instance.GameOver();
+
         if (gameObject.CompareTag("Shield")) { gameObject.SetActive(false); return; }
+
+        // Se for Asteroid, executa a lógica normal de divisão/explisão
+        if (gameObject.CompareTag("Asteroid"))
+        {
+            Debug.Log("Asteroide morto - executando DividirOuExplodir");
+            Asteroid ast = GetComponent<Asteroid>();
+            if (ast != null)
+            {
+                ast.DividirOuExplodir();
+            }
+            Destroy(this.gameObject);
+            return;
+        }
 
         Enemy enemyScript = GetComponent<Enemy>();
         if (enemyScript != null) enemyScript.DoBeforeDestroy();

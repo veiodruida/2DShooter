@@ -8,8 +8,9 @@ public class MotherShip : MonoBehaviour
     [Header("Configurações do Escudo")]
     public Health escudoHealth;
     public int totalNavesParaEnviar = 10;
-    private int navesEnviadas = 0;
+    public int navesEnviadas = 0; 
     public int vidaEscudoEstagio2 = 15;
+    public Sprite spriteEscudoEstagio2; // Sprite da variante (Ex: bolha vermelha)
 
     private List<GameObject> navesVivas = new List<GameObject>();
     private bool aguardandoLimpezaDeNaves = false;
@@ -122,12 +123,28 @@ public class MotherShip : MonoBehaviour
         VerificarLimpezaDeNaves();
         VerificarEstadoIncendio();
         MonitorarEscudo();
+        ExecutarRadarColisao(); // Protocolo Fúria 3.1
+    }
 
-        // Feedback Visual do Escudo Vulnerável
-        if (estagio2Ativo && escudoHealth != null && escudoHealth.gameObject.activeSelf)
+    void ExecutarRadarColisao()
+    {
+        // Apenas varre se o escudo estiver ativo e puder receber dano
+        if (escudoHealth != null && escudoHealth.gameObject.activeSelf && !escudoHealth.isInvincible)
         {
-            SpriteRenderer sr = escudoHealth.GetComponent<SpriteRenderer>();
-            if (sr != null && sr.color != Color.red) sr.color = Color.red;
+            Collider2D[] radar = Physics2D.OverlapCircleAll(escudoHealth.transform.position, 1.5f); // Ajustado para o tamanho do boss
+            foreach (var col in radar)
+            {
+                // Se o que bateu for um projétil do jogador, força o dano no ESCUDO
+                if (col.CompareTag("Projectile") || col.CompareTag("PlayerProjectile"))
+                {
+                    Projectile p = col.GetComponent<Projectile>();
+                    if (p != null)
+                    {
+                        escudoHealth.TakeDamage(p.damage);
+                        Destroy(col.gameObject); // Consome o tiro para evitar múltiplos hits
+                    }
+                }
+            }
         }
     }
 
@@ -229,7 +246,20 @@ public class MotherShip : MonoBehaviour
             escudoHealth.maximumHealth = vidaEscudoEstagio2;
             escudoHealth.currentHealth = vidaEscudoEstagio2;
 
+            SpriteRenderer sr = escudoHealth.GetComponent<SpriteRenderer>();
+            if (sr != null && spriteEscudoEstagio2 != null)
+            {
+                sr.sprite = spriteEscudoEstagio2;
+                sr.color = Color.white; 
+                
+                // Micro-animação de impacto na transição
+                escudoHealth.transform.localScale *= 1.1f;
+                // O Reset da escala pode ser feito via animação ou corotina, mas aqui garantimos o feedback visual imediato
+            }
+
             if (UIManager.instance != null) UIManager.instance.UpdateUI();
+            
+            Debug.Log("<color=orange>FÚRIA:</color> Escudo de Fase 2 Ativado!");
         }
     }
 
@@ -276,11 +306,35 @@ public class MotherShip : MonoBehaviour
                 rbPlayer.AddForce(direcao * forcaRicochete, ForceMode2D.Impulse);
             }
         }
+
+        // Colisão com Asteroide - asteroide explode, MotherShip só toma dano se o escudo estiver aberto
+        if (collision.CompareTag("Asteroid"))
+        {
+            Health asteroidHealth = collision.GetComponent<Health>();
+            if (asteroidHealth != null) 
+            {
+                Damage mgDamage = GetComponent<Damage>();
+                int finalDmg = mgDamage != null ? mgDamage.damageAmount : 999;
+                asteroidHealth.TakeDamage(finalDmg);
+            }
+
+            // Se o escudo já foi destruído, a MotherShip toma dano
+            if (!estagio2Ativo || (escudoHealth != null && !escudoHealth.gameObject.activeSelf))
+            {
+                Damage astDamage = collision.GetComponent<Damage>();
+                Health myHealth = GetComponent<Health>();
+                if (myHealth != null) 
+                {
+                    int dmgToTake = astDamage != null ? astDamage.damageAmount : 1;
+                    myHealth.TakeDamage(dmgToTake);
+                }
+            }
+        }
     }
 
     public void FinalizarBoss()
     {
-        if (GameManager.instance != null && GameManager.instance.gameIsOver) return;
+        // Removido o bloqueio para permitir vitória conjunta.
 
         LimparCenaParaVitoria();
 

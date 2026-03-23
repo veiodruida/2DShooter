@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "unity-ai-developer": {
+      "command": "node",
+      "args": [
+        "dist/index.js"
+      ],
+      "env": {
+        "UNITY_PROJECT_PATH": "d:\\Unity_Projects\\2DShooter",
+        "PORT": "3000",
+        "LOG_LEVEL": "debug"
+      },
+      "schema": "1.0.0",
+      "description": "FURY MODE 2 Agent Config for 2D Shooter"
+    }
+  },
+  "automationRules": [
+    {
+      "trigger": "scene-save",
+      "action": "script-execute",
+      "script": "BuildProcessor.cs"
+    }
+  ]
+}
