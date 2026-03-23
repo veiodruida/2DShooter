@@ -386,10 +386,10 @@ namespace Terresquall {
                 InputSystem.SetDeviceUsage(inputSystemDevice, ID.ToString());
 #endif
 
-            // If we are not on mobile, and this is mobile only, disable.
-            if (!Application.isMobilePlatform && onlyOnMobile) {
+            // WebGL on mobile browsers may not report isMobilePlatform reliably.
+            if (!ShouldUseMobileMode() && onlyOnMobile) {
                 gameObject.SetActive(false);
-                Debug.Log($"Your Virtual Joystick \"{name}\" is disabled because Only On Mobile is checked, and you are not on a mobile platform or mobile emualation.", gameObject);
+                Debug.Log($"Your Virtual Joystick \"{name}\" is disabled because Only On Mobile is checked, and no mobile/touch device was detected.", gameObject);
                 return;
             }
 
@@ -425,6 +425,16 @@ namespace Terresquall {
         IEnumerator Activate() {
             yield return new WaitForEndOfFrame();
             origin = desiredPosition = transform.position;
+        }
+
+        bool ShouldUseMobileMode() {
+            if (Application.isMobilePlatform) return true;
+            if (SystemInfo.deviceType == DeviceType.Handheld) return true;
+            if (Input.touchSupported) return true;
+#if ENABLE_INPUT_SYSTEM
+            if (Touchscreen.current != null) return true;
+#endif
+            return false;
         }
 
         void OnDisable() {

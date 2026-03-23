@@ -59,16 +59,18 @@ public class Controller : MonoBehaviour
         if (myRigidbody == null) myRigidbody = GetComponent<Rigidbody2D>();
         shootingController = GetComponent<ShootingController>();
 
-        // --- LÓGICA DE PLATAFORMA REAL ---
-#if UNITY_IOS || UNITY_ANDROID || UNITY_TVOS
-        aimMode = AimModes.DualStickMobile;
-        ConfigurarVisibilidadeJoysticks(true);
-        Debug.Log("Controller: Mobile detectado. Ativando Joysticks.");
-#else
-        aimMode = AimModes.AimTowardsMouse;
-        ConfigurarVisibilidadeJoysticks(false);
-        Debug.Log("Controller: PC/Desktop detectado. Joysticks ocultados.");
-#endif
+        if (ShouldUseMobileControls())
+        {
+            aimMode = AimModes.DualStickMobile;
+            ConfigurarVisibilidadeJoysticks(true);
+            Debug.Log("Controller: dispositivo touch detectado. Ativando Joysticks.");
+        }
+        else
+        {
+            aimMode = AimModes.AimTowardsMouse;
+            ConfigurarVisibilidadeJoysticks(false);
+            Debug.Log("Controller: dispositivo sem touch mobile. Joysticks ocultados.");
+        }
 
         if (GameSettings.instance != null && GameSettings.instance.configAtual != null)
         {
@@ -77,6 +79,15 @@ public class Controller : MonoBehaviour
 
         // FÚRIA: O jogador inicia com o Shield no máximo
         GanharEscudo(3);
+    }
+
+    private bool ShouldUseMobileControls()
+    {
+        if (Application.isMobilePlatform) return true;
+        if (SystemInfo.deviceType == DeviceType.Handheld) return true;
+        if (Input.touchSupported) return true;
+        if (Touchscreen.current != null) return true;
+        return false;
     }
 
     private void ConfigurarVisibilidadeJoysticks(bool mostrar)

@@ -3265,6 +3265,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2525626308453027572, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5525563857006450030, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
       propertyPath: projectileHolder
       value: 
@@ -3277,6 +3281,10 @@ PrefabInstance:
       propertyPath: mobileMoveJoystick
       value: 
       objectReference: {fileID: 1741193426}
+    - target: {fileID: 5959279895714222436, guid: a09fdc079192f704991b146d7a4163c5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.746
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
