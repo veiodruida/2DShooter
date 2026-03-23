@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 1.3, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -130,8 +130,9 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
   usarLimites: 1
-  minBounds: {x: -10, y: -16}
-  maxBounds: {x: 0, y: 5}
+  minBounds: {x: -5.65, y: -16}
+  maxBounds: {x: -4.45, y: 5}
+  detectarLimitesAutomaticamente: 0
 --- !u!114 &630389601480462766
 MonoBehaviour:
   m_ObjectHideFlags: 0

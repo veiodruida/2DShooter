@@ -322,6 +322,7 @@ public class GameManager : MonoBehaviour
         // --- 1. ATUALIZAR RECORDES ABSOLUTOS ---
         int recordePontos = PlayerPrefs.GetInt("highscore", 0);
         float melhorTempo = PlayerPrefs.GetFloat("melhor_tempo", 9999f);
+        float tempoFinalDaJornada = GetTempoFinalDaJornada();
 
         if (score > recordePontos)
         {
@@ -329,22 +330,19 @@ public class GameManager : MonoBehaviour
             instance.highScore = score;
         }
 
-        // Para o recorde de 'melhor tempo', consideramos apenas a fase ou o total? 
-        // Aqui mantemos a lógica original de verificar se este tempo foi o menor registrado.
-        if (instance.tempoDaFase < melhorTempo && instance.tempoDaFase > 1f)
+        // O recorde de tempo deve representar a jornada inteira, nao uma fase isolada.
+        if (appendToHistory && tempoFinalDaJornada < melhorTempo && tempoFinalDaJornada > 1f)
         {
-            PlayerPrefs.SetFloat("melhor_tempo", instance.tempoDaFase);
-            instance.tempoRecordeAnterior = instance.tempoDaFase;
+            PlayerPrefs.SetFloat("melhor_tempo", tempoFinalDaJornada);
+            instance.tempoRecordeAnterior = tempoFinalDaJornada;
         }
 
         // --- 2. ADICIONAR AO HISTÓRICO (SOMENTE AO FINALIZAR A JORNADA) ---
         if (appendToHistory && !hasSavedToHistoryThisRun)
         {
             hasSavedToHistoryThisRun = true;
-            // CRÍTICO: InvariantCulture força '.' como decimal
             string difNome = GetDificuldadeNome();
-            // USAMOS tempoTotalPartida para representar a soma de todos os níveis
-            string tempoFormatado = tempoTotalPartida.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+            string tempoFormatado = tempoFinalDaJornada.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
             string novaEntrada = $"{score};{tempoFormatado};{difNome}";
 
             string historicoAtual = PlayerPrefs.GetString("historico_partidas", "");
@@ -368,6 +366,12 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();
 
         instance.LimparObjetosDaCena();
+    }
+
+    private static float GetTempoFinalDaJornada()
+    {
+        if (tempoTotalPartida > 0f) return tempoTotalPartida;
+        return instance != null ? instance.tempoDaFase : 0f;
     }
 
     public static void UpdateUIElements()

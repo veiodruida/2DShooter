@@ -17,11 +17,11 @@ public class RecordDisplay : MonoBehaviour
         if (PlayerPrefs.HasKey("melhor_tempo"))
         {
             float tempo = PlayerPrefs.GetFloat("melhor_tempo");
-            textoTempoRecorde.text = "BEST TIME: " + tempo.ToString("F2") + "s";
+            textoTempoRecorde.text = "BEST RUN TIME: " + tempo.ToString("F2") + "s";
         }
         else
         {
-            textoTempoRecorde.text = "BEST TIME: ---";
+            textoTempoRecorde.text = "BEST RUN TIME: ---";
         }
     }
 
