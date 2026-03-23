@@ -11,6 +11,147 @@ Objetivo deste handoff:
 
 ---
 
+## 0. Atualizações recentes (2026-03-23)
+
+### Câmera e limites
+
+Arquivos envolvidos:
+- `Assets/Scripts/Camera/CameraController.cs`
+- `Assets/_Scenes/Level1.unity`
+- `Assets/_Scenes/Level2.unity`
+- `Assets/_Scenes/Level3.unity`
+- `Assets/Prefabs/Camera/Large Camera.prefab`
+- `Assets/Prefabs/Camera/Small Camera.prefab`
+
+Estado atual:
+- a câmera voltou ao uso de clamp manual simples em `X/Y`
+- em `Level1`, os limites manuais salvos atualmente são:
+  - `minBounds = (-5.65, -16)`
+  - `maxBounds = (-4.45, 5)`
+- `detectarLimitesAutomaticamente` está desligado na cena para evitar regressões no `X`
+- foi corrigido um problema grave em que a `MainCamera` estava com `Camera.rect` reduzido, fazendo o jogo parecer pequeno mesmo com espaço no ecrã
+- o `rect` da câmera foi resetado para tela cheia (`0,0,1,1`) em:
+  - `MainMenu`
+  - `Level1`
+  - `Level2`
+  - `Level3`
+
+Observação importante:
+- houve várias tentativas de cálculo automático por `Boundary`/`Background`, mas o estado que voltou a funcionar foi o clamp manual
+- não reativar detecção automática no `X` sem validar visualmente em runtime
+
+### Escudo do jogador
+
+Arquivo envolvido:
+- `Assets/Scripts/Player/ShieldController.cs`
+
+Mudança aplicada:
+- o escudo do jogador agora aplica a mesma repulsão usada em `Boundary` também quando colide com:
+  - `Boss`
+  - `BossShield`
+
+Como funciona agora:
+- `ShieldController` procura `Damage` no collider atingido ou no parent
+- lê `Damage.repulsionForce`
+- chama `Controller.ApplyImmediateRepulsion(...)`
+
+Regra:
+- para a repulsão funcionar, os objetos do boss e do escudo do boss precisam de `Damage.repulsionForce > 0` no Inspector
+
+### Records / sessão completa
+
+Arquivos envolvidos:
+- `Assets/Scripts/Utility/GameManager.cs`
+- `Assets/Scripts/UI/RecordDisplay.cs`
+
+Mudanças aplicadas:
+- o score da run continua acumulando entre níveis
+- o histórico final (`historico_partidas`) deve registrar uma única entrada por jornada
+- o tempo recorde passou a representar a jornada inteira, usando `tempoTotalPartida`
+- `RecordDisplay` agora mostra `BEST RUN TIME` em vez de `BEST TIME`
+
+Fluxo pretendido:
+- `MainMenu` inicia nova run e chama `ResetScore()`
+- `Level1 -> Level2 -> Level3` mantém score acumulado
+- só no fim da jornada ou em `GameOver` é que a entrada final é gravada no histórico
+
+Observação importante:
+- o botão de vitória no prefab base `LevelVictoryScreen.prefab` ainda aponta para `MainMenu`
+- o fluxo correto parece vir de override em `inGameUI.prefab`, onde a instância da página de vitória injeta `Level2`
+- se houver bug de progressão de fase, verificar primeiro os overrides do `inGameUI`
+
+### Main Menu / Instructions
+
+Arquivo envolvido:
+- `Assets/_Scenes/MainMenu.unity`
+
+Mudança aplicada:
+- o texto `InstructionsText` recebeu uma secção `Score System` com os valores reais do jogo
+
+Valores documentados no texto:
+- `Straight Shooter`: 5 pontos
+- `Straight Chaser`: 5 pontos
+- `Diagonal Shooter`: 10 pontos
+- `Diagonal Chaser`: 10 pontos
+- `Chaser Enemy`: 20 pontos
+- `Mothership`: 500 pontos
+- `Mothership` em `Cuba/Fury`: 1000 pontos
+- bónus de boss clear: até 5000 pontos com penalidade de 50 por segundo
+- bónus perfect clear: 10000 pontos
+- recorde final usa score total da run
+
+### Multi-monitor / aspect ratio
+
+Arquivos envolvidos:
+- `Assets/Scripts/Camera/AspectRatioEnforcer.cs` (criado e depois removido da solução ativa)
+- `Assets/Scripts/Camera/CameraController.cs`
+- `Assets/Prefabs/UI/inGameUI.prefab`
+- `Assets/Prefabs/UI/MainMenu.prefab`
+
+Estado atual:
+- foi testada uma abordagem com barras (`AspectRatioEnforcer`), mas ela foi abandonada
+- o componente não deve ser considerado parte da solução final ativa
+- a solução de barras foi removida das câmeras
+- `CanvasScaler` dos prefabs principais foi ajustado para:
+  - `Scale With Screen Size`
+  - `ReferenceResolution = 1920x1080`
+  - `MatchWidthOrHeight = 0.5`
+
+Observação:
+- o comportamento multi-monitor ainda precisa de validação visual real em formatos extremos
+- qualquer trabalho futuro em aspect ratio deve tomar cuidado para não alterar `Camera.rect` novamente
+
+### WebGL mobile / joysticks
+
+Arquivos envolvidos:
+- `Assets/Scripts/Player/Controller.cs`
+- `Assets/Scripts/UI/MobileOnlyVisibility.cs`
+- `Assets/VirtualJoystick/Scripts/VirtualJoystick.cs`
+
+Problema corrigido:
+- em WebGL aberto no telemóvel, os joysticks não apareciam
+
+Causa:
+- a lógica antiga dependia de `Application.isMobilePlatform`
+- em browser mobile/WebGL isso frequentemente retorna como desktop
+
+Correção aplicada:
+- a deteção de mobile/touch agora usa runtime checks:
+  - `Application.isMobilePlatform`
+  - `SystemInfo.deviceType == DeviceType.Handheld`
+  - `Input.touchSupported`
+  - `Touchscreen.current != null`
+
+Locais corrigidos:
+- `Controller.cs` para ativar modo `DualStickMobile`
+- `MobileOnlyVisibility.cs` para não esconder UI touch em WebGL mobile
+- `VirtualJoystick.cs` do asset third-party para não se auto-desativar erroneamente quando `onlyOnMobile` está ativo
+
+Regra importante:
+- se os joysticks ainda não aparecerem após isso, o próximo suspeito não é mais detecção de plataforma; é layout/âncoras fora da área visível do ecrã
+
+---
+
 ## 1. Resumo do projeto
 
 - Engine: Unity 2D
@@ -478,4 +619,3 @@ Se você é outro agente entrando agora:
 - o escudo grande do player influencia diretamente colisões de tiro
 - a worktree está suja; não reverta mudanças alheias
 - use o código real como fonte da verdade, não a documentação antiga
-
