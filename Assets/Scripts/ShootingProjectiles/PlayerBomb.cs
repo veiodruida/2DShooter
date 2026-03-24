@@ -37,7 +37,7 @@ public class PlayerBomb : MonoBehaviour
             // Se o alvo foi destruído, continua na direção atual
             direcaoAtual = Vector3.Slerp(direcaoAtual, Vector3.up, Time.deltaTime * forcaDaCurva);
         }
-
+        
         // Movimento na direção calculada
         transform.Translate(direcaoAtual * velocidade * Time.deltaTime);
 
