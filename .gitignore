@@ -12,6 +12,14 @@
 /[Uu]ser[Ss]ettings/
 *.log
 .env
+*.SKILL*
+.opencode/
+.claude/
+.aider/
+.cursor/
+.codex/
+.pi/
+.agent/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
